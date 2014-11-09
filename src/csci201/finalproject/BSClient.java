@@ -10,7 +10,7 @@ public class BSClient {
 	
 	class RunServerThread extends Thread {
 		public void run() {
-			
+			// yolo 2
 		}
 	}
 }

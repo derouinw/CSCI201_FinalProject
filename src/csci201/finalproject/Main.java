@@ -5,7 +5,7 @@ import javax.swing.JFrame;
 public class Main extends JFrame {
 
 	public Main() {
-		super("CSCI201 Final Project");
+		super("Buccaneer Battles");
 		setSize(800,600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		

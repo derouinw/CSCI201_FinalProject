@@ -4,7 +4,7 @@ public class BSClient {
 
 	class NetworkThread extends Thread {
 		public void run() {
-			
+			// yolo 3
 		}
 	}
 	

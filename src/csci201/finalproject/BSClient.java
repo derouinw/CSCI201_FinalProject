@@ -18,7 +18,7 @@ public class BSClient {
 		// Create an instance because of static
 		BSClient client = new BSClient();
 		
-		// Start the gui
+		// Start the gui (ClientGUI is the JFrame)
 		client.gui = new ClientGUI(client.nt);
 	}
 	

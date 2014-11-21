@@ -31,25 +31,34 @@ public class ChatPanel extends JPanel{
 		
 		//Data member instantiation
 		enterIsValidSubmission = false;
+		
 		displayArea = new JTextArea();
 		displayArea.setPreferredSize(new Dimension(300,400));
 		displayArea.setEditable(false);
+		
+		//add borders to display area
 		displayArea.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.black),BorderFactory.createEmptyBorder(10,10,10,10)));
 		displayArea.setBackground(new Color(193,232,228));
 		displayArea.setForeground(new Color(99,99,99));
+		
+		//allow text to wrap (by word) in display area and set default welcome message
 		displayArea.setLineWrap(true);
 		displayArea.setWrapStyleWord(true);
 		displayArea.setText("Hi there! To chat, just type your message in the white box below, select a recipient, and send it off!");
 		
+		//set borders and line wrapping for chat box
 		chatArea = new JTextArea();
 		chatArea.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.black),BorderFactory.createEmptyBorder(10,10,10,10)));
 		chatArea.setLineWrap(true);
 		chatArea.setWrapStyleWord(true);
+		
+		//add listeners for typed words and for the "enter key"
 		chatListener = new ChatListener();
 		enterListener = new EnterListener();
 		chatArea.getDocument().addDocumentListener(chatListener);
 		chatArea.addKeyListener(enterListener);
 		
+		//panel to house option to use "enter" to submit message
 		enterToSendPanel= new JPanel();
 		enterToSendPanel.setLayout(new BoxLayout(enterToSendPanel, BoxLayout.X_AXIS));
 		pressEnterToSend = new JCheckBox("Press enter to send? ");
@@ -67,6 +76,8 @@ public class ChatPanel extends JPanel{
 		enterToSendPanel.add(pressEnterToSend);
 		
 		buttonListener = new ButtonListener();
+		
+		//create bottom panel with clear/send buttons and add listeners
 		buttonPanel = new JPanel();
 		
 		clearButton = new JButton("Clear");
@@ -81,6 +92,7 @@ public class ChatPanel extends JPanel{
 		buttonPanel.add(Box.createGlue());
 		buttonPanel.add(submitButton);
 		
+		//add all components to jpanel
 		this.add(displayArea);
 		this.add(chatArea);
 		this.add(enterToSendPanel);
@@ -130,6 +142,6 @@ public class ChatPanel extends JPanel{
 
 		public void keyReleased(KeyEvent k) {}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent k) {}
 	}
 }

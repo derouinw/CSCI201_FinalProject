@@ -31,7 +31,7 @@ public class ChatPanel extends JPanel{
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
 		//Data member instantiation
-		enterIsValidSubmission = false;
+		enterIsValidSubmission = true;
 		shiftIsDown = false;
 		
 		displayArea = new JTextArea();
@@ -66,6 +66,7 @@ public class ChatPanel extends JPanel{
 		enterToSendPanel= new JPanel();
 		enterToSendPanel.setLayout(new BoxLayout(enterToSendPanel, BoxLayout.X_AXIS));
 		pressEnterToSend = new JCheckBox("Press enter to send? ");
+		pressEnterToSend.setSelected(true);
 		pressEnterToSend.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ae){
 				if (pressEnterToSend.getModel().isSelected()){
@@ -90,6 +91,7 @@ public class ChatPanel extends JPanel{
 		
 		submitButton = new JButton("Send");
 		submitButton.setEnabled(false);
+		submitButton.addActionListener(buttonListener);
 		
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		buttonPanel.add(clearButton);
@@ -107,10 +109,18 @@ public class ChatPanel extends JPanel{
 		displayArea.setText(displayArea.getText() + "\n" + s);
 	}
 	
+	public void send(){
+		String toBeSent = chatArea.getText();
+		chatArea.setText("");
+	}
+	
 	class ButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent ae){
 			if (ae.getSource() == clearButton){
 				chatArea.setText("");
+			}
+			else if(ae.getSource() == submitButton){
+				send();
 			}
 		}
 	}
@@ -138,8 +148,7 @@ public class ChatPanel extends JPanel{
 			if (k.getKeyCode() == KeyEvent.VK_ENTER){
 				if ((! shiftIsDown) && enterIsValidSubmission){
 					k.consume();
-					//submit string
-					chatArea.setText("");
+					send();
 				}
 				else if(enterIsValidSubmission){
 					chatArea.setText(chatArea.getText() + "\n");

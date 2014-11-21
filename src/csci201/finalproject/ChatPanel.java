@@ -10,7 +10,7 @@ import javax.swing.event.DocumentListener;
 public class ChatPanel extends JPanel{
 	
 	//DATA
-	private boolean enterIsValidSubmission;
+	private boolean enterIsValidSubmission, shiftIsDown;
 	private JTextArea displayArea;
 	private JTextArea chatArea;
 	private JPanel buttonPanel, enterToSendPanel;
@@ -21,6 +21,7 @@ public class ChatPanel extends JPanel{
 	private EnterListener enterListener;
 	
 	private JCheckBox pressEnterToSend;
+	private JScrollPane chatScroll;
 	
 	//METHODS
 	//constructor
@@ -31,9 +32,11 @@ public class ChatPanel extends JPanel{
 		
 		//Data member instantiation
 		enterIsValidSubmission = false;
+		shiftIsDown = false;
 		
 		displayArea = new JTextArea();
-		displayArea.setPreferredSize(new Dimension(300,400));
+		displayArea.setPreferredSize(new Dimension(300,325));
+		displayArea.setMinimumSize(new Dimension(300,325));
 		displayArea.setEditable(false);
 		
 		//add borders to display area
@@ -44,13 +47,14 @@ public class ChatPanel extends JPanel{
 		//allow text to wrap (by word) in display area and set default welcome message
 		displayArea.setLineWrap(true);
 		displayArea.setWrapStyleWord(true);
-		displayArea.setText("Hi there! To chat, just type your message in the white box below, select a recipient, and send it off!");
+		displayArea.setText("[Chat] Hi there! To chat, just type your message in the white box below, select a recipient, and send it off!");
 		
 		//set borders and line wrapping for chat box
 		chatArea = new JTextArea();
 		chatArea.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.black),BorderFactory.createEmptyBorder(10,10,10,10)));
 		chatArea.setLineWrap(true);
 		chatArea.setWrapStyleWord(true);
+		chatScroll = new JScrollPane(chatArea);
 		
 		//add listeners for typed words and for the "enter key"
 		chatListener = new ChatListener();
@@ -94,7 +98,7 @@ public class ChatPanel extends JPanel{
 		
 		//add all components to jpanel
 		this.add(displayArea);
-		this.add(chatArea);
+		this.add(chatScroll);
 		this.add(enterToSendPanel);
 		this.add(buttonPanel);
 	}
@@ -132,15 +136,25 @@ public class ChatPanel extends JPanel{
 
 		public void keyPressed(KeyEvent k) {
 			if (k.getKeyCode() == KeyEvent.VK_ENTER){
-				if (enterIsValidSubmission){
+				if ((! shiftIsDown) && enterIsValidSubmission){
 					k.consume();
 					//submit string
 					chatArea.setText("");
 				}
+				else if(enterIsValidSubmission){
+					chatArea.setText(chatArea.getText() + "\n");
+				}
+			}
+			else if(k.getKeyCode() == KeyEvent.VK_SHIFT){
+				shiftIsDown = true;
 			}
 		}
 
-		public void keyReleased(KeyEvent k) {}
+		public void keyReleased(KeyEvent k) {
+			if(k.getKeyCode() == KeyEvent.VK_SHIFT){
+				shiftIsDown = false;
+			}
+		}
 
 		public void keyTyped(KeyEvent k) {}
 	}

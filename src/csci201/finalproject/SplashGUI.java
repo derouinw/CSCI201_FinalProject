@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -29,9 +30,10 @@ public class SplashGUI extends JPanel {
 	
 	JPanel choosePlayers;
 	JLabel displayIPLabel;
-	String IPString;
+	String ipString;
 	JLabel numPlayersLabel;
 	JComboBox numPlayersCombo;
+	int numPlayers;
 	JButton continuePlayers;
 	
 	JPanel chooseIP;
@@ -54,7 +56,7 @@ public class SplashGUI extends JPanel {
 
 	String handle;
 	String host;
-	int port, numPlayers;
+	int port;
 	
 	public SplashGUI(Main m){
 		this.setPreferredSize(new Dimension(700,600));
@@ -93,25 +95,30 @@ public class SplashGUI extends JPanel {
 		SplashButtonPanel.add(CreateButton);
 		
 		//ChoosePlayers Panel Creation
-		choosePlayers = new JPanel(); //vertical box layout
-		IPString = "[insert server IP here]";
+		choosePlayers = new JPanel();
+		choosePlayers.setLayout(new BoxLayout(choosePlayers, BoxLayout.Y_AXIS));
+		ipString = "[insert server IP here]";
 		//TODO: change displayIPLabel to displaying IP address
-		displayIPLabel = new JLabel("Give yer mates this secret code so they can join the crew! " + IPString);
+		displayIPLabel = new JLabel("Give yer mates this secret code so they can join the crew! " + ipString);
+		JPanel numPanel = new JPanel();
 		numPlayersLabel = new JLabel("Select the count of pirates you wish to be in this battle. That includes yerself!");
-		Object[] numPlayersOptions = { 2, 3, 4 };
+		String[] numPlayersOptions = { "2", "3", "4" };
 		numPlayersCombo = new JComboBox(numPlayersOptions);
 		continuePlayers = new JButton("Continue");
 		continuePlayers.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				//host = "127.0.0.1";
-				//numPlayers = (int) (numPlayersCombo.getSelectedItem());
+				numPlayers = Integer.valueOf((String) numPlayersCombo.getSelectedItem());
 				splashPages.show(splashPagesContainer, "createName");
+				//TODO: pass numPlayers to the server
 			}	
 		});
 		choosePlayers.add(displayIPLabel);
 		choosePlayers.add(numPlayersLabel);
-		choosePlayers.add(numPlayersCombo);
-		choosePlayers.add(continuePlayers);
+		
+		numPanel.add(numPlayersCombo);
+		numPanel.add(continuePlayers);
+		choosePlayers.add(numPanel);
 		splashPagesContainer.add("choosePlayers", choosePlayers);
 		
 		// Enter IP address panel

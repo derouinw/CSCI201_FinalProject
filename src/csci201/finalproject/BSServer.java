@@ -122,8 +122,15 @@ public class BSServer {
 					}
 				} else if (gameState.equals("playing")) {
 					// TODO: playing part of run()
+					
+					// current player gets "enable" while the other
+					// players get "disable"
+					for (int i = 0; i < playerThreads.size(); i++) {
+						if (i == curPlayer) playerThreads.get(i).send("enable");
+						else playerThreads.get(i).send("disable");
+					}
 				} else if (gameState.equals("game over")) {
-					// send out statstics data then kill server
+					// send out statistics data then kill server
 					// TODO: send statistics data
 					break;
 				}
@@ -137,8 +144,16 @@ public class BSServer {
 			}
 		}
 		
+		// get index of PlayerThread from the username
 		private int ptNum(String name) {
-			return 0;
+			for (int i = 0; i < playerThreads.size(); i++) {
+				if (playerThreads.get(i).username.equals(name)) {
+					return i;
+				}
+			}
+			
+			// if reaches here, no player found with that username
+			return -1;
 		}
 	}
 

@@ -27,9 +27,12 @@ public class ChatPanel extends JPanel{
 	private JPanel recipientSelectionPanel;
 	private ArrayList<JCheckBox> checkBoxes;
 	
+	private BSClient.NetworkThread networkThread;
+	
 	//METHODS
 	//constructor
-	public ChatPanel(){	
+	public ChatPanel(BSClient.NetworkThread nt){
+		networkThread = nt;
 		//Panel Setup
 		//set vertical boxlayout
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -147,7 +150,7 @@ public class ChatPanel extends JPanel{
 		toBeSent = toBeSent + "]";
 		String actualMessage = chatArea.getText();
 		toBeSent = toBeSent + actualMessage;
-		
+		networkThread.send(toBeSent);
 		addMessage(actualMessage, "Me");
 		chatArea.setText("");
 	}

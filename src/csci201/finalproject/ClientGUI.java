@@ -68,7 +68,7 @@ public class ClientGUI extends JFrame {
 		if (page.equals("splash")) {
 			
 		} else if (page.equals("lobby")) {
-		
+			// pass in IP address
 		} else if (page.equals("fleet selection")) {
 			
 		} else if (page.equals("playing")) {
@@ -88,7 +88,7 @@ public class ClientGUI extends JFrame {
 		if (gameState.equals("splash")) {
 			
 		} else if (gameState.equals("lobby")) {
-			
+	
 		} else if (gameState.equals("fleet selection")) {
 			
 		} else if (gameState.equals("playing")) {

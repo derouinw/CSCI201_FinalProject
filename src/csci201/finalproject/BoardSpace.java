@@ -4,6 +4,7 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 
 public class BoardSpace extends JLabel {
+	
 
 	public BoardSpace() {
 		// TODO Auto-generated constructor stub

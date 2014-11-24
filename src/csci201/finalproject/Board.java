@@ -3,6 +3,7 @@ package csci201.finalproject;
 import java.awt.LayoutManager;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -13,6 +14,7 @@ import javax.swing.JPanel;
 public class Board extends JPanel {
 	
 	private HashMap<Coordinate,Ship> shipsToSpaces;
+	ArrayList<BoardSpace> boardSpaces;
 	private JLabel username;
 	
 
@@ -39,10 +41,20 @@ public class Board extends JPanel {
 		shipsToSpaces.put(c, ship);
 	}
 	
-	public void receiveAttack(Coordinate c){
+	public void receiveAttacksList(ArrayList<Shot> shots){
+		for(int i = 0; i<shots.size(); i++){
+			if(shots.get(i).getTargetPlayer().equals(username.getText()))
+			{
+				processAttack(shots.get(i));
+			}
+		}
+	}
+	
+	public void processAttack(Shot s){
 		for(Map.Entry<Coordinate, Ship> entry: shipsToSpaces.entrySet()){
-			if(c.equals(entry.getKey())){
+			if(s.getShotDestination().equals(entry.getKey())){
 				entry.getValue().hit();
+				s.shotHitShip();
 				shipsToSpaces.remove(entry.getValue());
 			}
 		}

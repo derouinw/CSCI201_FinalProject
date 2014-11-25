@@ -1,6 +1,10 @@
 package csci201.finalproject;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.*;
 import java.util.*;
 import java.util.Timer;
@@ -11,10 +15,16 @@ public class GameGUI extends JPanel{
 	private Board myBoardPanel;
 	private JButton fireButton;
 	private JLabel shotsFiredStatLabel, turnsTakenStatLabel, shipsSunkStatLabel, maxShotsAllowedStatLabel;
+	private BoardSpaceListener bsl;
+	private ArrayList<ArrayList <Coordinate> > selectedCoordinates;
+	private ArrayList<EnemyPanel> enemyPanels;
+	private int maxShotsAllowed;
+	private boolean isMyTurn;
 	
 	public GameGUI(){
 		createGUIComponents();
 		setUpGUI();
+		startTurn();
 	}
 	
 	private void setUpGUI(){
@@ -39,19 +49,42 @@ public class GameGUI extends JPanel{
 		fireButtonPanel = new JPanel();
 		statWrapper = new JPanel();
 		
-		maxShotsAllowedStatLabel = new JLabel("Shots per turn: 5");
+		bsl = new BoardSpaceListener();
+		
+		isMyTurn = false;
+		
+		maxShotsAllowed = 5;
+		
+		maxShotsAllowedStatLabel = new JLabel("Shots per turn: " + maxShotsAllowed);
 		shotsFiredStatLabel = new JLabel("Shots Hit/Fired: 0/0");
 		turnsTakenStatLabel = new JLabel("Turns Taken: 0");
 		shipsSunkStatLabel = new JLabel("Ships Sunk: 0");
 		fireButton = new JButton("FIRE!");
+		
+		enemyPanels = new ArrayList<EnemyPanel>(3);
+		for (int i=0;i<3;i++){
+			enemyPanels.add(new EnemyPanel());
+		}
+		selectedCoordinates = new ArrayList< ArrayList<Coordinate> >(3);
+		for (int i=0;i<3;i++){
+			selectedCoordinates.add(new ArrayList<Coordinate>());
+		}
+	}
+	
+	private int getNumSelectedCoordinates(){
+		int retval = 0;
+		for (ArrayList<Coordinate> al : selectedCoordinates){
+			retval += al.size();
+		}
+		return retval;
 	}
 	
 	private void createTopPanel(){
 		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 		
-		topPanel.add(new EnemyPanel());
-		topPanel.add(new EnemyPanel());
-		topPanel.add(new EnemyPanel());
+		for (EnemyPanel ep: enemyPanels){
+			topPanel.add(ep);
+		}
 		
 		topPanel.setBorder(BorderFactory.createTitledBorder("Enemy Waters"));
 	}
@@ -98,6 +131,12 @@ public class GameGUI extends JPanel{
 		statWrapper.add(turnsTakenStatLabel);
 		statWrapper.add(shipsSunkStatLabel);
 		statPanel.add(statWrapper);
+	}
+	
+	private void startTurn(){
+		isMyTurn = true;
+		timerPanel.startTimer();
+		fireButton.setEnabled(true);
 	}
 	
 	private class TimerPanel extends JPanel{
@@ -155,7 +194,7 @@ public class GameGUI extends JPanel{
 	private class EnemyPanel extends JPanel{
 		private JLabel userNameLabel, infoLabel;
 		private JPanel userNamePanel, infoPanel;
-		private Board boardPanel;
+		private GraphicalBoard boardPanel;
 		public EnemyPanel(){
 			this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 			setUpUserNamePanel();
@@ -175,7 +214,7 @@ public class GameGUI extends JPanel{
 		}
 		
 		private void setUpBoardPanel(){
-			boardPanel = new Board();
+			boardPanel = new GraphicalBoard(bsl);
 		}
 		
 		private void setUpInfoPanel(){
@@ -185,5 +224,62 @@ public class GameGUI extends JPanel{
 			infoPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, Color.black));
 		}
 		
+		public GraphicalBoard getBoard(){
+			return boardPanel;
+		}
+		
+	}
+	
+	class BoardSpaceListener implements MouseListener{
+
+		private BoardSpace bs;
+		public void mouseClicked(MouseEvent ae) {
+			bs = (BoardSpace) ae.getSource();
+			if (SwingUtilities.isRightMouseButton(ae)){
+				if (bs.getText().equals("  *")){
+					bs.setText("");
+				}
+				else{
+					bs.setText("  *");
+				}
+			}
+			else{
+				if (isMyTurn){
+					GraphicalBoard parent = (GraphicalBoard) bs.getParent();
+					int panelIdx = 99;
+					for (int i=0;i<3;i++){
+						EnemyPanel ep = enemyPanels.get(i);
+						if (parent.equals(ep.getBoard())){
+							panelIdx = i;
+						}
+					}
+					Coordinate c = new Coordinate(bs.getRow(),bs.getCol());
+					ArrayList<Coordinate> sourcePanel = selectedCoordinates.get(panelIdx);
+					if (bs.getBackground().equals(Color.red)){
+						bs.setBackground(Color.LIGHT_GRAY);
+						for (int i=0;i<sourcePanel.size();i++){
+							Coordinate newCoordinate = sourcePanel.get(i);
+							if (c.equals(newCoordinate)){
+								selectedCoordinates.get(panelIdx).remove(newCoordinate);
+							}
+						}
+					}
+					else{ //activate the cell
+						if (getNumSelectedCoordinates() < maxShotsAllowed){
+							bs.setBackground(Color.red);
+							selectedCoordinates.get(panelIdx).add(c);
+						}
+					}
+				}
+			}
+		}
+		
+		public void mouseEntered(MouseEvent arg0) {	}
+		
+		public void mouseExited(MouseEvent arg0) {}
+		
+		public void mousePressed(MouseEvent arg0) {	}
+		
+		public void mouseReleased(MouseEvent arg0) {}
 	}
 }

@@ -21,10 +21,10 @@ public class Board extends JPanel {
 
 	public Board() {
 		shipsToSpaces = new HashMap<Coordinate,Ship>();
-		this.setLayout(new GridLayout(9,9));
+		this.setLayout(new GridLayout(10,10));
 		boardSpaces = new ArrayList<BoardSpace>();
-		for (int i=0;i<81;i++){
-			BoardSpace bs = new BoardSpace();
+		for (int i=0;i<100;i++){
+			BoardSpace bs = new BoardSpace((i/10),(i%10));
 			bs.setBorder(BorderFactory.createEtchedBorder());
 			boardSpaces.add(bs);
 			this.add(bs);

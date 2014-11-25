@@ -29,8 +29,9 @@ public class ShipPlacementPanel extends JPanel {
 	// has the user hit ready yet?
 	boolean enabled;
 
+	//TODO DRAG & DROP?
 	// for drag-and-drop
-	boolean mouseDown;
+	//boolean mouseDown;
 
 	// rotation of ship
 	boolean vertical;
@@ -43,7 +44,7 @@ public class ShipPlacementPanel extends JPanel {
 		// initialize data structures
 		board = new Board();
 		ships = new ArrayList<Ship>();
-		shipType = 0;
+		shipType = -1;
 
 		// initial boolean values
 		enabled = true;
@@ -68,10 +69,31 @@ public class ShipPlacementPanel extends JPanel {
 		// only does anything if enabled
 		if (enabled) {
 			// get mouse position
-			int mX, mY;
-
+			int mX, mY, mRow, mCol;
+			boolean inBounds = false;
+			mX = me.getX() - 10;
+			mY = me.getY() - 10;
+			if(mX >= 0 && mY >= 0){
+				inBounds = true;
+			}
+			mCol = mX/50;
+			mRow = mY/50;
 			// place ship at that location (if valid)
 			// depends upon vertical
+			if(inBounds){
+				if(mCol < 10 && mRow < 10){
+					if(vertical){
+						Coordinate c = new Coordinate(mCol, mRow); //Are ship coordinates actual coordinates or grid spaces?
+						board.addShip(c, shipType);
+						repaint();
+					}
+					else{
+						Coordinate c = new Coordinate(mCol, mRow);
+						board.addShip(c, shipType);
+						repaint();
+					}
+				}
+			}
 		}
 	}
 
@@ -87,7 +109,10 @@ public class ShipPlacementPanel extends JPanel {
 		}
 
 		// draw the ships
-
+		for(int i = 0; i < ships.getSize(); i++){
+			if(shipType == 0)//NEED SHIP ACCESSOR FUNCTION!
+			g.drawImage(dinghy, )
+		}
 		// draw the grid
 		g.setColor(Color.BLACK);
 		for (int y = 10; y < ROWS * GRID_SIZE + 10; y += GRID_SIZE) {

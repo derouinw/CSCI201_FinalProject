@@ -96,6 +96,11 @@ public class BSClient {
 			return true;
 		}
 		
+		// Send a message to the server
+		public void send(String msg) {
+			send.println(msg);
+		}
+		
 		public void run() {
 			
 		}

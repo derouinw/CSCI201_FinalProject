@@ -1,5 +1,6 @@
 package csci201.finalproject;
 
+import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
@@ -19,7 +20,14 @@ public class Board extends JPanel {
 	
 
 	public Board() {
+		setLayout(new GridLayout(10,10));
 		shipsToSpaces = new HashMap<Coordinate,Ship>();
+		boardSpaces = new ArrayList<BoardSpace>();
+		for(int i=0; i<100; i++){
+			BoardSpace oneSpace = new BoardSpace();
+			boardSpaces.add(oneSpace);
+			add(oneSpace);
+		}
 	}
 
 	public Board(LayoutManager layout) {

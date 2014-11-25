@@ -6,7 +6,7 @@ public class Coordinate {
 	private int column;
 
 	public Coordinate() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	public Coordinate(int x, int y) {

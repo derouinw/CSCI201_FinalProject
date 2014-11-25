@@ -8,7 +8,7 @@ public class Shot {
 	
 
 	public Shot() {
-		// TODO Auto-generated constructor stub
+		hitFlag = false;
 	}
 	
 	public Shot(String targetPlayer, Coordinate shotDestination){

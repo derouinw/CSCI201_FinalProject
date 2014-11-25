@@ -19,7 +19,7 @@ public class ClientGUI extends JFrame {
 	GameGUI game;
 	GameOverGUI gameOver;
 	
-	// options: “splash” “lobby” “fleet selection” “playing” “game over”
+	// options: â€œsplashâ€� â€œlobbyâ€� â€œfleet selectionâ€� â€œplayingâ€� â€œgame overâ€�
 	String gameState;
 	
 	// From BSClient, interaction with server
@@ -127,21 +127,6 @@ public class ClientGUI extends JFrame {
 	class FleetGUI extends JPanel {
 		
 		class ShipPlacementPanel extends JPanel {
-			
-		}
-	}
-	
-	class GameGUI extends JPanel {
-		
-		class MyGamePanel extends JPanel {
-			
-		}
-		
-		class OtherGamePanel extends JPanel {
-			
-		}
-		
-		class ObserverPanel extends JPanel {
 			
 		}
 	}

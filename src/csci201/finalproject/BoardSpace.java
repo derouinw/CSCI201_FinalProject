@@ -1,13 +1,18 @@
 package csci201.finalproject;
 
 import javax.swing.Icon;
+import java.awt.*;
+import javax.swing.*;
 import javax.swing.JLabel;
 
 public class BoardSpace extends JLabel {
-	
+	private int row, col;
 
-	public BoardSpace() {
+	public BoardSpace(int row, int col) {
 		// TODO Auto-generated constructor stub
+		this.row = row;
+		this.col = col;
+		this.setPreferredSize(new Dimension(30,30));
 	}
 
 	public BoardSpace(String text) {
@@ -33,6 +38,14 @@ public class BoardSpace extends JLabel {
 	public BoardSpace(String text, Icon icon, int horizontalAlignment) {
 		super(text, icon, horizontalAlignment);
 		// TODO Auto-generated constructor stub
+	}
+	
+	public int getRow(){
+		return row;
+	}
+	
+	public int getCol(){
+		return col;
 	}
 
 }

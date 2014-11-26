@@ -19,7 +19,7 @@ public class ClientGUI extends JFrame {
 	GameGUI game;
 	GameOverGUI gameOver;
 	
-	// options: “splash” “lobby” “fleet selection” “playing” “game over”
+	// options: â€œsplashâ€� â€œlobbyâ€� â€œfleet selectionâ€� â€œplayingâ€� â€œgame overâ€�
 	String gameState;
 	
 	// From BSClient, interaction with server
@@ -68,7 +68,7 @@ public class ClientGUI extends JFrame {
 		if (page.equals("splash")) {
 			
 		} else if (page.equals("lobby")) {
-		
+			// pass in IP address
 		} else if (page.equals("fleet selection")) {
 			
 		} else if (page.equals("playing")) {
@@ -88,7 +88,7 @@ public class ClientGUI extends JFrame {
 		if (gameState.equals("splash")) {
 			
 		} else if (gameState.equals("lobby")) {
-			
+	
 		} else if (gameState.equals("fleet selection")) {
 			
 		} else if (gameState.equals("playing")) {
@@ -127,21 +127,6 @@ public class ClientGUI extends JFrame {
 	class FleetGUI extends JPanel {
 		
 		class ShipPlacementPanel extends JPanel {
-			
-		}
-	}
-	
-	class GameGUI extends JPanel {
-		
-		class MyGamePanel extends JPanel {
-			
-		}
-		
-		class OtherGamePanel extends JPanel {
-			
-		}
-		
-		class ObserverPanel extends JPanel {
 			
 		}
 	}

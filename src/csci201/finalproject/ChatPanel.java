@@ -2,6 +2,7 @@ package csci201.finalproject;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -10,7 +11,7 @@ import javax.swing.event.DocumentListener;
 public class ChatPanel extends JPanel{
 	
 	//DATA
-	private boolean enterIsValidSubmission, shiftIsDown;
+	private boolean enterIsValidSubmission, shiftIsDown, recipientsExist;
 	private JTextArea displayArea;
 	private JTextArea chatArea;
 	private JPanel buttonPanel, enterToSendPanel;
@@ -19,13 +20,19 @@ public class ChatPanel extends JPanel{
 	private ButtonListener buttonListener;
 	private ChatListener chatListener;
 	private EnterListener enterListener;
+	private CheckBoxListener checkBoxListener;
 	
 	private JCheckBox pressEnterToSend;
 	private JScrollPane chatScroll;
+	private JPanel recipientSelectionPanel;
+	private ArrayList<JCheckBox> checkBoxes;
+	
+	private BSClient.NetworkThread networkThread;
 	
 	//METHODS
 	//constructor
-	public ChatPanel(){	
+	public ChatPanel(BSClient.NetworkThread nt){
+		networkThread = nt;
 		//Panel Setup
 		//set vertical boxlayout
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -33,6 +40,7 @@ public class ChatPanel extends JPanel{
 		//Data member instantiation
 		enterIsValidSubmission = true;
 		shiftIsDown = false;
+		recipientsExist = true;
 		
 		displayArea = new JTextArea();
 		displayArea.setPreferredSize(new Dimension(300,325));
@@ -48,6 +56,7 @@ public class ChatPanel extends JPanel{
 		displayArea.setLineWrap(true);
 		displayArea.setWrapStyleWord(true);
 		displayArea.setText("[Chat] Hi there! To chat, just type your message in the white box below, select a recipient, and send it off!");
+		displayArea.setForeground(Color.black);
 		
 		//set borders and line wrapping for chat box
 		chatArea = new JTextArea();
@@ -98,19 +107,51 @@ public class ChatPanel extends JPanel{
 		buttonPanel.add(Box.createGlue());
 		buttonPanel.add(submitButton);
 		
+		recipientSelectionPanel = new JPanel();
+		recipientSelectionPanel.setLayout(new BoxLayout(recipientSelectionPanel,BoxLayout.Y_AXIS));
+		JPanel checkBoxWrapper = new JPanel();
+		JPanel labelWrapper = new JPanel();
+		checkBoxes = new ArrayList<JCheckBox>();
+		checkBoxListener = new CheckBoxListener();
+		for (int i=0;i<4;i++){
+			JCheckBox cb = new JCheckBox("User" + (i+1));
+			cb.setSelected(true);
+			cb.addActionListener(checkBoxListener);
+			checkBoxes.add(cb);
+			checkBoxWrapper.add(cb);
+		}
+		JLabel recipientLabel = new JLabel("Desired Recipients");
+		labelWrapper.add(recipientLabel);
+		recipientSelectionPanel.add(labelWrapper);
+		recipientSelectionPanel.add(checkBoxWrapper);
+		
 		//add all components to jpanel
 		this.add(displayArea);
+		this.add(recipientSelectionPanel);
 		this.add(chatScroll);
 		this.add(enterToSendPanel);
 		this.add(buttonPanel);
 	}
 	
-	public void addMessage(String s){
+	public void addMessage(String s, String origin){
+		s = "[" + origin + "] " + s;
 		displayArea.setText(displayArea.getText() + "\n" + s);
 	}
 	
 	public void send(){
-		String toBeSent = chatArea.getText();
+		String toBeSent = "";
+		for (JCheckBox cb : checkBoxes){
+			if (cb.isSelected()){
+				toBeSent = cb.getText() + " " + toBeSent;
+			}
+		}
+		toBeSent = "[" + toBeSent;
+		toBeSent = toBeSent.trim();
+		toBeSent = toBeSent + "]";
+		String actualMessage = chatArea.getText();
+		toBeSent = toBeSent + actualMessage;
+		networkThread.send(toBeSent);
+		addMessage(actualMessage, "Me");
 		chatArea.setText("");
 	}
 	
@@ -130,8 +171,10 @@ public class ChatPanel extends JPanel{
 		public void changedUpdate(DocumentEvent e) {}
 
 		public void insertUpdate(DocumentEvent e) {
-			submitButton.setEnabled(true);
-			clearButton.setEnabled(true);
+			if (recipientsExist){
+				submitButton.setEnabled(true);
+				clearButton.setEnabled(true);
+			}
 		}
 
 		public void removeUpdate(DocumentEvent e) {
@@ -166,5 +209,26 @@ public class ChatPanel extends JPanel{
 		}
 
 		public void keyTyped(KeyEvent k) {}
+	}
+	
+	class CheckBoxListener implements ActionListener{
+		public void actionPerformed(ActionEvent ae){
+			recipientsExist = false;
+			for (JCheckBox cb : checkBoxes){
+				if (cb.isSelected()){
+					recipientsExist = true;
+				}
+			}
+			if (recipientsExist){
+				if (! chatArea.getText().equals("")){
+					submitButton.setEnabled(true);
+					clearButton.setEnabled(true);
+				}
+			}
+			else{
+				submitButton.setEnabled(false);
+				clearButton.setEnabled(false);
+			}
+		}
 	}
 }

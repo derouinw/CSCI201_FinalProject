@@ -21,6 +21,9 @@ public class Board extends JPanel {
 
 	public Board() {
 		shipsToSpaces = new HashMap<Coordinate,Ship>();
+
+		boardSpaces = new ArrayList<BoardSpace>();
+
 		this.setLayout(new GridLayout(10,10));
 		boardSpaces = new ArrayList<BoardSpace>();
 		for (int i=0;i<100;i++){
@@ -29,6 +32,7 @@ public class Board extends JPanel {
 			boardSpaces.add(bs);
 			this.add(bs);
 		}
+
 	}
 
 	public Board(LayoutManager layout) {

@@ -24,8 +24,6 @@ import javax.swing.SwingUtilities;
 
 import csci201.finalproject.BSClient.NetworkThread;
 
-//TODO switch myShips to board version
-
 public class GameGUI extends JPanel{
 	private JPanel topPanel, bottomPanel, statPanel, firePanel, statFirePanel, fireButtonPanel, statWrapper, whosTurnLabelPanel;
 	private TimerPanel timerPanel;
@@ -52,25 +50,16 @@ public class GameGUI extends JPanel{
 	
 	public GameGUI(){}
 	
-	public void load(ArrayList<String> allUserNames, String myUN){
+	public void load(ArrayList<String> allUserNames, String myUN, Board b){
 		this.allUsernames = allUserNames;
 		this.myUsername = myUN;
+		this.myBoardPanel = b;
 		
 		createGUIComponents();
 		setUpGUI();
 		startTurn();
 		
 		this.myShips = myBoardPanel.getMap();
-	}
-	
-	public GameGUI(ArrayList<String> allUserNames, String myUN, HashMap<Coordinate, Ship> myShips ){
-		this.allUsernames = allUserNames;
-		this.myUsername = myUN;
-		this.myShips = myShips;
-		
-		createGUIComponents();
-		setUpGUI();
-		startTurn();
 	}
 	
 	private void setUpGUI(){
@@ -101,7 +90,6 @@ public class GameGUI extends JPanel{
 		
 		topPanel = new JPanel();
 		bottomPanel = new JPanel();
-		myBoardPanel = new Board(); //TODO grab existing board, don't generate new one
 		statPanel = new JPanel();
 		firePanel = new JPanel();
 		statFirePanel = new JPanel();

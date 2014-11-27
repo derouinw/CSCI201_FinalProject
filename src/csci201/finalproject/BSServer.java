@@ -17,6 +17,8 @@ public class BSServer {
 
 	// Store the number of players here too
 	int numPlayers;
+	
+	boolean allConnected = false;
 
 	// Constructor
 	public BSServer(int numPlayers) {
@@ -28,6 +30,7 @@ public class BSServer {
 			st = new ServerThread(numPlayers);
 
 			int connections = 0;
+			System.out.println("Accepting connections");
 			while (connections < numPlayers) {
 				// once the first player has connected (the host)
 				// start the ServerThread
@@ -40,8 +43,9 @@ public class BSServer {
 
 				connections++;
 			}
-
+			
 			// this point is reached once all players have connected
+			st.playerThreads.get(0).send("ready");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -86,8 +90,14 @@ public class BSServer {
 		// (send from within PlayerThread.receive)
 		public void receive(String msg, String src) {
 			// take message from player and do what needs to be done
+			System.out.println(msg);
 			if (gameState.equals("lobby")) {
 				// messages during lobby
+				if (msg.equals("ready lobby")) {
+					broadcast("ready lobby");
+					gameState = "fleet selection";
+					System.out.println("ready lobby");
+				}
 			} else if (gameState.equals("fleet selection")) {
 				// if player hits ready
 				if (msg.trim().equals("ready")) {
@@ -194,18 +204,23 @@ public class BSServer {
 
 		// Thread.run
 		public void run() {
-			while (s.isConnected()) {
+			// when initially connected, send ready msg
+			while (true) {
+				send("ready splash");
 				try {
 					String input = receive.readLine();
-
+					System.out.println(input);
 					// logic with received message
 
 					// set username
 					if (input.startsWith("connect")) {
 						username = input.substring(input.trim().indexOf(" "))
 								.trim();
+						//System.out.println(username + " received");
+						send("gotUser");
 						// otherwise everything is handled in the ServerThread
 					} else if (!input.startsWith("waiting")) {
+						System.out.println("receiving message");
 						st.receive(input, username);
 					}
 				} catch (Exception e) {

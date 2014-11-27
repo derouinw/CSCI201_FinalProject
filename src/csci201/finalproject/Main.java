@@ -16,7 +16,7 @@ public class Main extends JFrame {
 		setVisible(true);
 		//splashScreen = new SplashGUI(this);
 		//lobby = new LobbyGUI();
-		fleet = new FleetGUI();
+		//fleet = new FleetGUI();
 		add(fleet, BorderLayout.CENTER);
 		setSize(fleet.getPreferredSize());
 		setSize(800,600);

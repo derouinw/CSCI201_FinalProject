@@ -39,7 +39,7 @@ public class ClientGUI extends JFrame {
 		splash = new SplashGUI();
 		lobby = new LobbyGUI();
 		fleet = new FleetGUI();
-		game = new GameGUI();
+		//game = new GameGUI();
 		gameOver = new GameOverGUI();
 		
 		// add them to the CardLayout

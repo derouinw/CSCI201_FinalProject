@@ -94,13 +94,15 @@ public class ClientGUI extends JFrame {
 		msg = msg.trim();
 		//System.out.println("received " + msg);
 		if (gameState.equals("splash")) {
-			if (msg.equals("ready splash")) {
+			if (msg.equals("ready splash") || msg.startsWith("users")) {
 				setPage("lobby");
 			}
 		} else if (gameState.equals("lobby")) {
 			if (msg.equals("ready lobby")) {
 				setPage("fleet selection");
+				System.out.println("switching to fleet");
 			} else if (msg.startsWith("users")) {
+				//System.out.println("wtf " + msg);
 				String users = msg.substring(6);
 				lobby.getUsernames(users);
 			} else if (msg.equals("ready")) {

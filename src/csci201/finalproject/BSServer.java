@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
 public class BSServer {
@@ -84,6 +85,12 @@ public class BSServer {
 			PlayerThread pt = new PlayerThread(s, this);
 			playerThreads.add(pt);
 			pt.start();
+			
+			String msg = "users ";
+			for (int i = 0; i < playerThreads.size(); i++) {
+				msg += playerThreads.get(i).username + " ";
+			}
+			broadcast(msg);
 		}
 
 		// Receive a message from a PlayerThread
@@ -119,11 +126,11 @@ public class BSServer {
 				// server logic here
 				if (gameState.equals("lobby")) {
 					// send out message with player names
-					String msg = "users ";
-					for (int i = 0; i < playerThreads.size(); i++) {
-						msg += playerThreads.get(i).username + " ";
-					}
-					broadcast(msg);
+					// WRONG, this actually should only
+					// get sent once, when PlayerThread
+					// receives username
+					
+					// so nothing gets done here
 				} else if (gameState.equals("fleet selection")) {
 					// wait until all players are ready
 					if (fleetsFinished == numPlayers) {
@@ -188,6 +195,7 @@ public class BSServer {
 		public PlayerThread(Socket s, ServerThread st) {
 			this.s = s;
 			try {
+				s.setSoTimeout(2000);
 				receive = new BufferedReader(new InputStreamReader(
 						s.getInputStream()));
 				send = new PrintWriter(s.getOutputStream());
@@ -199,17 +207,40 @@ public class BSServer {
 
 		// Send a message to the player
 		public void send(String s) {
-			send.println(s);
+			send.write(s.length());
+			send.write(s);
+			send.flush();
+		}
+		
+		private String receive() {
+			int l = -1;
+			String msg = "";
+			try {
+				l = receive.read();
+				if (l == -1) System.out.println("disconnected");
+				//else System.out.println(l);
+				//if (l < 37) {
+					// l is length of msg
+					for (int i = 0; i < l; i++) {
+						msg += (char)receive.read();
+					}
+				//}
+			} catch (SocketTimeoutException ste) {
+				//System.out.println("timeout nbd");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return msg;
 		}
 
 		// Thread.run
 		public void run() {
 			// when initially connected, send ready msg
+			
 			while (true) {
-				send("ready splash");
 				try {
-					String input = receive.readLine();
-					System.out.println(input);
+					String input = receive();
+					//System.out.println(input);
 					// logic with received message
 
 					// set username
@@ -218,9 +249,16 @@ public class BSServer {
 								.trim();
 						//System.out.println(username + " received");
 						send("gotUser");
+						send("ready splash");
+						
+						String msg = "users ";
+						for (int i = 0; i < st.playerThreads.size(); i++) {
+							msg += st.playerThreads.get(i).username + " ";
+						}
+						st.broadcast(msg);
 						// otherwise everything is handled in the ServerThread
 					} else if (!input.startsWith("waiting")) {
-						System.out.println("receiving message");
+						//System.out.println("receiving message");
 						st.receive(input, username);
 					}
 				} catch (Exception e) {

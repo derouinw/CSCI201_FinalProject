@@ -5,9 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
 import javax.swing.*;
-
 import java.util.*;
 import java.util.Timer;
 
@@ -22,18 +20,21 @@ public class GameGUI extends JPanel{
 	private ButtonListener buttonListener;
 	private HashMap<String, ArrayList <Coordinate> > selectedCoordinates;
 	private HashMap<String, EnemyPanel> enemyPanels;
+	private HashMap<Coordinate, Ship> myShips;
 	private int maxShotsAllowed;
 	private boolean isMyTurn;
 	private String currentPlayingUser, myUsername;
 	private ArrayList<String> allUsernames;
 	private ArrayList<String> enemyUsernames;
 	
-	public GameGUI(ArrayList<String> allUserNames, String myUN){
+	public GameGUI(ArrayList<String> allUserNames, String myUN, HashMap<Coordinate, Ship> myShips ){
 		this.allUsernames = allUserNames;
 		this.myUsername = myUN;
+		this.myShips = myShips;
 		
 		createGUIComponents();
 		setUpGUI();
+		startTurn();
 	}
 	
 	private void setUpGUI(){
@@ -206,6 +207,31 @@ public class GameGUI extends JPanel{
 	public void userHasLost(String username){
 		EnemyPanel ep = enemyPanels.get(username);
 		ep.lostGame();
+	}
+	
+	public void addShotsList(ArrayList<Shot> shots){
+		for (Shot s: shots){
+			if (s.getTargetPlayer().equals(myUsername)){
+				addShot(s);
+			}
+		}
+		myBoardPanel.receiveAttacksList(shots);
+	}
+	
+	public void addShot(Shot shot){
+		Coordinate shotDestination = shot.getShotDestination();
+		int col = shotDestination.getColumn();
+		int row = shotDestination.getRow();
+		int idx = (10 * row) + col;
+		BoardSpace bs = myBoardPanel.getBoardspaces().get(idx);
+		if (myShips.get(shotDestination) == null){
+			bs.setText(" M");
+			bs.setBackground(Color.green);
+		}
+		else{
+			bs.setText(" H");
+			bs.setBackground(Color.red);
+		}
 	}
 	
 	private class TimerPanel extends JPanel{

@@ -68,5 +68,9 @@ public class Board extends JPanel {
 			}
 		}
 	}
+	
+	public ArrayList<BoardSpace> getBoardspaces(){
+		return boardSpaces;
+	}
 
 }

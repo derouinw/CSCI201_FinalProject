@@ -1,8 +1,8 @@
 package csci201.finalproject;
 
+import java.awt.Dimension;
+
 import javax.swing.Icon;
-import java.awt.*;
-import javax.swing.*;
 import javax.swing.JLabel;
 
 public class BoardSpace extends JLabel {

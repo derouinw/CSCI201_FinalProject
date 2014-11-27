@@ -30,5 +30,4 @@ public class Shot {
 	public void shotHitShip(){
 		hitFlag = true;
 	}
-
 }

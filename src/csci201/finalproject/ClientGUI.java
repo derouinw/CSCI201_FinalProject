@@ -29,6 +29,7 @@ public class ClientGUI extends JFrame {
 	public ClientGUI(NetworkThread nt) {
 		// super constructor
 		super("Buccaneer Battles");
+		setSize(700,600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		// page switches between gamestates
@@ -36,10 +37,10 @@ public class ClientGUI extends JFrame {
 		container = new JPanel(pages);
 		
 		// different game panels
-		splash = new SplashGUI();
-		lobby = new LobbyGUI();
-		fleet = new FleetGUI();
-		game = new GameGUI();
+		splash = new SplashGUI(nt);
+		lobby = new LobbyGUI(nt);
+		fleet = new FleetGUI(nt);
+		game = new GameGUI(nt);
 		gameOver = new GameOverGUI();
 		
 		// add them to the CardLayout
@@ -48,20 +49,27 @@ public class ClientGUI extends JFrame {
 		container.add("fleet selection", fleet);
 		container.add("playing", game);
 		container.add("game over", gameOver);
+		add(container);
 		
 		// NetworkThread
 		this.nt = nt;
+		nt.client = this;
 		
 		// finally...
+		gameState = "splash";
 		setPage("splash");
 		setVisible(true);
 	}
 	
 	// Sets the current page based on the string
 	// Changes visible GUI panel and window size
+	// Only goes one way - forwards
+	// In some cases, grab data from previous page
+	// to use in next page
 	public void setPage(String page) {
 		// string is equivalent to game state and CardLayout strings
 		pages.show(container, page);
+		gameState = page;
 		
 		// figure out other specifics
 		// like resizing
@@ -69,10 +77,13 @@ public class ClientGUI extends JFrame {
 			
 		} else if (page.equals("lobby")) {
 			// pass in IP address
+			lobby.setup();
+			setSize(800,600);
 		} else if (page.equals("fleet selection")) {
 			
 		} else if (page.equals("playing")) {
-			
+			// get data from FleetGUI and ClientGUI
+			//game.load(allUserNames, myUN, myShips);
 		} else if (page.equals("game over")) {
 			
 		}
@@ -80,15 +91,22 @@ public class ClientGUI extends JFrame {
 	
 	// receive a message from the server
 	public void receive(String msg) {
-		// certain messages will stay in ClientGUI
-		// such as changing game state
-		
-		// otherwise, the message will be sent along to
-		// respective panel of current game state
+		msg = msg.trim();
+		//System.out.println("received " + msg);
 		if (gameState.equals("splash")) {
-			
+			if (msg.equals("ready splash")) {
+				setPage("lobby");
+			}
 		} else if (gameState.equals("lobby")) {
-	
+			if (msg.equals("ready lobby")) {
+				setPage("fleet selection");
+			} else if (msg.startsWith("users")) {
+				String users = msg.substring(6);
+				lobby.getUsernames(users);
+			} else if (msg.equals("ready")) {
+				// only for host
+				lobby.StartButton.setEnabled(true);
+			}
 		} else if (gameState.equals("fleet selection")) {
 			
 		} else if (gameState.equals("playing")) {
@@ -113,21 +131,6 @@ public class ClientGUI extends JFrame {
 			return gameOver;
 		} else {
 			return null;
-		}
-	}
-
-	class SplashGUI extends JPanel {
-		
-	}
-	
-	class LobbyGUI extends JPanel {
-		
-	}
-	
-	class FleetGUI extends JPanel {
-		
-		class ShipPlacementPanel extends JPanel {
-			
 		}
 	}
 	

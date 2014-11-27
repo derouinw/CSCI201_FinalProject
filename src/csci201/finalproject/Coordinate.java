@@ -30,13 +30,19 @@ public class Coordinate {
 		return column;
 	}
 	
-	public boolean equals(Coordinate other){
-		
+	//Overriding hash map lookup to allow map to find same coordinate pairs even if coordinate objects in different memory locs.
+	
+	public boolean equals(Object o){
+		Coordinate other = (Coordinate) o;
 		if((other.getRow()==this.row)&&(other.getColumn()==this.column)){
 			return true;
 		}
 		
 		return false;
+	}
+	
+	public int hashCode(){
+		return (int)((long)((Math.pow(row+17, 3))-(Math.pow(column+42, 2))));
 	}
 
 }

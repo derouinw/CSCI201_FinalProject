@@ -1,12 +1,10 @@
 package csci201.finalproject;
 
-import java.awt.*;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
+import java.awt.GridLayout;
+import java.awt.LayoutManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -16,11 +14,13 @@ public class Board extends JPanel {
 	
 	private HashMap<Coordinate,Ship> shipsToSpaces;
 	ArrayList<BoardSpace> boardSpaces;
-	private JLabel username;
 	
 
 	public Board() {
 		shipsToSpaces = new HashMap<Coordinate,Ship>();
+
+		boardSpaces = new ArrayList<BoardSpace>();
+
 		this.setLayout(new GridLayout(10,10));
 		boardSpaces = new ArrayList<BoardSpace>();
 		for (int i=0;i<100;i++){
@@ -29,6 +29,7 @@ public class Board extends JPanel {
 			boardSpaces.add(bs);
 			this.add(bs);
 		}
+		//TODO add ship locations to shipsToSpaces in constructor
 	}
 
 	public Board(LayoutManager layout) {
@@ -50,14 +51,14 @@ public class Board extends JPanel {
 		shipsToSpaces.put(c, ship);
 	}
 	
-	public void receiveAttacksList(ArrayList<Shot> shots){
+	/*public void receiveAttacksList(ArrayList<Shot> shots){
 		for(int i = 0; i<shots.size(); i++){
 			if(shots.get(i).getTargetPlayer().equals(username.getText()))
 			{
 				processAttack(shots.get(i));
 			}
 		}
-	}
+	}*/
 	
 	public void processAttack(Shot s){
 		for(Map.Entry<Coordinate, Ship> entry: shipsToSpaces.entrySet()){
@@ -67,6 +68,14 @@ public class Board extends JPanel {
 				shipsToSpaces.remove(entry.getValue());
 			}
 		}
+	}
+	
+	public HashMap<Coordinate, Ship> getMap(){
+		return shipsToSpaces;
+	}
+	
+	public ArrayList<BoardSpace> getBoardspaces(){
+		return boardSpaces;
 	}
 
 }

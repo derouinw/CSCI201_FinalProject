@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 public class BSClient {
 	// Connection to the server
@@ -40,6 +41,7 @@ public class BSClient {
 		// Send and receive messages using Socket
 		BufferedReader receive;
 		PrintWriter send;
+		String curMsg, prevMsg;
 
 		// Information about server
 		String host;
@@ -93,6 +95,7 @@ public class BSClient {
 		private boolean setupConnection(String host, int port) {
 			try {
 				s = new Socket(host, port);
+				s.setSoTimeout(1000);
 				receive = new BufferedReader(new InputStreamReader(
 						s.getInputStream()));
 				send = new PrintWriter(s.getOutputStream());
@@ -105,7 +108,11 @@ public class BSClient {
 
 		// Send a message to the server
 		public void send(String msg) {
-			send.println(msg);
+			send.write(msg.length());
+			send.write(msg);
+			send.flush();
+			//System.out.println("sending \"" + msg + "\"");
+			curMsg = msg;
 		}
 
 		public void run() {
@@ -122,56 +129,46 @@ public class BSClient {
 
 			System.out.println("ok");
 			
-			try {
-				receive = new BufferedReader(new InputStreamReader(
-						s.getInputStream()));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				receive = new BufferedReader(new InputStreamReader(
+//						s.getInputStream()));
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
 
 			// let's get going!
 			String msg;
-			//Thread ka = new Thread(new KeepAlive(send, 100));
 			
 			while (true) {
 				msg = receive();
-				client.receive(msg);
+				if (msg != null) client.receive(msg);
+				//send();
 			}
 
-		}
-
-		class KeepAlive implements Runnable {
-			PrintWriter send;
-			int interval;
-
-			public KeepAlive(PrintWriter pw, int interval) {
-				send = pw;
-				this.interval = interval;
-				start();
-			}
-
-			public void run() {
-				while (true) {
-					send.println("waiting");
-					send.flush();
-					try {
-						sleep(interval);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
 		}
 
 		public String receive() {
+			int l = -1;
+			String msg = "";
 			try {
-				String msg = receive.readLine();
-				// if (!msg.startsWith("users"))
-				// System.out.println("received \"" + msg +"\"");
-				return msg;
-			} catch (IOException e) {
+				l = receive.read();
+				if (l == -1) System.out.println("disconnected");
+				//else System.out.println(l);
+				//else System.out.println(l);
+				//if (l < 37) {
+					// l is length of msg
+					for (int i = 0; i < l; i++) {
+						msg += (char)receive.read();
+					}
+				//}
+			} catch (SocketTimeoutException ste) {
+				//System.out.println("timeout nbd");
 				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+			System.out.println("received \"" + msg + "\"");
+			return msg;
 		}
 	}
 

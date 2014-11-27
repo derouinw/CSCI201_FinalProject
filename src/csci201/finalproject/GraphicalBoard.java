@@ -40,8 +40,21 @@ public class GraphicalBoard extends JPanel {
 			if (isOut) {
 				bs.setBackground(Color.black);
 			} else {
-				bs.setBackground(Color.LIGHT_GRAY);
+				if (bs.getBackground().equals(Color.blue)){
+					bs.setBackground(Color.LIGHT_GRAY);
+				}
 			}
+		}
+	}
+	
+	public void addShotGraphic(int idx, boolean hit){
+		if (hit){
+			boardSpaces.get(idx).setText("H");
+			boardSpaces.get(idx).setBackground(Color.red);
+		}
+		else{
+			boardSpaces.get(idx).setText("M");
+			boardSpaces.get(idx).setBackground(Color.green);
 		}
 	}
 

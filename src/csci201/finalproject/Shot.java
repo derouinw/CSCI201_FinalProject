@@ -2,7 +2,7 @@ package csci201.finalproject;
 
 public class Shot {
 	
-	private String targetPlayer;
+	private String targetPlayer, originPlayer;
 	private Coordinate shotDestination;
 	private Boolean hitFlag;
 	
@@ -11,9 +11,10 @@ public class Shot {
 		hitFlag = false;
 	}
 	
-	public Shot(String targetPlayer, Coordinate shotDestination){
+	public Shot(String targetPlayer, Coordinate shotDestination, String origin){
 		
 		this.targetPlayer = targetPlayer;
+		this.originPlayer = origin;
 		this.shotDestination = shotDestination;
 		hitFlag = false;
 		
@@ -23,11 +24,19 @@ public class Shot {
 		return targetPlayer;
 	}
 	
+	public String getOriginPlayer(){
+		return originPlayer;
+	}
+	
 	public Coordinate getShotDestination(){
 		return shotDestination;
 	}
 	
 	public void shotHitShip(){
 		hitFlag = true;
+	}
+	
+	public boolean wasAHit(){
+		return hitFlag;
 	}
 }

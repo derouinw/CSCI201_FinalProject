@@ -24,8 +24,6 @@ import javax.swing.SwingUtilities;
 
 import csci201.finalproject.BSClient.NetworkThread;
 
-//TODO switch myShips to board version
-
 public class GameGUI extends JPanel{
 	private JPanel topPanel, bottomPanel, statPanel, firePanel, statFirePanel, fireButtonPanel, statWrapper, whosTurnLabelPanel;
 	private TimerPanel timerPanel;
@@ -52,25 +50,16 @@ public class GameGUI extends JPanel{
 	
 	public GameGUI(){}
 	
-	public void load(ArrayList<String> allUserNames, String myUN){
+	public void load(ArrayList<String> allUserNames, String myUN, Board b){
 		this.allUsernames = allUserNames;
 		this.myUsername = myUN;
+		this.myBoardPanel = b;
 		
 		createGUIComponents();
 		setUpGUI();
 		startTurn();
 		
 		this.myShips = myBoardPanel.getMap();
-	}
-	
-	public GameGUI(ArrayList<String> allUserNames, String myUN, HashMap<Coordinate, Ship> myShips ){
-		this.allUsernames = allUserNames;
-		this.myUsername = myUN;
-		this.myShips = myShips;
-		
-		createGUIComponents();
-		setUpGUI();
-		startTurn();
 	}
 	
 	private void setUpGUI(){
@@ -101,7 +90,6 @@ public class GameGUI extends JPanel{
 		
 		topPanel = new JPanel();
 		bottomPanel = new JPanel();
-		myBoardPanel = new Board(); //TODO grab existing board, don't generate new one
 		statPanel = new JPanel();
 		firePanel = new JPanel();
 		statFirePanel = new JPanel();
@@ -212,7 +200,6 @@ public class GameGUI extends JPanel{
 	public void startTurn(){
 		isMyTurn = true;
 		timerPanel.startTimer();
-		fireButton.setEnabled(true);
 		whosTurnArea.setForeground(Color.red);
 		whosTurnArea.setText("IT'S Y'ARR TURN, TIMER RUNNING!");
 	}
@@ -248,23 +235,36 @@ public class GameGUI extends JPanel{
 	public void addShotsList(ArrayList<Shot> shots){
 		for (Shot s: shots){
 			if (s.getTargetPlayer().equals(myUsername)){
-				addShot(s);
+				addShotToMyBoard(s);
+			}
+			else if (s.getOriginPlayer().equals(myUsername)){
+				//add other shots
+				addShotToOtherBoard(s);
 			}
 		}
 	}
 	
-	public void addShot(Shot shot){
+	public void addShotToOtherBoard(Shot shot){
+		Coordinate shotDestination = shot.getShotDestination();
+		int col = shotDestination.getColumn();
+		int row = shotDestination.getRow();
+		int idx = (10 * row) + col;
+		EnemyPanel targetPanel = enemyPanels.get(shot.getTargetPlayer());
+		targetPanel.addShotGraphic(idx, shot.wasAHit());
+	}
+	
+	public void addShotToMyBoard(Shot shot){
 		Coordinate shotDestination = shot.getShotDestination();
 		int col = shotDestination.getColumn();
 		int row = shotDestination.getRow();
 		int idx = (10 * row) + col;
 		BoardSpace bs = myBoardPanel.getBoardspaces().get(idx);
 		if (myShips.get(shotDestination) == null){
-			bs.setText(" M");
+			bs.setText("M");
 			bs.setBackground(Color.green);
 		}
 		else{
-			bs.setText(" H");
+			bs.setText("H");
 			bs.setBackground(Color.red);
 		}
 		myBoardPanel.processAttack(shot);
@@ -394,6 +394,10 @@ public class GameGUI extends JPanel{
 				lostGame();
 			}
 		}
+		
+		public void addShotGraphic(int idx, boolean hit){
+			boardPanel.addShotGraphic(idx, hit);
+		}
 	}
 	
 	class BoardSpaceListener implements MouseListener{
@@ -401,15 +405,19 @@ public class GameGUI extends JPanel{
 		private BoardSpace bs;
 		public void mouseClicked(MouseEvent ae) {
 			bs = (BoardSpace) ae.getSource();
-			if (bs.getBackground().equals(Color.black)){
+			Color bgColor = bs.getBackground();
+			if (bgColor.equals(Color.black) || bgColor.equals(Color.green) || bgColor.equals(Color.red)){
 				return;
 			}
 			if (SwingUtilities.isRightMouseButton(ae)){
-				if (bs.getText().equals("  *")){
-					bs.setText("");
+				if (bs.getText().endsWith("*")){
+					bs.setText(bs.getText().substring(0,1));
+				}
+				else if(bs.getText().equals("")){
+					bs.setText(" *");
 				}
 				else{
-					bs.setText("  *");
+					bs.setText(bs.getText() + "*");
 				}
 			}
 			else{
@@ -420,7 +428,7 @@ public class GameGUI extends JPanel{
 					
 					Coordinate c = new Coordinate(bs.getRow(),bs.getCol());
 					ArrayList<Coordinate> sourcePanel = selectedCoordinates.get(user);
-					if (bs.getBackground().equals(Color.red)){
+					if (bs.getBackground().equals(Color.blue)){
 						bs.setBackground(Color.LIGHT_GRAY);
 						for (int i=0;i<sourcePanel.size();i++){
 							Coordinate newCoordinate = sourcePanel.get(i);
@@ -431,11 +439,14 @@ public class GameGUI extends JPanel{
 					}
 					else{ //activate the cell
 						if (getNumSelectedCoordinates() < maxShotsAllowed){
-							bs.setBackground(Color.red);
+							bs.setBackground(Color.blue);
 							selectedCoordinates.get(user).add(c);
 						}
 					}
 				}
+			}
+			if (getNumSelectedCoordinates() == maxShotsAllowed){
+				fireButton.setEnabled(true);
 			}
 		}
 		
@@ -455,7 +466,7 @@ public class GameGUI extends JPanel{
 			    String user = entry.getKey();
 			    ArrayList<Coordinate> coordinates = entry.getValue();
 			    for (Coordinate c : coordinates){
-			    	shots.add(new Shot(user,c));
+			    	shots.add(new Shot(user,c,myUsername));
 			    }
 			}
 			endTurn();

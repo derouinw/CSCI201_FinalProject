@@ -87,7 +87,7 @@ public class ShipPlacementPanel extends JPanel {
 			Ship myShip = null;
 			
 			if(shipType == 0){
-				myShip = myShip.new Dinghy();
+				myShip = new Dinghy();
 				if(vertical){
 					if(mRow <= 8){
 						valid = true;
@@ -100,7 +100,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 			}
 			else if(shipType == 1){
-				myShip = myShip.new Sloop();
+				myShip = new Sloop();
 				if(vertical){
 					if(mRow <= 7){
 						valid = true;
@@ -113,7 +113,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 			}
 			else if(shipType == 2){
-				myShip = myShip.new Frigate();
+				myShip = new Frigate();
 				if(vertical){
 					if(mRow <= 7){
 						valid = true;
@@ -126,7 +126,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 			}
 			else if(shipType == 3){
-				myShip = myShip.new Brigantine();
+				myShip = new Brigantine();
 				if(vertical){
 					if(mRow <= 6){
 						valid = true;
@@ -139,7 +139,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 			}
 			else if(shipType == 4){
-				myShip = myShip.new Galleon();
+				myShip = new Galleon();
 				if(vertical){
 					if(mRow <= 5){
 						valid = true;
@@ -218,7 +218,7 @@ public class ShipPlacementPanel extends JPanel {
 		for(int i = 0; i < ships.size(); i++){
 			int x = ships.get(i).coord.getColumn();
 			int y = ships.get(i).coord.getRow();
-			if(ships.get(i) instanceof Ship.Dinghy){
+			if(ships.get(i) instanceof Dinghy){
 				BufferedImage dinghyImage = null;
 				try {
 					dinghyImage = ImageIO.read(new File("dinghy.png"));
@@ -227,7 +227,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 				g.drawImage(dinghyImage, x*50, y*50, null);
 			}
-			if(ships.get(i) instanceof Ship.Sloop){
+			if(ships.get(i) instanceof Sloop){
 				BufferedImage sloopImage = null;
 				try {
 					sloopImage = ImageIO.read(new File("sloop.png"));
@@ -236,7 +236,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 				g.drawImage(sloopImage, x*50, y*50, null);
 			}
-			if(ships.get(i) instanceof Ship.Frigate){
+			if(ships.get(i) instanceof Frigate){
 				BufferedImage frigateImage = null;
 				try {
 					frigateImage = ImageIO.read(new File("frigate.png"));
@@ -245,7 +245,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 				g.drawImage(frigateImage, x*50, y*50, null);
 			}
-			if(ships.get(i) instanceof Ship.Brigantine){
+			if(ships.get(i) instanceof Brigantine){
 				BufferedImage brigImage = null;
 				try {
 					brigImage = ImageIO.read(new File("brigantine.png"));
@@ -254,7 +254,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 				g.drawImage(brigImage, x*50, y*50, null);
 			}
-			if(ships.get(i) instanceof Ship.Galleon){
+			if(ships.get(i) instanceof Galleon){
 				BufferedImage galleonImage = null;
 				try {
 					galleonImage = ImageIO.read(new File("galleon.png"));

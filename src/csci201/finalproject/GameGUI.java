@@ -24,6 +24,8 @@ import javax.swing.SwingUtilities;
 
 import csci201.finalproject.BSClient.NetworkThread;
 
+//TODO switch myShips to board version
+
 public class GameGUI extends JPanel{
 	private JPanel topPanel, bottomPanel, statPanel, firePanel, statFirePanel, fireButtonPanel, statWrapper, whosTurnLabelPanel;
 	private TimerPanel timerPanel;
@@ -48,14 +50,17 @@ public class GameGUI extends JPanel{
 		this.nt = nt;
 	}
 	
-	public void load(ArrayList<String> allUserNames, String myUN, HashMap<Coordinate, Ship> myShips ){
+	public GameGUI(){}
+	
+	public void load(ArrayList<String> allUserNames, String myUN){
 		this.allUsernames = allUserNames;
 		this.myUsername = myUN;
-		this.myShips = myShips;
 		
 		createGUIComponents();
 		setUpGUI();
 		startTurn();
+		
+		this.myShips = myBoardPanel.getMap();
 	}
 	
 	public GameGUI(ArrayList<String> allUserNames, String myUN, HashMap<Coordinate, Ship> myShips ){
@@ -96,7 +101,7 @@ public class GameGUI extends JPanel{
 		
 		topPanel = new JPanel();
 		bottomPanel = new JPanel();
-		myBoardPanel = new Board();
+		myBoardPanel = new Board(); //TODO grab existing board, don't generate new one
 		statPanel = new JPanel();
 		firePanel = new JPanel();
 		statFirePanel = new JPanel();
@@ -246,7 +251,6 @@ public class GameGUI extends JPanel{
 				addShot(s);
 			}
 		}
-		myBoardPanel.receiveAttacksList(shots);
 	}
 	
 	public void addShot(Shot shot){
@@ -263,6 +267,7 @@ public class GameGUI extends JPanel{
 			bs.setText(" H");
 			bs.setBackground(Color.red);
 		}
+		myBoardPanel.processAttack(shot);
 	}
 	
 	private class TimerPanel extends JPanel{
@@ -453,7 +458,6 @@ public class GameGUI extends JPanel{
 			    	shots.add(new Shot(user,c));
 			    }
 			}
-			//TODO send shots array to server
 			endTurn();
 		}
 	}

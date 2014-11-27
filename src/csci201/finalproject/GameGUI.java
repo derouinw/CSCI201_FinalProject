@@ -22,6 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
+import csci201.finalproject.BSClient.NetworkThread;
+
 public class GameGUI extends JPanel{
 	private JPanel topPanel, bottomPanel, statPanel, firePanel, statFirePanel, fireButtonPanel, statWrapper, whosTurnLabelPanel;
 	private TimerPanel timerPanel;
@@ -39,6 +41,22 @@ public class GameGUI extends JPanel{
 	private String currentPlayingUser, myUsername;
 	private ArrayList<String> allUsernames;
 	private ArrayList<String> enemyUsernames;
+	
+	NetworkThread nt;
+	
+	public GameGUI(NetworkThread nt) {
+		this.nt = nt;
+	}
+	
+	public void load(ArrayList<String> allUserNames, String myUN, HashMap<Coordinate, Ship> myShips ){
+		this.allUsernames = allUserNames;
+		this.myUsername = myUN;
+		this.myShips = myShips;
+		
+		createGUIComponents();
+		setUpGUI();
+		startTurn();
+	}
 	
 	public GameGUI(ArrayList<String> allUserNames, String myUN, HashMap<Coordinate, Ship> myShips ){
 		this.allUsernames = allUserNames;

@@ -1,7 +1,6 @@
 package csci201.finalproject;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -12,7 +11,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
+
+import csci201.finalproject.BSClient.NetworkThread;
 
 public class FleetGUI extends JPanel {
 	JPanel SelectUserInfoPanel;
@@ -32,7 +32,11 @@ public class FleetGUI extends JPanel {
 	String[] numOptions3 = {"0","1","2","3"};
 	JButton ContinueButton; // only active if correct fleet is chosen
 	
-	public FleetGUI(){
+	NetworkThread nt;
+	
+	public FleetGUI(NetworkThread nt){
+		this.nt = nt;
+		
 		SelectUserInfoPanel = new JPanel(new BorderLayout());
 		JPanel SelectColorPanel = new JPanel();
 		JPanel SelectFleetPanel = new JPanel();
@@ -93,6 +97,7 @@ public class FleetGUI extends JPanel {
 		ContinueButton = new JButton("Continue"); // only active if correct fleet is chosen
 		FleetSelect.add(ContinueButton);
 		ContinueButton.setEnabled(false);
+		// TODO: make continue button activate when ready
 		
 		SelectFleetPanel.add(FleetSelect);
 		

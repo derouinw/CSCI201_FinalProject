@@ -1,12 +1,10 @@
 package csci201.finalproject;
 
-import java.awt.*;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
+import java.awt.GridLayout;
+import java.awt.LayoutManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;

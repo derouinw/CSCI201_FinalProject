@@ -36,7 +36,7 @@ public class GameGUI extends JPanel{
 	private HashMap<String, ArrayList <Coordinate> > selectedCoordinates;
 	private HashMap<String, EnemyPanel> enemyPanels;
 	private HashMap<Coordinate, Ship> myShips;
-	private int maxShotsAllowed;
+	private int maxShotsAllowed, turnsTaken, shotsFired, shotsHit, shipsSunk;
 	private boolean isMyTurn;
 	private String currentPlayingUser, myUsername;
 	private ArrayList<String> allUsernames;
@@ -75,7 +75,7 @@ public class GameGUI extends JPanel{
 	
 	private void createGUIComponents(){
 		
-		enemyUsernames = new ArrayList<String>(allUsernames.size()-1);
+		enemyUsernames = new ArrayList<String>();
 		for (String s : allUsernames){
 			if (!s.equals(myUsername)){
 				enemyUsernames.add(s);
@@ -86,7 +86,7 @@ public class GameGUI extends JPanel{
 		bsl = new BoardSpaceListener();
 		buttonListener = new ButtonListener();
 		
-		currentPlayingUser = enemyUsernames.get(0);
+		currentPlayingUser = "John";//enemyUsernames.get(0);
 		
 		topPanel = new JPanel();
 		bottomPanel = new JPanel();
@@ -103,12 +103,16 @@ public class GameGUI extends JPanel{
 		isMyTurn = false;
 		
 		maxShotsAllowed = 5;
+		turnsTaken = 0;
+		shotsFired = 0;
+		shotsHit = 0;
+		shipsSunk = 0;
 		
-		whosTurnArea.setText(currentPlayingUser + " is now playing.");
+		whosTurnArea.setText(currentPlayingUser + " is now firing.");
 		maxShotsAllowedStatLabel = new JLabel("Shots per turn: " + maxShotsAllowed);
-		shotsFiredStatLabel = new JLabel("Shots Hit/Fired: 0/0");
-		turnsTakenStatLabel = new JLabel("Turns Taken: 0");
-		shipsSunkStatLabel = new JLabel("Ships Sunk: 0");
+		shotsFiredStatLabel = new JLabel("Shots Hit/Fired: " + shotsHit + "/" + shotsFired);
+		turnsTakenStatLabel = new JLabel("Turns Taken: " + turnsTaken);
+		shipsSunkStatLabel = new JLabel("Ships Sunk: " + shipsSunk);
 		fireButton = new JButton("FIRE!");
 		fireButton.addActionListener(buttonListener);
 		
@@ -224,7 +228,11 @@ public class GameGUI extends JPanel{
 		
 		//reset label
 		whosTurnArea.setForeground(Color.black);
-		whosTurnArea.setText(currentPlayingUser + " is now playing.");
+		whosTurnArea.setText(currentPlayingUser + " is now firing.");
+		
+		//add statistics
+		turnsTaken++;
+		turnsTakenStatLabel.setText("Turns Taken: " + turnsTaken);
 	}
 	
 	public void userHasLost(String username){
@@ -234,11 +242,13 @@ public class GameGUI extends JPanel{
 	
 	public void addShotsList(ArrayList<Shot> shots){
 		for (Shot s: shots){
-			if (s.getTargetPlayer().equals(myUsername)){
-				addShotToMyBoard(s);
+			if (s.getTargetPlayer().equals(myUsername)){ // I'm the target
+				myBoardPanel.processAttack(s);
+				myBoardPanel.repaint();
 			}
-			else if (s.getOriginPlayer().equals(myUsername)){
+			else if (s.getOriginPlayer().equals(myUsername)){ //I'm the originator
 				//add other shots
+				shotsFired++;
 				addShotToOtherBoard(s);
 			}
 		}
@@ -251,23 +261,10 @@ public class GameGUI extends JPanel{
 		int idx = (10 * row) + col;
 		EnemyPanel targetPanel = enemyPanels.get(shot.getTargetPlayer());
 		targetPanel.addShotGraphic(idx, shot.wasAHit());
-	}
-	
-	public void addShotToMyBoard(Shot shot){
-		Coordinate shotDestination = shot.getShotDestination();
-		int col = shotDestination.getColumn();
-		int row = shotDestination.getRow();
-		int idx = (10 * row) + col;
-		BoardSpace bs = myBoardPanel.getBoardspaces().get(idx);
-		if (myShips.get(shotDestination) == null){
-			bs.setText("M");
-			bs.setBackground(Color.green);
+		if (shot.wasAHit()){
+			shotsHit++;
 		}
-		else{
-			bs.setText("H");
-			bs.setBackground(Color.red);
-		}
-		myBoardPanel.processAttack(shot);
+		shotsFiredStatLabel.setText("Shots Hit/Fired: " + shotsHit + "/" + shotsFired);
 	}
 	
 	private class TimerPanel extends JPanel{

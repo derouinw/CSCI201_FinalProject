@@ -55,8 +55,8 @@ public class ChatPanel extends JPanel{
 		recipientsExist = true;
 		
 		displayArea = new JTextArea();
-		displayArea.setPreferredSize(new Dimension(300,325));
-		displayArea.setMinimumSize(new Dimension(300,325));
+		displayArea.setPreferredSize(new Dimension(200,300));
+		displayArea.setMinimumSize(new Dimension(200,300));
 		displayArea.setEditable(false);
 		
 		//add borders to display area

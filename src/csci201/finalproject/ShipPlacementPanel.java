@@ -155,45 +155,49 @@ public class ShipPlacementPanel extends JPanel {
 			if(inBounds){
 				if(mCol < 10 && mRow < 10){
 					if(valid){
+						FleetGUI.decrementShips(shipType);
 						if(vertical){
 							Coordinate c = new Coordinate(mCol, mRow); //Are ship coordinates actual coordinates or grid spaces?
 							myShip.coord = c;
 							myShip.vertical = true;
-							board.addShip(c, myShip);
+							ships.add(myShip);
+							board.addShip(c, myShip, true);
 							Coordinate x = new Coordinate(mCol, mRow+1);
-							board.addShip(x, myShip);
+							board.addShip(x, myShip, false);
 							if(shipType > 0){
 								Coordinate q = new Coordinate(mCol, mRow+2);
-								board.addShip(q, myShip);
+								board.addShip(q, myShip, false);
 							}
 							if(shipType > 2){
 								Coordinate y = new Coordinate(mCol, mRow+3);
-								board.addShip(y, myShip);
+								board.addShip(y, myShip, false);
 							}
 							if(shipType > 3){
 								Coordinate w = new Coordinate(mCol, mRow+4);
-								board.addShip(w, myShip);
+								board.addShip(w, myShip, false);
 							}
 							repaint();
+							revalidate();
 						}
 						else{
 							Coordinate c = new Coordinate(mCol, mRow);
 							myShip.coord = c;
 							myShip.vertical = false;
-							board.addShip(c, myShip);
+							ships.add(myShip);
+							board.addShip(c, myShip, true);
 							Coordinate x = new Coordinate(mCol+1, mRow);
-							board.addShip(x, myShip);
+							board.addShip(x, myShip, false);
 							if(shipType > 0){
 								Coordinate q = new Coordinate(mCol+2, mRow);
-								board.addShip(q, myShip);
+								board.addShip(q, myShip, false);
 							}
 							if(shipType > 2){
 								Coordinate y = new Coordinate(mCol+3, mRow);
-								board.addShip(y, myShip);
+								board.addShip(y, myShip, false);
 							}
 							if(shipType > 3){
 								Coordinate w = new Coordinate(mCol+4, mRow);
-								board.addShip(w, myShip);
+								board.addShip(w, myShip, false);
 							}
 							repaint();
 						}

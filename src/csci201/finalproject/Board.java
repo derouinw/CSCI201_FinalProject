@@ -1,24 +1,19 @@
 package csci201.finalproject;
 
-import java.awt.GridLayout;
-import java.awt.LayoutManager;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import java.awt.*;
+import java.util.*;
+import javax.swing.*;
 
 public class Board extends JPanel {
 	
-	private HashMap<Coordinate,Ship> shipsToSpaces;
-	ArrayList<BoardSpace> boardSpaces;
-	
+	private HashMap<Coordinate,Ship> shipsToSpaces, firstCoordinates;
+	private ArrayList<Shot> shotsFiredOnMyBoard;
+	private ArrayList<BoardSpace> boardSpaces;
 
 	public Board() {
 		shipsToSpaces = new HashMap<Coordinate,Ship>();
-
+		firstCoordinates = new HashMap<Coordinate,Ship>();
+		shotsFiredOnMyBoard = new ArrayList<Shot>();
 		boardSpaces = new ArrayList<BoardSpace>();
 
 		this.setLayout(new GridLayout(10,10));
@@ -29,25 +24,12 @@ public class Board extends JPanel {
 			boardSpaces.add(bs);
 			this.add(bs);
 		}
-		//TODO add ship locations to shipsToSpaces in constructor
-	}
-
-	public Board(LayoutManager layout) {
-		super(layout);
-		// TODO Auto-generated constructor stub
-	}
-
-	public Board(boolean isDoubleBuffered) {
-		super(isDoubleBuffered);
-		// TODO Auto-generated constructor stub
-	}
-
-	public Board(LayoutManager layout, boolean isDoubleBuffered) {
-		super(layout, isDoubleBuffered);
-		// TODO Auto-generated constructor stub
 	}
 	
-	public void addShip(Coordinate c, Ship ship){
+	public void addShip(Coordinate c, Ship ship, boolean isFirstCoordinate){
+		if (isFirstCoordinate){
+			firstCoordinates.put(c, ship);
+		}
 		shipsToSpaces.put(c, ship);
 	}
 	
@@ -68,6 +50,7 @@ public class Board extends JPanel {
 				shipsToSpaces.remove(entry.getValue());
 			}
 		}
+		shotsFiredOnMyBoard.add(s);
 	}
 	
 	public HashMap<Coordinate, Ship> getMap(){
@@ -76,6 +59,30 @@ public class Board extends JPanel {
 	
 	public ArrayList<BoardSpace> getBoardspaces(){
 		return boardSpaces;
+	}
+	
+	public void paintComponent(Graphics g){
+		//draw ships
+		for (Map.Entry<Coordinate, Ship> entry : firstCoordinates.entrySet()){
+			Coordinate c = entry.getKey();
+			Image toDraw = entry.getValue().getImage();
+			int x = c.getColumn()*36 + 10;
+			int y = c.getRow()*30 + 24;
+			g.drawImage(toDraw, x,y,null);
+		}
+		
+		//draw shots
+		for (Shot s: shotsFiredOnMyBoard){
+			int x = (s.getShotDestination().getColumn() * 36) + 20;
+			int y = (s.getShotDestination().getRow() * 30) + 30;
+			if (s.wasAHit()){
+				g.setColor(Color.red);
+			}
+			else{
+				g.setColor(Color.green);
+			}
+			g.fillOval(x, y, 10, 10);
+		}
 	}
 
 }

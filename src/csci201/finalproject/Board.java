@@ -9,8 +9,6 @@ public class Board extends JPanel {
 	private HashMap<Coordinate,Ship> shipsToSpaces, firstCoordinates;
 	private ArrayList<Shot> shotsFiredOnMyBoard;
 	private ArrayList<BoardSpace> boardSpaces;
-	private Image dinghyImage, frigateImage, brigantineImage, galleonImage, sloopImage;
-	
 
 	public Board() {
 		shipsToSpaces = new HashMap<Coordinate,Ship>();
@@ -26,12 +24,6 @@ public class Board extends JPanel {
 			boardSpaces.add(bs);
 			this.add(bs);
 		}
-		
-		dinghyImage = (new ImageIcon("Dinghy.png")).getImage();
-		frigateImage = (new ImageIcon("Frigate.png")).getImage();
-		brigantineImage = (new ImageIcon("Brigantine.png")).getImage();
-		sloopImage = (new ImageIcon("Sloop.png")).getImage();
-		galleonImage = (new ImageIcon("Galleon.png")).getImage();
 	}
 	
 	public void addShip(Coordinate c, Ship ship, boolean isFirstCoordinate){

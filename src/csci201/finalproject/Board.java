@@ -1,26 +1,23 @@
 package csci201.finalproject;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import java.util.*;
+import javax.swing.*;
 
 public class Board extends JPanel {
 	
-	private HashMap<Coordinate,Ship> shipsToSpaces;
-	ArrayList<BoardSpace> boardSpaces;
-	private JLabel username;
+	private HashMap<Coordinate,Ship> shipsToSpaces, firstCoordinates;
+	private ArrayList<Shot> shotsFiredOnMyBoard;
+	private ArrayList<BoardSpace> boardSpaces;
+	private Image dinghyImage, frigateImage, brigantineImage, galleonImage, sloopImage;
 	
 
 	public Board() {
 		shipsToSpaces = new HashMap<Coordinate,Ship>();
+		firstCoordinates = new HashMap<Coordinate,Ship>();
+		shotsFiredOnMyBoard = new ArrayList<Shot>();
+		boardSpaces = new ArrayList<BoardSpace>();
+
 		this.setLayout(new GridLayout(10,10));
 		boardSpaces = new ArrayList<BoardSpace>();
 		for (int i=0;i<100;i++){
@@ -29,35 +26,29 @@ public class Board extends JPanel {
 			boardSpaces.add(bs);
 			this.add(bs);
 		}
-	}
-
-	public Board(LayoutManager layout) {
-		super(layout);
-		// TODO Auto-generated constructor stub
-	}
-
-	public Board(boolean isDoubleBuffered) {
-		super(isDoubleBuffered);
-		// TODO Auto-generated constructor stub
-	}
-
-	public Board(LayoutManager layout, boolean isDoubleBuffered) {
-		super(layout, isDoubleBuffered);
-		// TODO Auto-generated constructor stub
+		
+		dinghyImage = (new ImageIcon("Dinghy.png")).getImage();
+		frigateImage = (new ImageIcon("Frigate.png")).getImage();
+		brigantineImage = (new ImageIcon("Brigantine.png")).getImage();
+		sloopImage = (new ImageIcon("Sloop.png")).getImage();
+		galleonImage = (new ImageIcon("Galleon.png")).getImage();
 	}
 	
-	public void addShip(Coordinate c, Ship ship){
+	public void addShip(Coordinate c, Ship ship, boolean isFirstCoordinate){
+		if (isFirstCoordinate){
+			firstCoordinates.put(c, ship);
+		}
 		shipsToSpaces.put(c, ship);
 	}
 	
-	public void receiveAttacksList(ArrayList<Shot> shots){
+	/*public void receiveAttacksList(ArrayList<Shot> shots){
 		for(int i = 0; i<shots.size(); i++){
 			if(shots.get(i).getTargetPlayer().equals(username.getText()))
 			{
 				processAttack(shots.get(i));
 			}
 		}
-	}
+	}*/
 	
 	public void processAttack(Shot s){
 		for(Map.Entry<Coordinate, Ship> entry: shipsToSpaces.entrySet()){
@@ -66,6 +57,39 @@ public class Board extends JPanel {
 				s.shotHitShip();
 				shipsToSpaces.remove(entry.getValue());
 			}
+		}
+		shotsFiredOnMyBoard.add(s);
+	}
+	
+	public HashMap<Coordinate, Ship> getMap(){
+		return shipsToSpaces;
+	}
+	
+	public ArrayList<BoardSpace> getBoardspaces(){
+		return boardSpaces;
+	}
+	
+	public void paintComponent(Graphics g){
+		//draw ships
+		for (Map.Entry<Coordinate, Ship> entry : firstCoordinates.entrySet()){
+			Coordinate c = entry.getKey();
+			Image toDraw = entry.getValue().getImage();
+			int x = c.getColumn()*36 + 10;
+			int y = c.getRow()*30 + 24;
+			g.drawImage(toDraw, x,y,null);
+		}
+		
+		//draw shots
+		for (Shot s: shotsFiredOnMyBoard){
+			int x = (s.getShotDestination().getColumn() * 36) + 20;
+			int y = (s.getShotDestination().getRow() * 30) + 30;
+			if (s.wasAHit()){
+				g.setColor(Color.red);
+			}
+			else{
+				g.setColor(Color.green);
+			}
+			g.fillOval(x, y, 10, 10);
 		}
 	}
 

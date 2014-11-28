@@ -14,7 +14,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
+
+import csci201.finalproject.BSClient.NetworkThread;
 
 public class FleetGUI extends JPanel {
 	JPanel fleetPanel;
@@ -53,10 +54,15 @@ public class FleetGUI extends JPanel {
 	ShipPlacementPanel shipPlacementGridPanel;
 	CardLayout fleetCard;
 	
-	public FleetGUI(){
+	NetworkThread nt;
+	
+	public FleetGUI(NetworkThread nt){
+		this.nt = nt;
+
 		fleetPanel = new JPanel();
 		fleetCard = new CardLayout();
 		fleetPanel.setLayout(fleetCard);
+
 		
 		SelectUserInfoPanel = new JPanel(new BorderLayout());
 		JPanel SelectColorPanel = new JPanel();
@@ -123,6 +129,14 @@ public class FleetGUI extends JPanel {
 		ContinueButton.addActionListener(new ContinueListener());
 		FleetSelect.add(ContinueButton);
 		ContinueButton.setEnabled(false);
+		// TODO: make continue button activate when ready
+		ContinueButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// for now advance to playing game state
+				FleetGUI.this.nt.send("ready");
+				ContinueButton.setEnabled(false);
+			}
+		});
 		
 		SelectFleetPanel.add(FleetSelect);
 		

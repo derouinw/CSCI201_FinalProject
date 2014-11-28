@@ -5,11 +5,10 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Socket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
@@ -19,6 +18,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import csci201.finalproject.BSClient.NetworkThread;
+import csci201.finalproject.BSClient.RunServerThread;
 
 public class SplashGUI extends JPanel {
 	CardLayout splashPages;
@@ -49,17 +51,16 @@ public class SplashGUI extends JPanel {
 	JPanel main;
 	JLabel connected;
 
-	Socket s;
-	BufferedReader receive;
-	PrintWriter send;
-	//ClientThread ct;
+	NetworkThread nt;
 
 	String handle;
 	String host;
 	int port;
+	boolean isHost = false;
 	
-	public SplashGUI(Main m){
+	public SplashGUI(NetworkThread nt){
 		this.setPreferredSize(new Dimension(700,600));
+		this.nt = nt;
 		
 		// Read in Title Image
 		BufferedImage TitleImage;
@@ -97,8 +98,14 @@ public class SplashGUI extends JPanel {
 		//ChoosePlayers Panel Creation
 		choosePlayers = new JPanel();
 		choosePlayers.setLayout(new BoxLayout(choosePlayers, BoxLayout.Y_AXIS));
-		ipString = "[insert server IP here]";
-		//TODO: change displayIPLabel to displaying IP address
+		
+		// TODO: right now this gives local IP for some reason
+		try {
+			ipString = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e1) {
+			ipString = "[unknown host error (try again)]";
+		}
+		
 		displayIPLabel = new JLabel("Give yer mates this secret code so they can join the crew! " + ipString);
 		JPanel numPanel = new JPanel();
 		numPlayersLabel = new JLabel("Select the count of pirates you wish to be in this battle. That includes yerself!");
@@ -107,10 +114,11 @@ public class SplashGUI extends JPanel {
 		continuePlayers = new JButton("Continue");
 		continuePlayers.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				//host = "127.0.0.1";
+				host = "127.0.0.1";
 				numPlayers = Integer.valueOf((String) numPlayersCombo.getSelectedItem());
 				splashPages.show(splashPagesContainer, "createName");
-				//TODO: pass numPlayers to the server
+				RunServerThread rst = new RunServerThread(numPlayers); // this starts the server!
+				isHost = true;
 			}	
 		});
 		choosePlayers.add(displayIPLabel);
@@ -129,6 +137,7 @@ public class SplashGUI extends JPanel {
 		continueIP.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				host = ipField.getText();
+				// TODO: validate ip address?
 				splashPages.show(splashPagesContainer, "createName");
 			}	
 		});
@@ -145,7 +154,8 @@ public class SplashGUI extends JPanel {
 		connect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				handle = name.getText();
-				//connect(handle);
+				SplashGUI.this.nt.connect(host, handle, isHost);
+				// TODO: error handling
 				splashPages.show(splashPagesContainer, "main");
 			}
 		});

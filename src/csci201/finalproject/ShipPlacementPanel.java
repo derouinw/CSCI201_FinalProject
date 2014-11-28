@@ -161,20 +161,20 @@ public class ShipPlacementPanel extends JPanel {
 							myShip.coord = c;
 							myShip.vertical = true;
 							ships.add(myShip);
-							board.addShip(c, myShip);
+							board.addShip(c, myShip, true);
 							Coordinate x = new Coordinate(mCol, mRow+1);
-							board.addShip(x, myShip);
+							board.addShip(x, myShip, false);
 							if(shipType > 0){
 								Coordinate q = new Coordinate(mCol, mRow+2);
-								board.addShip(q, myShip);
+								board.addShip(q, myShip, false);
 							}
 							if(shipType > 2){
 								Coordinate y = new Coordinate(mCol, mRow+3);
-								board.addShip(y, myShip);
+								board.addShip(y, myShip, false);
 							}
 							if(shipType > 3){
 								Coordinate w = new Coordinate(mCol, mRow+4);
-								board.addShip(w, myShip);
+								board.addShip(w, myShip, false);
 							}
 							repaint();
 							revalidate();
@@ -184,20 +184,20 @@ public class ShipPlacementPanel extends JPanel {
 							myShip.coord = c;
 							myShip.vertical = false;
 							ships.add(myShip);
-							board.addShip(c, myShip);
+							board.addShip(c, myShip, true);
 							Coordinate x = new Coordinate(mCol+1, mRow);
-							board.addShip(x, myShip);
+							board.addShip(x, myShip, false);
 							if(shipType > 0){
 								Coordinate q = new Coordinate(mCol+2, mRow);
-								board.addShip(q, myShip);
+								board.addShip(q, myShip, false);
 							}
 							if(shipType > 2){
 								Coordinate y = new Coordinate(mCol+3, mRow);
-								board.addShip(y, myShip);
+								board.addShip(y, myShip, false);
 							}
 							if(shipType > 3){
 								Coordinate w = new Coordinate(mCol+4, mRow);
-								board.addShip(w, myShip);
+								board.addShip(w, myShip, false);
 							}
 							repaint();
 						}
@@ -222,7 +222,7 @@ public class ShipPlacementPanel extends JPanel {
 		for(int i = 0; i < ships.size(); i++){
 			int x = ships.get(i).coord.getColumn();
 			int y = ships.get(i).coord.getRow();
-			if(ships.get(i) instanceof Ship.Dinghy){
+			if(ships.get(i) instanceof Dinghy){
 				BufferedImage dinghyImage = null;
 				try {
 					dinghyImage = ImageIO.read(new File("dinghy.png"));
@@ -231,7 +231,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 				g.drawImage(dinghyImage, x*50, y*50, null);
 			}
-			if(ships.get(i) instanceof Ship.Sloop){
+			if(ships.get(i) instanceof Sloop){
 				BufferedImage sloopImage = null;
 				try {
 					sloopImage = ImageIO.read(new File("sloop.png"));
@@ -240,7 +240,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 				g.drawImage(sloopImage, x*50, y*50, null);
 			}
-			if(ships.get(i) instanceof Ship.Frigate){
+			if(ships.get(i) instanceof Frigate){
 				BufferedImage frigateImage = null;
 				try {
 					frigateImage = ImageIO.read(new File("frigate.png"));
@@ -249,7 +249,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 				g.drawImage(frigateImage, x*50, y*50, null);
 			}
-			if(ships.get(i) instanceof Ship.Brigantine){
+			if(ships.get(i) instanceof Brigantine){
 				BufferedImage brigImage = null;
 				try {
 					brigImage = ImageIO.read(new File("brigantine.png"));
@@ -258,7 +258,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 				g.drawImage(brigImage, x*50, y*50, null);
 			}
-			if(ships.get(i) instanceof Ship.Galleon){
+			if(ships.get(i) instanceof Galleon){
 				BufferedImage galleonImage = null;
 				try {
 					galleonImage = ImageIO.read(new File("galleon.png"));

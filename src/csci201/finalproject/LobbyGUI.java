@@ -58,7 +58,7 @@ public class LobbyGUI extends JPanel {
 		StartButton.setEnabled(false);
 		StartButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				nt.send("ready lobby");
+				nt.send(new Message("ready lobby"));
 				System.out.println("ready lobby sent");
 			}
 		});

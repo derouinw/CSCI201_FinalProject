@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
 
 public class BSClient {
 	// Connection to the server
@@ -54,6 +55,7 @@ public class BSClient {
 
 		// Handle displayed to other players and server
 		String username;
+		ArrayList<String> players;
 
 		// In order to send along messages from receive
 		ClientGUI client;
@@ -67,6 +69,8 @@ public class BSClient {
 			connected = false;
 			username = "";
 			gotUser = false;
+			
+			players = new ArrayList<String>();
 		}
 
 		// Called from ClientGUI when the user chooses to connect
@@ -145,6 +149,21 @@ public class BSClient {
 				//send();
 			}
 
+		}
+		
+		private void parseUsers(String s) {
+			players.clear();
+			
+			s = s.trim();
+			int index = s.indexOf(",");
+			players.add(s.substring(0, index));
+			s = s.substring(index+1).trim();
+			index = s.indexOf(",");
+			while (index != -1) {
+				players.add(s.substring(0, index));
+				s = s.substring(index+1).trim();
+				index = s.indexOf(",");
+			}
 		}
 
 		public String receive() {

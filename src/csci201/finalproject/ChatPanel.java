@@ -162,7 +162,7 @@ public class ChatPanel extends JPanel{
 		toBeSent = toBeSent + "]";
 		String actualMessage = chatArea.getText();
 		toBeSent = toBeSent + actualMessage;
-		networkThread.send(toBeSent);
+		networkThread.send(new Message(toBeSent));
 		addMessage(actualMessage, "Me");
 		chatArea.setText("");
 	}

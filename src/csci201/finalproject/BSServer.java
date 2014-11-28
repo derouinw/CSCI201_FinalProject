@@ -18,7 +18,7 @@ public class BSServer {
 
 	// Store the number of players here too
 	int numPlayers;
-	
+
 	boolean allConnected = false;
 
 	// Constructor
@@ -44,9 +44,9 @@ public class BSServer {
 
 				connections++;
 			}
-			
+
 			// this point is reached once all players have connected
-			st.playerThreads.get(0).send("ready");
+			st.playerThreads.get(0).send(new Message("ready"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -65,10 +65,11 @@ public class BSServer {
 		// Corresponds to game state in ClientGUI
 		// options: “lobby” “fleet selection” “playing” “game over”
 		String gameState;
-		
+		boolean running = true;
+
 		// during fleet selection, how many players are ready
 		int fleetsFinished = 0;
-		
+
 		// during playing, the index of current player firing
 		int curPlayer = 0; // default host
 
@@ -85,94 +86,100 @@ public class BSServer {
 			PlayerThread pt = new PlayerThread(s, this);
 			playerThreads.add(pt);
 			pt.start();
-			
+
 			String msg = "users ";
 			for (int i = 0; i < playerThreads.size(); i++) {
 				msg += playerThreads.get(i).username + " ";
 			}
-			broadcast(msg);
+			broadcast(new Message(msg));
 		}
 
 		// Receive a message from a PlayerThread
 		// (send from within PlayerThread.receive)
-		public void receive(String msg, String src) {
+		public void receive(Message msg, String src) {
+			if (msg.type == -1) {
+				// disconnect
+				
+			}
 			// take message from player and do what needs to be done
-			System.out.println(msg);
-			if (gameState.equals("lobby")) {
-				// messages during lobby
-				if (msg.equals("ready lobby")) {
-					broadcast("ready lobby");
-					gameState = "fleet selection";
-					System.out.println("ready lobby");
+			switch (msg.type) {
+			case Message.TYPE_STRING:
+				String sMsg = ((String) msg.value).trim();
+				if (gameState.equals("lobby")) {
+					// messages during lobby
+					if (sMsg.equals("ready lobby")) {
+						broadcast(new Message("ready lobby"));
+						gameState = "fleet selection";
+					}
+				} else if (gameState.equals("fleet selection")) {
+					// if player hits ready
+					if (sMsg.equals("ready")) {
+						fleetsFinished++;
+					} else if (sMsg.equals("unready")) {
+						fleetsFinished--;
+					}
+				} else if (gameState.equals("playing")) {
+					// TODO: receive a message while playing
+				} else if (gameState.equals("game over")) {
+					// there should be no messages received during game over
 				}
-			} else if (gameState.equals("fleet selection")) {
-				// if player hits ready
-				if (msg.trim().equals("ready")) {
-					fleetsFinished++;
-					System.out.println("got ready");
-				} else if (msg.trim().equals("unready")) {
-					fleetsFinished--;
-				}
-			} else if (gameState.equals("playing")) {
-				// TODO: receive a message while playing
-			} else if (gameState.equals("game over")) {
-				// there should be no messages received during game over
+				break;
+			case Message.TYPE_SHOTS:
+				// TODO: receive shots;
+				break;
+			case Message.TYPE_BOARD:
+				// TODO: receive board
+				break;
 			}
 		}
 
 		// Thread.run
 		// I.e. main loop for thread
 		public void run() {
-			while (true) { // TODO: real exit case
+			while (running) { // TODO: real exit case
 				// server logic here
-				//System.out.println("ddone: " + fleetsFinished + ", total: " + playerThreads.size());
-				System.out.println(gameState); // TODO: things break without this idk why
+				System.out.print(""); // TODO: things break without this idk why
 				if (gameState.equals("lobby")) {
 					// send out message with player names
 					// WRONG, this actually should only
 					// get sent once, when PlayerThread
 					// receives username
-					
+
 					// so nothing gets done here
 				} else if (gameState.equals("fleet selection")) {
 					// wait until all players are ready
-					System.out.println("done: " + fleetsFinished + ", total: " + playerThreads.size());
-
 					if (fleetsFinished == playerThreads.size()) {
 						gameState = "playing";
-						broadcast("ready fleet");
-						System.out.println("switching to game");
-						
+						broadcast(new Message("ready fleet"));
+
+						// start first turn of game
 						// start with host
 						for (int i = 0; i < playerThreads.size(); i++) {
-							if (i == curPlayer) playerThreads.get(i).send("enable");
-							else playerThreads.get(i).send("disable");
+							if (i == curPlayer)
+								playerThreads.get(i)
+										.send(new Message("enable"));
+							else
+								playerThreads.get(i).send(
+										new Message("disable"));
 						}
 					}
 				} else if (gameState.equals("playing")) {
 					// TODO: playing part of run()
-					
-					// current player gets "enable" while the other
-					// players get "disable"
-					/*for (int i = 0; i < playerThreads.size(); i++) {
-						if (i == curPlayer) playerThreads.get(i).send("enable");
-						else playerThreads.get(i).send("disable");
-					}*/
 				} else if (gameState.equals("game over")) {
 					// send out statistics data then kill server
-					// TODO: send statistics data
+					// TODO: this ^
 					break;
 				}
 			}
 		}
 
 		// sends out a message to all players
-		private void broadcast(String msg) {
+		private void broadcast(Message msg) {
 			for (int i = 0; i < playerThreads.size(); i++) {
 				playerThreads.get(i).send(msg);
 			}
 		}
-		
+
 		// get index of PlayerThread from the username
 		private int ptNum(String name) {
 			for (int i = 0; i < playerThreads.size(); i++) {
@@ -180,7 +187,7 @@ public class BSServer {
 					return i;
 				}
 			}
-			
+
 			// if reaches here, no player found with that username
 			return -1;
 		}
@@ -199,6 +206,7 @@ public class BSServer {
 
 		// Whether the player has been killed or not
 		boolean active;
+		boolean ptrunning = true;
 
 		// the user's handle
 		String username;
@@ -217,65 +225,112 @@ public class BSServer {
 			}
 		}
 
-		// Send a message to the player
-		public void send(String s) {
-			send.write(s.length());
-			send.write(s);
+		// Send a message to the player (TLV protocol)
+		public void send(Message msg) {
+			send.write(msg.type);
+			send.write(msg.length);
+			switch (msg.type) {
+			case Message.TYPE_STRING:
+				send.write((String) msg.value);
+				break;
+			case Message.TYPE_SHOTS:
+				// TODO: send shots
+				break;
+			case Message.TYPE_BOARD:
+				// TODO: send board
+				break;
+			}
 			send.flush();
 		}
-		
-		private String receive() {
-			int l = -1;
-			String msg = "";
+
+		private Message receive() {
+			int t = -1, l = -1;
+			Message msg = new Message();
 			try {
+				t = receive.read();
+				msg.type = t;
+				if (t == -1) {
+					st.running = false;
+					ptrunning = false;
+					s.close();
+					
+					// tell all users disconnect
+					st.broadcast(new Message());
+					return new Message();
+				}
+
 				l = receive.read();
-				if (l == -1) System.out.println("disconnected");
-				//else System.out.println(l);
-				//if (l < 37) {
-					// l is length of msg
+				msg.length = l;
+
+				// t is type of message
+				switch (t) {
+				case Message.TYPE_STRING:
+					String value = "";
+
 					for (int i = 0; i < l; i++) {
-						msg += (char)receive.read();
+						value += (char) receive.read();
 					}
-				//}
+
+					msg.value = value;
+					break;
+				case Message.TYPE_SHOTS:
+					// TODO: receive shots
+					break;
+				case Message.TYPE_BOARD:
+					// TODO: receive board
+					break;
+				}
+
 			} catch (SocketTimeoutException ste) {
-				//System.out.println("timeout nbd");
+				// timeout, will happen if no messages for a second
+				return null;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+
+			System.out.println("received message at server:"
+					+ (String) msg.value);
 			return msg;
 		}
 
 		// Thread.run
 		public void run() {
 			// when initially connected, send ready msg
-			
-			while (true) {
-				try {
-					String input = receive();
-					//System.out.println(input);
-					// logic with received message
 
-					// set username
+			while (ptrunning) {
+				Message msg;
+				try {
+					msg = receive();
+					if (msg == null)
+						continue;
+				} catch (Exception e) {
+					e.printStackTrace();
+					continue;
+				}
+
+				// logic with received message
+				switch (msg.type) {
+				case Message.TYPE_STRING:
+					String input = ((String) msg.value).trim();
 					if (input.startsWith("connect")) {
 						username = input.substring(input.trim().indexOf(" "))
 								.trim();
-						//System.out.println(username + " received");
-						send("gotUser");
-						send("ready splash");
-						
-						String msg = "users ";
+						send(new Message("gotUser"));
+						send(new Message("ready splash"));
+
+						String broadcast = "users ";
 						for (int i = 0; i < st.playerThreads.size(); i++) {
-							msg += st.playerThreads.get(i).username + " ";
+							broadcast += st.playerThreads.get(i).username + " ";
 						}
-						st.broadcast(msg);
-						// otherwise everything is handled in the ServerThread
-					} else if (!input.startsWith("waiting")) {
-						//System.out.println("receiving message");
-						st.receive(input, username);
+						st.broadcast(new Message(broadcast));
+						// otherwise everything is handled in the
+						// ServerThread
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
+					break;
 				}
+
+				st.receive(msg, username);
+
 			}
 		}
 	}

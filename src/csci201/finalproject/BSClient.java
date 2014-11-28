@@ -42,7 +42,6 @@ public class BSClient {
 		// Send and receive messages using Socket
 		BufferedReader receive;
 		PrintWriter send;
-		String curMsg, prevMsg;
 
 		// Information about server
 		String host;
@@ -69,29 +68,28 @@ public class BSClient {
 			connected = false;
 			username = "";
 			gotUser = false;
-			
+
 			players = new ArrayList<String>();
 		}
 
 		// Called from ClientGUI when the user chooses to connect
 		// Host and username come from user-entered data
-		public void connect(String host, String username, boolean isHost) {
+		public boolean connect(String host, String username, boolean isHost) {
 			this.username = username;
 			this.isHost = isHost;
 
 			for (int i = 0; i < MAX_CONNECT_ATTEMPTS; i++) {
 				if (setupConnection(host, BSServer.PORT)) {
 					// if succeeded, start thread and exit constructor
-					System.out.println("connected");
-
 					connected = true;
 					start();
-					return;
+					return true;
 				}
 			}
 
 			// reached max connect attempts
 			connected = false;
+			return false;
 		}
 
 		// A single attempt to connect to the server
@@ -110,83 +108,111 @@ public class BSClient {
 			return true;
 		}
 
-		// Send a message to the server
-		public void send(String msg) {
-			send.write(msg.length());
-			send.write(msg);
+		// TLV protocol
+		public void send(Message msg) {
+			send.write(msg.type);
+			send.write(msg.length);
+			switch (msg.type) {
+			case Message.TYPE_STRING:
+				send.write((String)msg.value);
+				break;
+			case Message.TYPE_SHOTS:
+				// TODO: send shots
+				break;
+			case Message.TYPE_BOARD:
+				// TODO: send board
+				break;
+			}
 			send.flush();
-			//System.out.println("sending \"" + msg + "\"");
-			curMsg = msg;
 		}
 
 		public void run() {
 
 			// inital state, waiting for handshake
+			send(new Message("connect " + username));
 			while (!gotUser) {
-				send("connect " + username);
 
-				if (receive().equals("gotUser")) {
-					gotUser = true;
-					System.out.println("got user");
+				// messsages should only be strings at this point
+				Message msg = receive();
+				switch (msg.type) {
+				case Message.TYPE_STRING:
+					if (receive().value.equals("gotUser")) {
+						gotUser = true;
+					}
+					break;
 				}
+				
 			}
 
-			System.out.println("ok");
-			
-//			try {
-//				receive = new BufferedReader(new InputStreamReader(
-//						s.getInputStream()));
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-
 			// let's get going!
-			String msg;
-			
-			while (true) {
+			Message msg;
+
+			while (connected) {
 				msg = receive();
-				if (msg != null) client.receive(msg);
-				//send();
+				if (msg != null)
+					client.receive(msg);
 			}
 
 		}
-		
+
 		private void parseUsers(String s) {
 			players.clear();
-			
+
 			s = s.trim();
 			int index = s.indexOf(",");
 			players.add(s.substring(0, index));
-			s = s.substring(index+1).trim();
+			s = s.substring(index + 1).trim();
 			index = s.indexOf(",");
 			while (index != -1) {
 				players.add(s.substring(0, index));
-				s = s.substring(index+1).trim();
+				s = s.substring(index + 1).trim();
 				index = s.indexOf(",");
 			}
 		}
 
-		public String receive() {
-			int l = -1;
-			String msg = "";
+		public Message receive() {
+			int t = -1, l = -1;
+			Message msg = new Message();
 			try {
+				t = receive.read();
+				msg.type = t;
+				
 				l = receive.read();
-				if (l == -1) System.out.println("disconnected");
-				//else System.out.println(l);
-				//else System.out.println(l);
-				//if (l < 37) {
-					// l is length of msg
+				msg.length = l;
+				
+				// t is type of message
+				switch (t) {
+				case Message.TYPE_STRING:
+					String value = "";
+					
 					for (int i = 0; i < l; i++) {
-						msg += (char)receive.read();
+						value += (char) receive.read();
 					}
-				//}
+					
+					msg.value = value;
+					break;
+				case Message.TYPE_SHOTS:
+					// TODO: receive shots
+					break;
+				case Message.TYPE_BOARD:
+					// TODO: receive board
+					break;
+				}	
+				
 			} catch (SocketTimeoutException ste) {
-				//System.out.println("timeout nbd");
+				// timeout, will happen if no messages for a second
 				return null;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println("received \"" + msg + "\"");
+
+			if (msg.value == null) {
+				try { s.close(); } catch (IOException e) {}
+				connected = false;
+				return new Message();
+			}
+			
+			System.out.println("received message at client:" + (String)msg.value);
 			return msg;
 		}
 	}

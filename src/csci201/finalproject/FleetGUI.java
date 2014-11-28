@@ -98,6 +98,13 @@ public class FleetGUI extends JPanel {
 		FleetSelect.add(ContinueButton);
 		ContinueButton.setEnabled(false);
 		// TODO: make continue button activate when ready
+		ContinueButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// for now advance to playing game state
+				FleetGUI.this.nt.send("ready");
+				ContinueButton.setEnabled(false);
+			}
+		});
 		
 		SelectFleetPanel.add(FleetSelect);
 		

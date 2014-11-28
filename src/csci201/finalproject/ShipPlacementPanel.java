@@ -87,7 +87,7 @@ public class ShipPlacementPanel extends JPanel {
 			Ship myShip = null;
 			
 			if(shipType == 0){
-				myShip = myShip.new Dinghy();
+				myShip = new Dinghy();
 				if(vertical){
 					if(mRow <= 8){
 						valid = true;
@@ -100,7 +100,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 			}
 			else if(shipType == 1){
-				myShip = myShip.new Sloop();
+				myShip = new Sloop();
 				if(vertical){
 					if(mRow <= 7){
 						valid = true;
@@ -113,7 +113,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 			}
 			else if(shipType == 2){
-				myShip = myShip.new Frigate();
+				myShip = new Frigate();
 				if(vertical){
 					if(mRow <= 7){
 						valid = true;
@@ -126,7 +126,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 			}
 			else if(shipType == 3){
-				myShip = myShip.new Brigantine();
+				myShip = new Brigantine();
 				if(vertical){
 					if(mRow <= 6){
 						valid = true;
@@ -139,7 +139,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 			}
 			else if(shipType == 4){
-				myShip = myShip.new Galleon();
+				myShip = new Galleon();
 				if(vertical){
 					if(mRow <= 5){
 						valid = true;

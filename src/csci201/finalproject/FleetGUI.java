@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -109,16 +111,16 @@ public class FleetGUI extends JPanel {
 		JLabel spaceLabel = new JLabel(" ");
 		descriptionPanel.add(instructLabel);
 		descriptionPanel.add(spaceLabel);
-		JLabel dingyLabel = new JLabel("The Dingy is a 2 space ship.");
-		JLabel sloopLabel = new JLabel("The Sloop is a 3 space ship.");
-		JLabel frigateLabel = new JLabel("The Frigate is a 3 space ship.");
-		JLabel brigantineLabel = new JLabel("The Brigantine is a 4 space ship.");
-		JLabel galleonLabel = new JLabel("The Galleon is a 5 space ship.");
-		descriptionPanel.add(dingyLabel);
-		descriptionPanel.add(sloopLabel);
-		descriptionPanel.add(frigateLabel);
-		descriptionPanel.add(brigantineLabel);
-		descriptionPanel.add(galleonLabel);
+		JLabel dLabel = new JLabel("The Dingy is a 2 space ship.");
+		JLabel sLabel = new JLabel("The Sloop is a 3 space ship.");
+		JLabel fLabel = new JLabel("The Frigate is a 3 space ship.");
+		JLabel bLabel = new JLabel("The Brigantine is a 4 space ship.");
+		JLabel gLabel = new JLabel("The Galleon is a 5 space ship.");
+		descriptionPanel.add(dLabel);
+		descriptionPanel.add(sLabel);
+		descriptionPanel.add(fLabel);
+		descriptionPanel.add(bLabel);
+		descriptionPanel.add(gLabel);
 		
 		JLabel spaceLabel1 = new JLabel(" ");
 		descriptionPanel.add(spaceLabel1);
@@ -200,6 +202,12 @@ public class FleetGUI extends JPanel {
 		frigateLabel = new JLabel("Frigate: x" + frigateQuantity);
 		brigantineLabel = new JLabel("Brigantine: x" + brigQuantity);
 		galleonLabel = new JLabel("Galleon: x" + galleonQuantity);
+		MouseLabel mLabel = new MouseLabel();
+		dinghyLabel.addMouseListener(mLabel);
+		sloopLabel.addMouseListener(mLabel);
+		frigateLabel.addMouseListener(mLabel);
+		brigantineLabel.addMouseListener(mLabel);
+		galleonLabel.addMouseListener(mLabel);
 		//Rotate Button
 		rotateButton = new JButton("Rotate: Horizontal");
 		rotateButton.addActionListener(new RotateListener());
@@ -328,6 +336,59 @@ public class FleetGUI extends JPanel {
 			int number = galleonQuantity-1;
 			galleonLabel.setText("Galleon: x" + number);
 		}
+	}
+	
+	public class MouseLabel implements MouseListener{
+		
+		@Override
+		public void mouseClicked(MouseEvent me) {
+			JLabel source = (JLabel) me.getSource();
+			String labelText = source.getText();
+			if(labelText.startsWith("D")){
+				if(dinghyQuantity > 0){
+					shipPlacementGridPanel.chooseShip(0);
+				}
+			}
+			if(labelText.startsWith("S")){
+				if(sloopQuantity > 0){
+					shipPlacementGridPanel.chooseShip(1);					
+				}
+			}
+			if(labelText.startsWith("F")){
+				if(frigateQuantity > 0){
+					shipPlacementGridPanel.chooseShip(2);
+				}
+			}
+			if(labelText.startsWith("B")){
+				if(brigQuantity > 0){
+					shipPlacementGridPanel.chooseShip(3);
+				}
+			}
+			if(labelText.startsWith("G")){
+				if(galleonQuantity > 0){
+					shipPlacementGridPanel.chooseShip(4);
+				}
+			}
+			
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+		
 	}
 	
 }

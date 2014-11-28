@@ -74,7 +74,7 @@ public class BSClient {
 
 		// Called from ClientGUI when the user chooses to connect
 		// Host and username come from user-entered data
-		public void connect(String host, String username, boolean isHost) {
+		public boolean connect(String host, String username, boolean isHost) {
 			this.username = username;
 			this.isHost = isHost;
 
@@ -83,12 +83,13 @@ public class BSClient {
 					// if succeeded, start thread and exit constructor
 					connected = true;
 					start();
-					return;
+					return true;
 				}
 			}
 
 			// reached max connect attempts
 			connected = false;
+			return false;
 		}
 
 		// A single attempt to connect to the server
@@ -146,7 +147,7 @@ public class BSClient {
 			// let's get going!
 			Message msg;
 
-			while (true) {
+			while (connected) {
 				msg = receive();
 				if (msg != null)
 					client.receive(msg);
@@ -175,11 +176,6 @@ public class BSClient {
 			try {
 				t = receive.read();
 				msg.type = t;
-				if (t == -1) {
-					System.out.println("disconnected");
-
-					// TODO: handle disconnects
-				}
 				
 				l = receive.read();
 				msg.length = l;
@@ -201,8 +197,7 @@ public class BSClient {
 				case Message.TYPE_BOARD:
 					// TODO: receive board
 					break;
-				}
-				
+				}	
 				
 			} catch (SocketTimeoutException ste) {
 				// timeout, will happen if no messages for a second
@@ -211,6 +206,12 @@ public class BSClient {
 				e.printStackTrace();
 			}
 
+			if (msg.value == null) {
+				try { s.close(); } catch (IOException e) {}
+				connected = false;
+				return new Message();
+			}
+			
 			System.out.println("received message at client:" + (String)msg.value);
 			return msg;
 		}

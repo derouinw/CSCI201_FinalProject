@@ -23,9 +23,6 @@ public class LobbyGUI extends JPanel {
 	JButton StartButton;
 
 	BSClient.NetworkThread nt;
-	// TODO:
-	// dialog box for the instructions
-	// actionListener for the JButtons
 	ArrayList<String> usernames;
 
 	public LobbyGUI(BSClient.NetworkThread nt) {
@@ -84,7 +81,7 @@ public class LobbyGUI extends JPanel {
 	void updateLabel() {
 		String text = "Connected players: ";
 		for (int i = 0; i < usernames.size(); i++) {
-			text += usernames.get(i) + ", ";
+			text += usernames.get(i) + ((i == usernames.size()-1) ? "" : ", ");
 		}
 		WaitingLabel.setText(text);
 	}

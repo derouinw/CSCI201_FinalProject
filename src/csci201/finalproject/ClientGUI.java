@@ -2,6 +2,7 @@ package csci201.finalproject;
 
 import java.awt.CardLayout;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -92,9 +93,14 @@ public class ClientGUI extends JFrame {
 
 	// receive a message from the server
 	public void receive(Message msg) {
-		String sMsg;
+		if (msg.value == null) {
+			// disconnect
+			JDialog popup = new JDialog(this, "Disconnected from server");
+			dispose();
+		}
 		switch (msg.type) {
 		case Message.TYPE_STRING:
+			String sMsg;
 			sMsg = ((String) msg.value).trim();
 			if (gameState.equals("splash")) {
 				if (sMsg.equals("ready splash")) {

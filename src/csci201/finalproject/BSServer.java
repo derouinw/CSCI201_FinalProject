@@ -65,6 +65,7 @@ public class BSServer {
 		// Corresponds to game state in ClientGUI
 		// options: “lobby” “fleet selection” “playing” “game over”
 		String gameState;
+		boolean running = true;
 
 		// during fleet selection, how many players are ready
 		int fleetsFinished = 0;
@@ -96,6 +97,10 @@ public class BSServer {
 		// Receive a message from a PlayerThread
 		// (send from within PlayerThread.receive)
 		public void receive(Message msg, String src) {
+			if (msg.type == -1) {
+				// disconnect
+				
+			}
 			// take message from player and do what needs to be done
 			switch (msg.type) {
 			case Message.TYPE_STRING:
@@ -131,12 +136,9 @@ public class BSServer {
 		// Thread.run
 		// I.e. main loop for thread
 		public void run() {
-			while (true) { // TODO: real exit case
+			while (running) { // TODO: real exit case
 				// server logic here
-				// System.out.println("ddone: " + fleetsFinished + ", total: " +
-				// playerThreads.size());
-				System.out.print(""); // TODO: things break without
-				// this idk why
+				System.out.print(""); // TODO: things break without this idk why
 				if (gameState.equals("lobby")) {
 					// send out message with player names
 					// WRONG, this actually should only
@@ -163,12 +165,9 @@ public class BSServer {
 					}
 				} else if (gameState.equals("playing")) {
 					// TODO: playing part of run()
-
-					// current player gets "enable" while the other
-					// players get "disable"
 				} else if (gameState.equals("game over")) {
 					// send out statistics data then kill server
-					// TODO: send statistics data
+					// TODO: this ^
 					break;
 				}
 			}
@@ -207,6 +206,7 @@ public class BSServer {
 
 		// Whether the player has been killed or not
 		boolean active;
+		boolean ptrunning = true;
 
 		// the user's handle
 		String username;
@@ -250,9 +250,13 @@ public class BSServer {
 				t = receive.read();
 				msg.type = t;
 				if (t == -1) {
-					System.out.println("disconnected");
-
-					// TODO: handle disconnects
+					st.running = false;
+					ptrunning = false;
+					s.close();
+					
+					// tell all users disconnect
+					st.broadcast(new Message());
+					return new Message();
 				}
 
 				l = receive.read();
@@ -293,7 +297,7 @@ public class BSServer {
 		public void run() {
 			// when initially connected, send ready msg
 
-			while (true) {
+			while (ptrunning) {
 				Message msg;
 				try {
 					msg = receive();
@@ -303,7 +307,7 @@ public class BSServer {
 					e.printStackTrace();
 					continue;
 				}
-				
+
 				// logic with received message
 				switch (msg.type) {
 				case Message.TYPE_STRING:

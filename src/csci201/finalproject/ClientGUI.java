@@ -83,7 +83,7 @@ public class ClientGUI extends JFrame {
 			
 		} else if (page.equals("playing")) {
 			// get data from FleetGUI and ClientGUI
-			//game.load(allUserNames, myUN, myShips);
+			game.load(nt.players, nt.username, null);
 		} else if (page.equals("game over")) {
 			
 		}
@@ -94,7 +94,7 @@ public class ClientGUI extends JFrame {
 		msg = msg.trim();
 		//System.out.println("received " + msg);
 		if (gameState.equals("splash")) {
-			if (msg.equals("ready splash") || msg.startsWith("users")) {
+			if (msg.equals("ready splash")) {
 				setPage("lobby");
 			}
 		} else if (gameState.equals("lobby")) {
@@ -110,9 +110,16 @@ public class ClientGUI extends JFrame {
 				lobby.StartButton.setEnabled(true);
 			}
 		} else if (gameState.equals("fleet selection")) {
-			
+			if (msg.equals("ready fleet")) {
+				setPage("playing");
+				//System.out.println();
+			}
 		} else if (gameState.equals("playing")) {
-			
+			if (msg.equals("enable")) {
+				game.startTurn();
+			} else if (msg.equals("disable")) {
+				game.endTurn();
+			}
 		} else if (gameState.equals("game over")) {
 			
 		} else {

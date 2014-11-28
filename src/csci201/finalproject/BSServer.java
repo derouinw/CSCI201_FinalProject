@@ -109,6 +109,7 @@ public class BSServer {
 				// if player hits ready
 				if (msg.trim().equals("ready")) {
 					fleetsFinished++;
+					System.out.println("got ready");
 				} else if (msg.trim().equals("unready")) {
 					fleetsFinished--;
 				}
@@ -124,6 +125,8 @@ public class BSServer {
 		public void run() {
 			while (true) { // TODO: real exit case
 				// server logic here
+				//System.out.println("ddone: " + fleetsFinished + ", total: " + playerThreads.size());
+				System.out.println(gameState); // TODO: things break without this idk why
 				if (gameState.equals("lobby")) {
 					// send out message with player names
 					// WRONG, this actually should only
@@ -133,19 +136,28 @@ public class BSServer {
 					// so nothing gets done here
 				} else if (gameState.equals("fleet selection")) {
 					// wait until all players are ready
-					if (fleetsFinished == numPlayers) {
+					System.out.println("done: " + fleetsFinished + ", total: " + playerThreads.size());
+
+					if (fleetsFinished == playerThreads.size()) {
 						gameState = "playing";
-						broadcast("ready");
+						broadcast("ready fleet");
+						System.out.println("switching to game");
+						
+						// start with host
+						for (int i = 0; i < playerThreads.size(); i++) {
+							if (i == curPlayer) playerThreads.get(i).send("enable");
+							else playerThreads.get(i).send("disable");
+						}
 					}
 				} else if (gameState.equals("playing")) {
 					// TODO: playing part of run()
 					
 					// current player gets "enable" while the other
 					// players get "disable"
-					for (int i = 0; i < playerThreads.size(); i++) {
+					/*for (int i = 0; i < playerThreads.size(); i++) {
 						if (i == curPlayer) playerThreads.get(i).send("enable");
 						else playerThreads.get(i).send("disable");
-					}
+					}*/
 				} else if (gameState.equals("game over")) {
 					// send out statistics data then kill server
 					// TODO: send statistics data

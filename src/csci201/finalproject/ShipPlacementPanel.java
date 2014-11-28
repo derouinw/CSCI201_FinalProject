@@ -155,10 +155,12 @@ public class ShipPlacementPanel extends JPanel {
 			if(inBounds){
 				if(mCol < 10 && mRow < 10){
 					if(valid){
+						FleetGUI.decrementShips(shipType);
 						if(vertical){
 							Coordinate c = new Coordinate(mCol, mRow); //Are ship coordinates actual coordinates or grid spaces?
 							myShip.coord = c;
 							myShip.vertical = true;
+							ships.add(myShip);
 							board.addShip(c, myShip, true);
 							Coordinate x = new Coordinate(mCol, mRow+1);
 							board.addShip(x, myShip, false);
@@ -175,11 +177,13 @@ public class ShipPlacementPanel extends JPanel {
 								board.addShip(w, myShip, false);
 							}
 							repaint();
+							revalidate();
 						}
 						else{
 							Coordinate c = new Coordinate(mCol, mRow);
 							myShip.coord = c;
 							myShip.vertical = false;
+							ships.add(myShip);
 							board.addShip(c, myShip, true);
 							Coordinate x = new Coordinate(mCol+1, mRow);
 							board.addShip(x, myShip, false);

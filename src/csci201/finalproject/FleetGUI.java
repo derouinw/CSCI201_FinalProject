@@ -1,6 +1,9 @@
 package csci201.finalproject;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -15,6 +18,10 @@ import javax.swing.JRadioButton;
 import csci201.finalproject.BSClient.NetworkThread;
 
 public class FleetGUI extends JPanel {
+	JPanel fleetPanel;
+	JPanel placementPanel;
+	JPanel shipLabelPanel;
+	JPanel buttonPanel;
 	JPanel SelectUserInfoPanel;
 	JLabel SelectColorLabel;
 	JComboBox<String> SelectColorCombo;
@@ -31,11 +38,31 @@ public class FleetGUI extends JPanel {
 	String[] numOptions2 = {"0","1","2","3","4","5"};
 	String[] numOptions3 = {"0","1","2","3"};
 	JButton ContinueButton; // only active if correct fleet is chosen
+	JButton rotateButton;
+	JButton submitButton;
+	static JLabel dinghyLabel;
+	static JLabel sloopLabel;
+	static JLabel frigateLabel;
+	static JLabel brigantineLabel;
+	static JLabel galleonLabel;
+	static int dinghyQuantity;
+	static int sloopQuantity;
+	static int frigateQuantity;
+	static int brigQuantity;
+	static int galleonQuantity;
+	
+	ShipPlacementPanel shipPlacementGridPanel;
+	CardLayout fleetCard;
 	
 	NetworkThread nt;
 	
 	public FleetGUI(NetworkThread nt){
 		this.nt = nt;
+
+		fleetPanel = new JPanel();
+		fleetCard = new CardLayout();
+		fleetPanel.setLayout(fleetCard);
+
 		
 		SelectUserInfoPanel = new JPanel(new BorderLayout());
 		JPanel SelectColorPanel = new JPanel();
@@ -43,6 +70,10 @@ public class FleetGUI extends JPanel {
 		SelectFleetPanel.setLayout(new BoxLayout(SelectFleetPanel,BoxLayout.X_AXIS));
 		JPanel FleetSelect = new JPanel();
 		FleetSelect.setLayout(new BoxLayout(FleetSelect,BoxLayout.Y_AXIS));
+		
+		shipPlacementGridPanel = new ShipPlacementPanel();
+		shipLabelPanel = new JPanel();
+		placementPanel = new JPanel();
 		
 		// Color Selection
 		SelectColorLabel = new JLabel("Select your color ");
@@ -95,6 +126,7 @@ public class FleetGUI extends JPanel {
 		FleetSelect.add(descriptionPanel);
 		
 		ContinueButton = new JButton("Continue"); // only active if correct fleet is chosen
+		ContinueButton.addActionListener(new ContinueListener());
 		FleetSelect.add(ContinueButton);
 		ContinueButton.setEnabled(false);
 		// TODO: make continue button activate when ready
@@ -159,26 +191,60 @@ public class FleetGUI extends JPanel {
 		
 		SelectFleetPanel.add(FleetInfo);
 		
+		
+		//Placement Panel Code
+		//TODO
+		//Ship Labels w/ numbers
+		dinghyLabel = new JLabel("Dinghy: x" + dinghyQuantity);
+		sloopLabel = new JLabel("Sloop: x" + sloopQuantity);
+		frigateLabel = new JLabel("Frigate: x" + frigateQuantity);
+		brigantineLabel = new JLabel("Brigantine: x" + brigQuantity);
+		galleonLabel = new JLabel("Galleon: x" + galleonQuantity);
+		//Rotate Button
+		rotateButton = new JButton("Rotate: Horizontal");
+		rotateButton.addActionListener(new RotateListener());
+		//Submit button
+		submitButton = new JButton("Submit");
+		submitButton.addActionListener(new SubmitListener());
+		
+		shipLabelPanel.setLayout(new GridLayout(7, 1));
+		shipLabelPanel.add(dinghyLabel);
+		shipLabelPanel.add(sloopLabel);
+		shipLabelPanel.add(frigateLabel);
+		shipLabelPanel.add(brigantineLabel);
+		shipLabelPanel.add(galleonLabel);
+		shipLabelPanel.add(rotateButton);
+		shipLabelPanel.add(submitButton);
+		
+		placementPanel.setLayout(new BorderLayout());
+		placementPanel.add(shipLabelPanel, BorderLayout.WEST);
+		placementPanel.add(shipPlacementGridPanel, BorderLayout.CENTER);	
+		
+		
 		SelectUserInfoPanel.add(SelectFleetPanel, BorderLayout.CENTER);
-		add(SelectUserInfoPanel, BorderLayout.CENTER);
+		fleetPanel.add(SelectUserInfoPanel, "USER INFO PANEL");
+		fleetPanel.add(placementPanel, "PLACEMENT PANEL");
+		fleetCard.show(fleetPanel, "USER INFO PANEL");
+		
+		add(fleetPanel);
 		
 	}
 	class ComboListener implements ActionListener{
 		
 		public void actionPerformed(ActionEvent e) {
 			//check that the combo boxes add up to 17
-			int d = Integer.valueOf(numOptions1[Type0Combo.getSelectedIndex()]);
-			d = d*2;
-			int s = Integer.valueOf(numOptions2[Type1Combo.getSelectedIndex()]);
-			s = s*3;
-			int f = Integer.valueOf(numOptions2[Type2Combo.getSelectedIndex()]);
-			f = f*3;
-			int b = Integer.valueOf(numOptions3[Type3Combo.getSelectedIndex()]);
-			b = b*4;
-			int g = Integer.valueOf(numOptions3[Type4Combo.getSelectedIndex()]);
-			g = g*5;
+			dinghyQuantity = Integer.valueOf(numOptions1[Type0Combo.getSelectedIndex()]);
+			dinghyQuantity = dinghyQuantity*2;
+			sloopQuantity = Integer.valueOf(numOptions2[Type1Combo.getSelectedIndex()]);
+			sloopQuantity = sloopQuantity*3;
+			frigateQuantity = Integer.valueOf(numOptions2[Type2Combo.getSelectedIndex()]);
+			frigateQuantity = frigateQuantity*3;
+			brigQuantity = Integer.valueOf(numOptions3[Type3Combo.getSelectedIndex()]);
+			brigQuantity = brigQuantity*4;
+			galleonQuantity = Integer.valueOf(numOptions3[Type4Combo.getSelectedIndex()]);
+			galleonQuantity = galleonQuantity*5;
 			
-			if(d+s+f+b+g == 17){
+			if(dinghyQuantity+sloopQuantity+frigateQuantity+brigQuantity+galleonQuantity == 17){
 				ContinueButton.setEnabled(true);
 			}
 			else{
@@ -212,6 +278,56 @@ public class FleetGUI extends JPanel {
 			}
 		}
 		
+	}
+	class ContinueListener implements ActionListener{
+		
+		public void actionPerformed(ActionEvent e) {
+			fleetCard.show(fleetPanel, "PLACEMENT PANEL");
+		}
+	}
+	
+	class RotateListener implements ActionListener{
+		
+		public void actionPerformed(ActionEvent e) {
+			if(shipPlacementGridPanel.vertical){
+				shipPlacementGridPanel.vertical = false;
+				rotateButton.setText("Rotate: Vertical");
+			}
+			else{
+				shipPlacementGridPanel.vertical = true;
+				rotateButton.setText("Rotate: Horizontal");
+			}
+		}
+	}
+	
+	class SubmitListener implements ActionListener{
+		
+		public void actionPerformed(ActionEvent e) {
+			
+		}
+	}
+	
+	public static void decrementShips(int shipType){
+		if(shipType == 0){
+			int number = dinghyQuantity-1;
+			dinghyLabel.setText("Dinghy: x" + number);
+		}
+		if(shipType == 1){
+			int number = sloopQuantity-1;
+			sloopLabel.setText("Sloop: x" + number);
+		}
+		if(shipType == 2){
+			int number = frigateQuantity-1;
+			frigateLabel.setText("Frigate: x" + number);
+		}
+		if(shipType == 3){
+			int number = brigQuantity-1;
+			brigantineLabel.setText("Brigantine: x" + number);
+		}
+		if(shipType == 4){
+			int number = galleonQuantity-1;
+			galleonLabel.setText("Galleon: x" + number);
+		}
 	}
 	
 }

@@ -42,16 +42,16 @@ public class FleetGUI extends JPanel {
 	JButton ContinueButton; // only active if correct fleet is chosen
 	JButton rotateButton;
 	JButton submitButton;
-	static JLabel dinghyLabel;
-	static JLabel sloopLabel;
-	static JLabel frigateLabel;
-	static JLabel brigantineLabel;
-	static JLabel galleonLabel;
-	static int dinghyQuantity;
-	static int sloopQuantity;
-	static int frigateQuantity;
-	static int brigQuantity;
-	static int galleonQuantity;
+	JLabel dinghyLabel;
+	JLabel sloopLabel;
+	JLabel frigateLabel;
+	JLabel brigantineLabel;
+	JLabel galleonLabel;
+	int dinghyQuantity;
+	int sloopQuantity;
+	int frigateQuantity;
+	int brigQuantity;
+	int galleonQuantity;
 	
 	ShipPlacementPanel shipPlacementGridPanel;
 	CardLayout fleetCard;
@@ -73,7 +73,7 @@ public class FleetGUI extends JPanel {
 		JPanel FleetSelect = new JPanel();
 		FleetSelect.setLayout(new BoxLayout(FleetSelect,BoxLayout.Y_AXIS));
 		
-		shipPlacementGridPanel = new ShipPlacementPanel();
+		shipPlacementGridPanel = new ShipPlacementPanel(this);
 		shipLabelPanel = new JPanel();
 		placementPanel = new JPanel();
 		
@@ -128,15 +128,15 @@ public class FleetGUI extends JPanel {
 		FleetSelect.add(descriptionPanel);
 		
 		ContinueButton = new JButton("Continue"); // only active if correct fleet is chosen
-		ContinueButton.addActionListener(new ContinueListener());
 		FleetSelect.add(ContinueButton);
 		ContinueButton.setEnabled(false);
 		// TODO: make continue button activate when ready
 		ContinueButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// for now advance to playing game state
-				FleetGUI.this.nt.send("ready");
+				//FleetGUI.this.nt.send("ready");
 				ContinueButton.setEnabled(false);
+				fleetCard.show(fleetPanel, "PLACEMENT PANEL");
 			}
 		});
 		
@@ -287,12 +287,6 @@ public class FleetGUI extends JPanel {
 		}
 		
 	}
-	class ContinueListener implements ActionListener{
-		
-		public void actionPerformed(ActionEvent e) {
-			fleetCard.show(fleetPanel, "PLACEMENT PANEL");
-		}
-	}
 	
 	class RotateListener implements ActionListener{
 		
@@ -315,7 +309,7 @@ public class FleetGUI extends JPanel {
 		}
 	}
 	
-	public static void decrementShips(int shipType){
+	public void decrementShips(int shipType){
 		if(shipType == 0){
 			int number = dinghyQuantity-1;
 			dinghyLabel.setText("Dinghy: x" + number);

@@ -20,6 +20,7 @@ public class ShipPlacementPanel extends JPanel {
 	// actual board and ship data
 	Board board;
 	ArrayList<Ship> ships;
+	private FleetGUI fGUI;
 
 	// selected in gui component,
 	// passed in from FleetGUI
@@ -41,12 +42,13 @@ public class ShipPlacementPanel extends JPanel {
 	boolean vertical;
 
 	// constructor
-	public ShipPlacementPanel() {
+	public ShipPlacementPanel(FleetGUI fg) {
 		// super constructor
 		super();
 
 		// initialize data structures
 		board = new Board();
+		fGUI = fg;
 		ships = new ArrayList<Ship>();
 		shipType = -1;
 
@@ -155,7 +157,7 @@ public class ShipPlacementPanel extends JPanel {
 			if(inBounds){
 				if(mCol < 10 && mRow < 10){
 					if(valid){
-						FleetGUI.decrementShips(shipType);
+						fGUI.decrementShips(shipType);
 						if(vertical){
 							Coordinate c = new Coordinate(mCol, mRow); //Are ship coordinates actual coordinates or grid spaces?
 							myShip.coord = c;

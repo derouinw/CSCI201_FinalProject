@@ -1,10 +1,13 @@
 package csci201.finalproject;
 
+import java.awt.Image;
+
 public abstract class Ship {
 
 	protected int healthPoints;
 	protected boolean vertical;
 	protected Coordinate coord;
+	protected Image image;
 	
 	public Ship() {
 		// TODO Auto-generated constructor stub
@@ -15,4 +18,6 @@ public abstract class Ship {
 			healthPoints--;
 		}
 	}
+	
+	public abstract Image getImage();
 }

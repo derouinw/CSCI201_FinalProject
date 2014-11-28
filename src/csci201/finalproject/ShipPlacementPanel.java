@@ -200,7 +200,6 @@ public class ShipPlacementPanel extends JPanel {
 								board.addShip(w, myShip);
 							}
 							repaint();
-							revalidate();
 						}
 					}
 				}

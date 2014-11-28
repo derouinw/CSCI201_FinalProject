@@ -14,7 +14,6 @@ public class Board extends JPanel {
 	
 	private HashMap<Coordinate,Ship> shipsToSpaces;
 	ArrayList<BoardSpace> boardSpaces;
-	private JLabel username;
 	
 
 	public Board() {
@@ -30,7 +29,7 @@ public class Board extends JPanel {
 			boardSpaces.add(bs);
 			this.add(bs);
 		}
-
+		//TODO add ship locations to shipsToSpaces in constructor
 	}
 
 	public Board(LayoutManager layout) {
@@ -52,14 +51,14 @@ public class Board extends JPanel {
 		shipsToSpaces.put(c, ship);
 	}
 	
-	public void receiveAttacksList(ArrayList<Shot> shots){
+	/*public void receiveAttacksList(ArrayList<Shot> shots){
 		for(int i = 0; i<shots.size(); i++){
 			if(shots.get(i).getTargetPlayer().equals(username.getText()))
 			{
 				processAttack(shots.get(i));
 			}
 		}
-	}
+	}*/
 	
 	public void processAttack(Shot s){
 		for(Map.Entry<Coordinate, Ship> entry: shipsToSpaces.entrySet()){
@@ -69,6 +68,10 @@ public class Board extends JPanel {
 				shipsToSpaces.remove(entry.getValue());
 			}
 		}
+	}
+	
+	public HashMap<Coordinate, Ship> getMap(){
+		return shipsToSpaces;
 	}
 	
 	public ArrayList<BoardSpace> getBoardspaces(){

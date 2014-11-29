@@ -64,7 +64,7 @@ public class ClientGUI extends JFrame {
 
 		// finally...
 		gameState = "splash";
-		setPage("fleet selection");
+		setPage("splash");
 		setResizable(false);
 		setVisible(true);
 	}
@@ -87,7 +87,6 @@ public class ClientGUI extends JFrame {
 			// pass in IP address
 			chatPanel.setVisible(true);
 			lobby.setup();
-			setSize(800, 600);
 		} else if (page.equals("fleet selection")) {
 
 		} else if (page.equals("playing")) {

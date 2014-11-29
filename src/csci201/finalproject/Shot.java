@@ -1,10 +1,12 @@
 package csci201.finalproject;
 
-public class Shot {
+import java.io.Serializable;
+
+public class Shot implements Serializable {
 	
 	private String targetPlayer, originPlayer;
 	private Coordinate shotDestination;
-	private Boolean hitFlag;
+	private boolean hitFlag;
 	
 
 	public Shot() {

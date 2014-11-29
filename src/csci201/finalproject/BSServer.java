@@ -1,9 +1,9 @@
 package csci201.finalproject;
 
-import java.io.BufferedReader;
+import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -97,10 +97,6 @@ public class BSServer {
 		// Receive a message from a PlayerThread
 		// (send from within PlayerThread.receive)
 		public void receive(Message msg, String src) {
-			if (msg.type == -1) {
-				// disconnect
-				
-			}
 			// take message from player and do what needs to be done
 			switch (msg.type) {
 			case Message.TYPE_STRING:
@@ -129,6 +125,7 @@ public class BSServer {
 				break;
 			case Message.TYPE_BOARD:
 				// TODO: receive board
+				System.out.println("received board");
 				break;
 			}
 		}
@@ -195,12 +192,14 @@ public class BSServer {
 
 	// PlayerThread is the connection to a single player
 	class PlayerThread extends Thread {
-		Socket s;
+		Socket s, s2;
 
 		// To communicate with player
-		BufferedReader receive;
-		PrintWriter send;
-
+		// BufferedReader receive;
+		ObjectInputStream receive;
+		//PrintWriter send;
+		ObjectOutputStream send;
+		
 		// To send messages received from player to server
 		ServerThread st;
 
@@ -215,10 +214,9 @@ public class BSServer {
 		public PlayerThread(Socket s, ServerThread st) {
 			this.s = s;
 			try {
-				s.setSoTimeout(2000);
-				receive = new BufferedReader(new InputStreamReader(
-						s.getInputStream()));
-				send = new PrintWriter(s.getOutputStream());
+				s.setSoTimeout(1000);
+				send = new ObjectOutputStream(s.getOutputStream());
+				receive = new ObjectInputStream(s.getInputStream());
 				this.st = st;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -227,69 +225,31 @@ public class BSServer {
 
 		// Send a message to the player (TLV protocol)
 		public void send(Message msg) {
-			send.write(msg.type);
-			send.write(msg.length);
-			switch (msg.type) {
-			case Message.TYPE_STRING:
-				send.write((String) msg.value);
-				break;
-			case Message.TYPE_SHOTS:
-				// TODO: send shots
-				break;
-			case Message.TYPE_BOARD:
-				// TODO: send board
-				break;
+			try {
+				send.writeObject(msg);
+				send.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			send.flush();
 		}
 
 		private Message receive() {
-			int t = -1, l = -1;
 			Message msg = new Message();
+
 			try {
-				t = receive.read();
-				msg.type = t;
-				if (t == -1) {
-					st.running = false;
-					ptrunning = false;
-					s.close();
-					
-					// tell all users disconnect
-					st.broadcast(new Message());
-					return new Message();
-				}
-
-				l = receive.read();
-				msg.length = l;
-
-				// t is type of message
-				switch (t) {
-				case Message.TYPE_STRING:
-					String value = "";
-
-					for (int i = 0; i < l; i++) {
-						value += (char) receive.read();
-					}
-
-					msg.value = value;
-					break;
-				case Message.TYPE_SHOTS:
-					// TODO: receive shots
-					break;
-				case Message.TYPE_BOARD:
-					// TODO: receive board
-					break;
-				}
-
+				msg = (Message) receive.readObject();
+			} catch (EOFException eofe) {
+				//System.out.println("disconnect");
+				// TODO: handle disconnect
+				return new Message();
 			} catch (SocketTimeoutException ste) {
-				// timeout, will happen if no messages for a second
 				return null;
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
-			System.out.println("received message at server:"
-					+ (String) msg.value);
 			return msg;
 		}
 

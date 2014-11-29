@@ -1,9 +1,9 @@
 package csci201.finalproject;
 
-import java.io.BufferedReader;
+import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -40,8 +40,8 @@ public class BSClient {
 		Socket s;
 
 		// Send and receive messages using Socket
-		BufferedReader receive;
-		PrintWriter send;
+		ObjectInputStream receive;
+		ObjectOutputStream send;
 
 		// Information about server
 		String host;
@@ -98,38 +98,35 @@ public class BSClient {
 			try {
 				s = new Socket(host, port);
 				s.setSoTimeout(1000);
-				receive = new BufferedReader(new InputStreamReader(
-						s.getInputStream()));
-				send = new PrintWriter(s.getOutputStream());
+				send = new ObjectOutputStream(s.getOutputStream());
+				receive = new ObjectInputStream(s.getInputStream());
+			} catch (SocketTimeoutException ste) {
+				return false;
 			} catch (IOException e) {
 				return false;
 			}
 
 			return true;
 		}
+		
+		public void send(String msg) {
+			send(new Message(msg, username));
+		}
 
 		// TLV protocol
 		public void send(Message msg) {
-			send.write(msg.type);
-			send.write(msg.length);
-			switch (msg.type) {
-			case Message.TYPE_STRING:
-				send.write((String)msg.value);
-				break;
-			case Message.TYPE_SHOTS:
-				// TODO: send shots
-				break;
-			case Message.TYPE_BOARD:
-				// TODO: send board
-				break;
+			try {
+				send.writeObject(msg);
+				send.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			send.flush();
 		}
 
 		public void run() {
 
 			// inital state, waiting for handshake
-			send(new Message("connect " + username));
+			send("connect " + username);
 			while (!gotUser) {
 
 				// messsages should only be strings at this point
@@ -141,7 +138,7 @@ public class BSClient {
 					}
 					break;
 				}
-				
+
 			}
 
 			// let's get going!
@@ -171,48 +168,23 @@ public class BSClient {
 		}
 
 		public Message receive() {
-			int t = -1, l = -1;
 			Message msg = new Message();
+
 			try {
-				t = receive.read();
-				msg.type = t;
-				
-				l = receive.read();
-				msg.length = l;
-				
-				// t is type of message
-				switch (t) {
-				case Message.TYPE_STRING:
-					String value = "";
-					
-					for (int i = 0; i < l; i++) {
-						value += (char) receive.read();
-					}
-					
-					msg.value = value;
-					break;
-				case Message.TYPE_SHOTS:
-					// TODO: receive shots
-					break;
-				case Message.TYPE_BOARD:
-					// TODO: receive board
-					break;
-				}	
-				
+				msg = (Message) receive.readObject();
+			} catch (EOFException eofe) {
+				//System.out.println("disconnect");
+				// TODO: handle disconnect
+				return new Message();
 			} catch (SocketTimeoutException ste) {
-				// timeout, will happen if no messages for a second
 				return null;
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
-			if (msg.value == null) {
-				try { s.close(); } catch (IOException e) {}
-				connected = false;
-				return new Message();
-			}
-			
-			System.out.println("received message at client:" + (String)msg.value);
+			if (msg.type == Message.TYPE_STRING) System.out.println("received message at client: " + msg.value);
 			return msg;
 		}
 	}

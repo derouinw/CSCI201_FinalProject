@@ -201,8 +201,8 @@ public class SplashGUI extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				handle = name.getText();
 				boolean valid = true;
-				if (handle.indexOf(" ") != -1) {
-					name.setText("No spaces allowed");
+				if (handle.indexOf(" ") != -1 || handle.indexOf("]") != -1) {
+					name.setText("Invalid username");
 					valid = false;
 				}
 				

@@ -1,10 +1,18 @@
 package csci201.finalproject;
 
-import java.awt.*;
-import java.util.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Board extends JPanel {
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+
+public class Board extends JPanel implements Serializable {
 	
 	private HashMap<Coordinate,Ship> shipsToSpaces, firstCoordinates;
 	private ArrayList<Shot> shotsFiredOnMyBoard;

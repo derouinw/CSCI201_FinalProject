@@ -35,11 +35,12 @@ public class ChatPanel extends JPanel{
 	private CheckBoxListener checkBoxListener;
 	
 	private JCheckBox pressEnterToSend;
-	private JScrollPane chatScroll;
+	private JScrollPane chatScroll, displayScroll;
 	private JPanel recipientSelectionPanel;
 	private ArrayList<JCheckBox> checkBoxes;
 	
 	private BSClient.NetworkThread networkThread;
+	private int numRecipients;
 	
 	//METHODS
 	//constructor
@@ -54,8 +55,10 @@ public class ChatPanel extends JPanel{
 		shiftIsDown = false;
 		recipientsExist = true;
 		
+		numRecipients = 0;
+		
 		displayArea = new JTextArea();
-		displayArea.setPreferredSize(new Dimension(200,300));
+		//displayArea.setPreferredSize(new Dimension(200,300));
 		displayArea.setMinimumSize(new Dimension(200,300));
 		displayArea.setEditable(false);
 		
@@ -69,6 +72,8 @@ public class ChatPanel extends JPanel{
 		displayArea.setWrapStyleWord(true);
 		displayArea.setText("[Chat] Hi there! To chat, just type your message in the white box below, select a recipient, and send it off!");
 		displayArea.setForeground(Color.black);
+		
+		displayScroll = new JScrollPane(displayArea);
 		
 		//set borders and line wrapping for chat box
 		chatArea = new JTextArea();
@@ -125,12 +130,15 @@ public class ChatPanel extends JPanel{
 		JPanel labelWrapper = new JPanel();
 		checkBoxes = new ArrayList<JCheckBox>();
 		checkBoxListener = new CheckBoxListener();
-		for (int i=0;i<4;i++){
+		for (int i=0;i<3;i++){
 			JCheckBox cb = new JCheckBox("User" + (i+1));
-			cb.setSelected(true);
+			cb.setSelected(false);
 			cb.addActionListener(checkBoxListener);
 			checkBoxes.add(cb);
 			checkBoxWrapper.add(cb);
+			if (i >= numRecipients){
+				cb.setVisible(false);
+			}
 		}
 		JLabel recipientLabel = new JLabel("Desired Recipients");
 		labelWrapper.add(recipientLabel);
@@ -138,31 +146,48 @@ public class ChatPanel extends JPanel{
 		recipientSelectionPanel.add(checkBoxWrapper);
 		
 		//add all components to jpanel
-		this.add(displayArea);
+		this.add(displayScroll);
 		this.add(recipientSelectionPanel);
 		this.add(chatScroll);
 		this.add(enterToSendPanel);
 		this.add(buttonPanel);
 	}
 	
+	public void updateUserCheckBoxes(String users){
+		String userArray[] = users.split(" ");
+		for (int i=0;i<userArray.length;i++){
+			if (userArray[i].equals(networkThread.username)){
+				continue;
+			}
+			checkBoxes.get(i).setText(userArray[i]);
+			checkBoxes.get(i).setVisible(true);
+		}
+	}
+	
 	public void addMessage(String s, String origin){
+		if (origin.equals(networkThread.username)) return;
 		s = "[" + origin + "] " + s;
 		displayArea.setText(displayArea.getText() + "\n" + s);
 	}
 	
 	public void send(){
 		String toBeSent = "";
+		boolean recipientsExist = false;
 		for (JCheckBox cb : checkBoxes){
 			if (cb.isSelected()){
+				recipientsExist = true;
 				toBeSent = cb.getText() + " " + toBeSent;
 			}
+		}
+		if (! recipientsExist){
+			return;
 		}
 		toBeSent = "[" + toBeSent;
 		toBeSent = toBeSent.trim();
 		toBeSent = toBeSent + "]";
 		String actualMessage = chatArea.getText();
 		toBeSent = toBeSent + actualMessage;
-		networkThread.send(new Message(toBeSent));
+		networkThread.send(toBeSent);
 		addMessage(actualMessage, "Me");
 		chatArea.setText("");
 	}
@@ -203,7 +228,9 @@ public class ChatPanel extends JPanel{
 			if (k.getKeyCode() == KeyEvent.VK_ENTER){
 				if ((! shiftIsDown) && enterIsValidSubmission){
 					k.consume();
-					send();
+					if (! chatArea.getText().equals("")){
+						send();
+					}
 				}
 				else if(enterIsValidSubmission){
 					chatArea.setText(chatArea.getText() + "\n");

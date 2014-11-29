@@ -84,14 +84,14 @@ public class ShipPlacementPanel extends JPanel implements MouseListener{
 			boolean valid = false;
 			mX = me.getX() - 135;
 			mY = me.getY() - 10;
-			System.out.println(mX + " " + mY);
+			//System.out.println(mX + " " + mY);
 			if(mX >= 0 && mY >= 0){
 				inBounds = true;
 //				System.out.println("In Bounds!");
 			}
 			mCol = mX/40;
 			mRow = mY/40;
-			System.out.println("Row: " + mRow + " Col: " + mCol);
+			//System.out.println("Row: " + mRow + " Col: " + mCol);
 			// place ship at that location (if valid)
 			// depends upon vertical
 			Ship myShip = null;
@@ -167,7 +167,7 @@ public class ShipPlacementPanel extends JPanel implements MouseListener{
 					if(valid){
 						boolean overlap = false;
 						if(fGUI.haveShips(shipType)){
-							System.out.println("Have ships of type: " + shipType);
+							//System.out.println("Have ships of type: " + shipType);
 							if(vertical){
 								Coordinate c = new Coordinate(mCol, mRow); //Are ship coordinates actual coordinates or grid spaces?
 								Coordinate x = new Coordinate(mCol, mRow+1);

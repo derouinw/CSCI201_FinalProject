@@ -142,7 +142,7 @@ public class ClientGUI extends JFrame {
 				} else if (sMsg.startsWith("users")) {
 					String users = sMsg.substring(6);
 					lobby.getUsernames(users);
-					chatPanel.users = users;
+					chatPanel.updateUserCheckboxes(users);
 				} else if (sMsg.equals("ready")) {
 					// only for host
 					lobby.StartButton.setEnabled(true);

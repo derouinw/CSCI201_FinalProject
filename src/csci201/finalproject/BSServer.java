@@ -105,9 +105,12 @@ public class BSServer {
 					// chat message
 					int bracket = sMsg.indexOf("]");
 					String users = sMsg.substring(1,bracket);
+					String[] usersArr = users.split(" ");
 					String message = sMsg.substring(bracket+1);
 					Message newMsg = new Message("chat " + message, src);
-					broadcast(newMsg);
+					for (int i = 0; i < usersArr.length; i++) {
+						playerThreads.get(ptNum(usersArr[i].trim())).send(newMsg);
+					}
 				} else if (gameState.equals("lobby")) {
 					// messages during lobby
 					if (sMsg.equals("ready lobby")) {

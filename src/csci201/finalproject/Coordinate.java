@@ -1,6 +1,8 @@
 package csci201.finalproject;
 
-public class Coordinate {
+import java.io.Serializable;
+
+public class Coordinate implements Serializable {
 	
 	private int row;
 	private int column;

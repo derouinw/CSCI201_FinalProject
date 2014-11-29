@@ -137,7 +137,6 @@ public class FleetGUI extends JPanel {
 		ContinueButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// for now advance to playing game state
-				FleetGUI.this.nt.send(new Message("ready"));
 				ContinueButton.setEnabled(false);
 				fleetCard.show(fleetPanel, "PLACEMENT PANEL");
 			}
@@ -314,7 +313,13 @@ public class FleetGUI extends JPanel {
 	class SubmitListener implements ActionListener{
 		
 		public void actionPerformed(ActionEvent e) {
+			// TODO: validate ship layout
+			// for now just send it
+			FleetGUI.this.nt.send(new Message("ready"));
 			
+			Board data = shipPlacementGridPanel.board;
+			Message boardData = new Message(data);
+			FleetGUI.this.nt.send(boardData);
 		}
 	}
 	

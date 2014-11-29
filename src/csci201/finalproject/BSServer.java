@@ -46,7 +46,7 @@ public class BSServer {
 			}
 
 			// this point is reached once all players have connected
-			st.playerThreads.get(0).send(new Message("ready"));
+			st.playerThreads.get(0).send("ready");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -91,7 +91,7 @@ public class BSServer {
 			for (int i = 0; i < playerThreads.size(); i++) {
 				msg += playerThreads.get(i).username + " ";
 			}
-			broadcast(new Message(msg));
+			broadcast(msg);
 		}
 
 		// Receive a message from a PlayerThread
@@ -101,10 +101,17 @@ public class BSServer {
 			switch (msg.type) {
 			case Message.TYPE_STRING:
 				String sMsg = ((String) msg.value).trim();
-				if (gameState.equals("lobby")) {
+				if (sMsg.startsWith("[")) {
+					// chat message
+					int bracket = sMsg.indexOf("]");
+					String users = sMsg.substring(1,bracket);
+					String message = sMsg.substring(bracket+1);
+					Message newMsg = new Message("chat " + message, src);
+					broadcast(newMsg);
+				} else if (gameState.equals("lobby")) {
 					// messages during lobby
 					if (sMsg.equals("ready lobby")) {
-						broadcast(new Message("ready lobby"));
+						broadcast("ready lobby");
 						gameState = "fleet selection";
 					}
 				} else if (gameState.equals("fleet selection")) {
@@ -147,17 +154,16 @@ public class BSServer {
 					// wait until all players are ready
 					if (fleetsFinished == playerThreads.size()) {
 						gameState = "playing";
-						broadcast(new Message("ready fleet"));
+						broadcast("ready fleet");
 
 						// start first turn of game
 						// start with host
 						for (int i = 0; i < playerThreads.size(); i++) {
 							if (i == curPlayer)
 								playerThreads.get(i)
-										.send(new Message("enable"));
+										.send("enable");
 							else
-								playerThreads.get(i).send(
-										new Message("disable"));
+								playerThreads.get(i).send("disable");
 						}
 					}
 				} else if (gameState.equals("playing")) {
@@ -168,6 +174,10 @@ public class BSServer {
 					break;
 				}
 			}
+		}
+		
+		private void broadcast(String msg) {
+			broadcast(new Message(msg, "Server"));
 		}
 
 		// sends out a message to all players
@@ -197,9 +207,9 @@ public class BSServer {
 		// To communicate with player
 		// BufferedReader receive;
 		ObjectInputStream receive;
-		//PrintWriter send;
+		// PrintWriter send;
 		ObjectOutputStream send;
-		
+
 		// To send messages received from player to server
 		ServerThread st;
 
@@ -222,6 +232,10 @@ public class BSServer {
 				e.printStackTrace();
 			}
 		}
+		
+		public void send(String msg) {
+			send(new Message(msg, "Server"));
+		}
 
 		// Send a message to the player (TLV protocol)
 		public void send(Message msg) {
@@ -239,7 +253,7 @@ public class BSServer {
 			try {
 				msg = (Message) receive.readObject();
 			} catch (EOFException eofe) {
-				//System.out.println("disconnect");
+				// System.out.println("disconnect");
 				// TODO: handle disconnect
 				return new Message();
 			} catch (SocketTimeoutException ste) {
@@ -250,6 +264,8 @@ public class BSServer {
 				e.printStackTrace();
 			}
 
+			if (msg.type == Message.TYPE_STRING)
+				System.out.println("received message at server: " + msg.value);
 			return msg;
 		}
 
@@ -275,14 +291,14 @@ public class BSServer {
 					if (input.startsWith("connect")) {
 						username = input.substring(input.trim().indexOf(" "))
 								.trim();
-						send(new Message("gotUser"));
-						send(new Message("ready splash"));
+						send("gotUser");
+						send("ready splash");
 
 						String broadcast = "users ";
 						for (int i = 0; i < st.playerThreads.size(); i++) {
 							broadcast += st.playerThreads.get(i).username + " ";
 						}
-						st.broadcast(new Message(broadcast));
+						st.broadcast(broadcast);
 						// otherwise everything is handled in the
 						// ServerThread
 					}

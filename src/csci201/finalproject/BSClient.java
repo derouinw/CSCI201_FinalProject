@@ -108,6 +108,10 @@ public class BSClient {
 
 			return true;
 		}
+		
+		public void send(String msg) {
+			send(new Message(msg, username));
+		}
 
 		// TLV protocol
 		public void send(Message msg) {
@@ -115,7 +119,6 @@ public class BSClient {
 				send.writeObject(msg);
 				send.flush();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -123,7 +126,7 @@ public class BSClient {
 		public void run() {
 
 			// inital state, waiting for handshake
-			send(new Message("connect " + username));
+			send("connect " + username);
 			while (!gotUser) {
 
 				// messsages should only be strings at this point
@@ -181,6 +184,7 @@ public class BSClient {
 				e.printStackTrace();
 			}
 
+			if (msg.type == Message.TYPE_STRING) System.out.println("received message at client: " + msg.value);
 			return msg;
 		}
 	}

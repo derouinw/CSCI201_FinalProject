@@ -40,6 +40,7 @@ public class ChatPanel extends JPanel{
 	private ArrayList<JCheckBox> checkBoxes;
 	
 	private BSClient.NetworkThread networkThread;
+	String users;
 	
 	//METHODS
 	//constructor
@@ -146,6 +147,7 @@ public class ChatPanel extends JPanel{
 	}
 	
 	public void addMessage(String s, String origin){
+		if (origin.equals(networkThread.username)) return;
 		s = "[" + origin + "] " + s;
 		displayArea.setText(displayArea.getText() + "\n" + s);
 	}
@@ -162,7 +164,7 @@ public class ChatPanel extends JPanel{
 		toBeSent = toBeSent + "]";
 		String actualMessage = chatArea.getText();
 		toBeSent = toBeSent + actualMessage;
-		networkThread.send(new Message(toBeSent));
+		networkThread.send(toBeSent);
 		addMessage(actualMessage, "Me");
 		chatArea.setText("");
 	}

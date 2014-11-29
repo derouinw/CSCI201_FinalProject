@@ -316,7 +316,7 @@ public class FleetGUI extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			// TODO: validate ship layout
 			// for now just send it
-			FleetGUI.this.nt.send(new Message("ready"));
+			FleetGUI.this.nt.send("ready");
 			
 			Board data = shipPlacementGridPanel.board;
 			Message boardData = new Message(data);

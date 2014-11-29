@@ -13,24 +13,28 @@ public class Message implements Serializable {
 	
 	int type;
 	int length;
+	String source;
 	Object value;
 	
 	public Message () {
 		type = -1;
 		length = -1;
+		source = null;
 		value = null;
 	}
 	
-	public Message(String msg) {
+	public Message(String msg, String username) {
 		type = TYPE_STRING;
 		length = msg.length();
 		value = msg;
+		source = username;
 	}
 	
-	public Message(ArrayList<Shot> msg) {
+	public Message(ArrayList<Shot> msg, String username) {
 		type = TYPE_SHOTS;
 		length = 0;
 		value = msg;
+		source = username;
 	}
 	
 	public Message(Board msg) {

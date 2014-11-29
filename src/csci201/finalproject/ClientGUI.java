@@ -15,7 +15,7 @@ public class ClientGUI extends JFrame {
 	CardLayout pages;
 	JPanel container;
 	ChatPanel chatPanel;
-	
+
 	// Gui pages for each game state
 	SplashGUI splash;
 	LobbyGUI lobby;
@@ -34,7 +34,7 @@ public class ClientGUI extends JFrame {
 	public ClientGUI(NetworkThread nt) {
 		// super constructor
 		super("Buccaneer Battles");
-		setSize(950,700);
+		setSize(950, 700);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// page switches between gamestates
@@ -45,10 +45,10 @@ public class ClientGUI extends JFrame {
 		splash = new SplashGUI(nt);
 		lobby = new LobbyGUI(nt);
 		fleet = new FleetGUI(nt);
-		game = new GameGUI(nt); 
+		game = new GameGUI(nt);
 		gameOver = new GameOverGUI();
 		chatPanel = new ChatPanel(nt);
-		
+
 		// add them to the CardLayout
 		container.add("splash", splash);
 		container.add("lobby", lobby);
@@ -57,7 +57,7 @@ public class ClientGUI extends JFrame {
 		container.add("game over", gameOver);
 		add(container, BorderLayout.CENTER);
 		add(chatPanel, BorderLayout.WEST);
-		
+
 		// NetworkThread
 		this.nt = nt;
 		nt.client = this;
@@ -91,26 +91,27 @@ public class ClientGUI extends JFrame {
 
 		} else if (page.equals("playing")) {
 			// get data from FleetGUI and ClientGUI
-			ArrayList<String> usernames = new ArrayList<String>(4); //fake data
+			ArrayList<String> usernames = new ArrayList<String>(4); // fake data
 			usernames.add("Eshed");
 			usernames.add("Bill");
 			usernames.add("Max");
 			usernames.add("Cara");
-			
-			ArrayList<Shot> shotsList = new ArrayList<Shot>(5); //fake data
-			shotsList.add(new Shot("Eshed", new Coordinate(0,0),"Cara"));
-			shotsList.add(new Shot("Bill", new Coordinate(1,1),"Eshed"));
-			shotsList.add(new Shot("Eshed", new Coordinate(0,1),"Cara"));
-			shotsList.add(new Shot("Max", new Coordinate(0,2),"Eshed"));
-			shotsList.add(new Shot("Eshed", new Coordinate(0,3),"Cara"));
-			shotsList.add(new Shot("Eshed", new Coordinate(1,2),"Max"));
-			shotsList.add(new Shot("Eshed", new Coordinate(5,5),"Max"));
-			shotsList.add(new Shot("Eshed", new Coordinate(9,9),"Max"));
-			
+
+			ArrayList<Shot> shotsList = new ArrayList<Shot>(5); // fake data
+			shotsList.add(new Shot("Eshed", new Coordinate(0, 0), "Cara"));
+			shotsList.add(new Shot("Bill", new Coordinate(1, 1), "Eshed"));
+			shotsList.add(new Shot("Eshed", new Coordinate(0, 1), "Cara"));
+			shotsList.add(new Shot("Max", new Coordinate(0, 2), "Eshed"));
+			shotsList.add(new Shot("Eshed", new Coordinate(0, 3), "Cara"));
+			shotsList.add(new Shot("Eshed", new Coordinate(1, 2), "Max"));
+			shotsList.add(new Shot("Eshed", new Coordinate(5, 5), "Max"));
+			shotsList.add(new Shot("Eshed", new Coordinate(9, 9), "Max"));
+
 			game.load(usernames, "Eshed", new Board());
 			game.addShotsList(shotsList);
-			
-			//game.load(nt.players, nt.username, null); //TODO add this data, not fake data
+
+			// game.load(nt.players, nt.username, null); //TODO add this data,
+			// not fake data
 		} else if (page.equals("game over")) {
 
 		}
@@ -127,7 +128,11 @@ public class ClientGUI extends JFrame {
 		case Message.TYPE_STRING:
 			String sMsg;
 			sMsg = ((String) msg.value).trim();
-			if (gameState.equals("splash")) {
+			if (sMsg.startsWith("chat")) {
+				int space = sMsg.indexOf(" ");
+				String message = sMsg.substring(space+1);
+				chatPanel.addMessage(message, msg.source);
+			} else if (gameState.equals("splash")) {
 				if (sMsg.equals("ready splash")) {
 					setPage("lobby");
 				}
@@ -137,6 +142,7 @@ public class ClientGUI extends JFrame {
 				} else if (sMsg.startsWith("users")) {
 					String users = sMsg.substring(6);
 					lobby.getUsernames(users);
+					chatPanel.users = users;
 				} else if (sMsg.equals("ready")) {
 					// only for host
 					lobby.StartButton.setEnabled(true);

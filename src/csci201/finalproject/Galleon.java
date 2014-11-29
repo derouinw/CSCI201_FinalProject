@@ -11,6 +11,11 @@ public class Galleon extends Ship {
 	}
 	
 	public Image getImage(){
-		return (new ImageIcon("Galleon.png")).getImage();
+		if(vertical){
+			return (new ImageIcon("Galleon.png")).getImage();
+		}
+		else{
+			return (new ImageIcon("galleonH.png")).getImage();
+		}
 	}
 }

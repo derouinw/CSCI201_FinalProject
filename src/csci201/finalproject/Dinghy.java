@@ -4,6 +4,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
+
 public class Dinghy extends Ship{
 	public Dinghy(){
 		super();
@@ -11,6 +12,12 @@ public class Dinghy extends Ship{
 	}
 	
 	public Image getImage(){
-		return (new ImageIcon("Dinghy.png")).getImage();
+		if(vertical){
+			return (new ImageIcon("Dinghy.png")).getImage();
+		}
+		else{
+			return (new ImageIcon("dinghyH.png")).getImage();
+		}
 	}
 }
+

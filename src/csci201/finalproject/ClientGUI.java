@@ -108,11 +108,9 @@ public class ClientGUI extends JFrame {
 			shotsList.add(new Shot("Eshed", new Coordinate(9, 9), "Max"));
 
 			Board board = fleet.shipPlacementGridPanel.board;
-			game.load(usernames, "Eshed", board);
+			game.load(usernames, nt.username, board);
 			game.addShotsList(shotsList);
-
-			// game.load(nt.players, nt.username, null); //TODO add this data,
-			// not fake data
+			
 		} else if (page.equals("game over")) {
 
 		}

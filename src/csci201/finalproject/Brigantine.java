@@ -4,6 +4,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
+
 public class Brigantine extends Ship {
 	public Brigantine() {
 		super();
@@ -11,6 +12,11 @@ public class Brigantine extends Ship {
 	}
 	
 	public Image getImage(){
-		return (new ImageIcon("Brigantine.png")).getImage();
+		if(vertical){
+			return (new ImageIcon("Brigantine.png")).getImage();
+		}
+		else{
+			return (new ImageIcon("brigantineH.png")).getImage();
+		}
 	}
 }

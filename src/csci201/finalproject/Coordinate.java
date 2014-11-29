@@ -10,8 +10,8 @@ public class Coordinate {
 	}
 	
 	public Coordinate(int x, int y) {
-		row = x;
-		column = y;
+		column = x;
+		row = y;
 	}
 	
 	public void setRow(int y){

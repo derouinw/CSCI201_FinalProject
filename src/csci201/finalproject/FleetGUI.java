@@ -137,7 +137,6 @@ public class FleetGUI extends JPanel {
 		ContinueButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// for now advance to playing game state
-				FleetGUI.this.nt.send(new Message("ready"));
 				ContinueButton.setEnabled(false);
 				fleetCard.show(fleetPanel, "PLACEMENT PANEL");
 			}

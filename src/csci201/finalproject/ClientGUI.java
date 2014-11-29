@@ -107,7 +107,8 @@ public class ClientGUI extends JFrame {
 			shotsList.add(new Shot("Eshed", new Coordinate(5, 5), "Max"));
 			shotsList.add(new Shot("Eshed", new Coordinate(9, 9), "Max"));
 
-			game.load(usernames, "Eshed", new Board());
+			Board board = fleet.shipPlacementGridPanel.board;
+			game.load(usernames, "Eshed", board);
 			game.addShotsList(shotsList);
 
 			// game.load(nt.players, nt.username, null); //TODO add this data,
@@ -142,7 +143,7 @@ public class ClientGUI extends JFrame {
 				} else if (sMsg.startsWith("users")) {
 					String users = sMsg.substring(6);
 					lobby.getUsernames(users);
-					chatPanel.updateUserCheckboxes(users);
+					//chatPanel.updateUserCheckboxes(users);
 				} else if (sMsg.equals("ready")) {
 					// only for host
 					lobby.StartButton.setEnabled(true);

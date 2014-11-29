@@ -321,6 +321,8 @@ public class FleetGUI extends JPanel {
 			Board data = shipPlacementGridPanel.board;
 			Message boardData = new Message(data);
 			FleetGUI.this.nt.send(boardData);
+			
+			submitButton.setEnabled(false);
 		}
 	}
 	

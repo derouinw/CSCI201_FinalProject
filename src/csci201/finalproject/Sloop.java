@@ -11,6 +11,11 @@ public class Sloop extends Ship {
 	}
 	
 	public Image getImage(){
-		return (new ImageIcon("Sloop.png")).getImage();
+		if(vertical){
+			return (new ImageIcon("Sloop.png")).getImage();
+		}
+		else{
+			return (new ImageIcon("sloopH.png")).getImage();
+		}
 	}
 }

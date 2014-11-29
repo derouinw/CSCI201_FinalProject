@@ -1,11 +1,12 @@
 package csci201.finalproject;
 
+import java.awt.Dimension;
+import java.io.Serializable;
+
 import javax.swing.Icon;
-import java.awt.*;
-import javax.swing.*;
 import javax.swing.JLabel;
 
-public class BoardSpace extends JLabel {
+public class BoardSpace extends JLabel implements Serializable {
 	private int row, col;
 
 	public BoardSpace(int row, int col) {

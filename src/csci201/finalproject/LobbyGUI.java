@@ -21,73 +21,78 @@ public class LobbyGUI extends JPanel {
 	JPanel WaitingButtonPanel;
 	JButton InstructionsButton;
 	JButton StartButton;
-	
+
 	BSClient.NetworkThread nt;
-	//TODO:
-	//dialog box for the instructions
-	//actionListener for the JButtons
 	ArrayList<String> usernames;
-	
-	public LobbyGUI(BSClient.NetworkThread nt){
+
+	public LobbyGUI(BSClient.NetworkThread nt) {
 		this.nt = nt;
-			
+	}
+
+	public void setup() {
 		WaitingLobby = new JPanel(new BorderLayout());
-		
+
 		usernames = new ArrayList<String>();
-		
+
 		BufferedImage LobbyImage;
 		try {
 			LobbyImage = ImageIO.read(new File("treasureBackground.jpg"));
 			JLabel LobbyImageLabel = new JLabel(new ImageIcon(LobbyImage));
-			WaitingLobby.add(LobbyImageLabel,BorderLayout.NORTH );
-		
+			WaitingLobby.add(LobbyImageLabel, BorderLayout.NORTH);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		WaitingLabel = new JLabel("Connected players: ");
 		updateLabel();
-		WaitingLobby.add(WaitingLabel,BorderLayout.CENTER);
-		
+		WaitingLobby.add(WaitingLabel, BorderLayout.CENTER);
+
 		WaitingButtonPanel = new JPanel();
 		InstructionsButton = new JButton("Instructions");
 		InstructionsButton.addActionListener(new InstructionsListener());
-		if (nt.isHost) {
-			StartButton = new JButton("Start");
-			StartButton.setEnabled(false);
-		}
-		
+		StartButton = new JButton("Start");
+		StartButton.setEnabled(false);
+		StartButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				nt.send("ready lobby");
+				System.out.println("ready lobby sent");
+			}
+		});
+		if (!nt.isHost) StartButton.setVisible(false);
+
 		WaitingButtonPanel.add(InstructionsButton);
 		WaitingButtonPanel.add(StartButton);
-		WaitingLobby.add(WaitingButtonPanel,BorderLayout.SOUTH);
-		
-		
-		add(WaitingLobby,BorderLayout.CENTER);
-		
-		
+		WaitingLobby.add(WaitingButtonPanel, BorderLayout.SOUTH);
+
+		add(WaitingLobby, BorderLayout.CENTER);
 	}
-	//function that takes a string split by spaces
-	public void getUsernames(String s){
+
+	// function that takes a string split by spaces
+	public void getUsernames(String s) {
 		String[] users = s.split(" ");
-		for(int i = 0; i<users.length; i++){
+		usernames.clear();
+		for (int i = 0; i < users.length; i++) {
 			usernames.add(users[i]);
-			
 		}
+		updateLabel();
 	}
-	void updateLabel(){
-		for(int i = 0; i<usernames.size(); i++){
-			String text;
-			text = WaitingLabel.getText()+ "<br />" + usernames.get(i);
-			WaitingLabel.setText(text);
-			
+
+	void updateLabel() {
+		String text = "Connected players: ";
+		for (int i = 0; i < usernames.size(); i++) {
+			text += usernames.get(i) + ((i == usernames.size()-1) ? "" : ", ");
 		}
+		WaitingLabel.setText(text);
 	}
-	class InstructionsListener implements ActionListener{
+
+	class InstructionsListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			JOptionPane.showMessageDialog(null,
-				    "Kind of like BattleShip, but with more players, and way more awesome.",
-				    "Game Instructions",
-				    JOptionPane.PLAIN_MESSAGE);
+			JOptionPane
+					.showMessageDialog(
+							null,
+							"Kind of like BattleShip, but with more players, and way more awesome.",
+							"Game Instructions", JOptionPane.PLAIN_MESSAGE);
 		}
 	}
 }

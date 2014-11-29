@@ -3,23 +3,27 @@ package csci201.finalproject;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 // This class handles a drag-and-drop/clicking ship placement functionality, 
 // embedded within the fleet selection screen
-public class ShipPlacementPanel extends JPanel {
-	final static int GRID_SIZE = 50, ROWS = 10, COLS = 10;
+public class ShipPlacementPanel extends JPanel implements MouseListener{
+	final static int GRID_SIZE = 40, ROWS = 10, COLS = 10;
 	final static String[] labels = { "", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
 	
 	// actual board and ship data
 	Board board;
 	ArrayList<Ship> ships;
+	private FleetGUI fGUI;
+	private HashMap<Coordinate, Ship> sanityMap;
 
 	// selected in gui component,
 	// passed in from FleetGUI
@@ -41,14 +45,16 @@ public class ShipPlacementPanel extends JPanel {
 	boolean vertical;
 
 	// constructor
-	public ShipPlacementPanel() {
+	public ShipPlacementPanel(FleetGUI fg) {
 		// super constructor
 		super();
 
 		// initialize data structures
 		board = new Board();
+		fGUI = fg;
 		ships = new ArrayList<Ship>();
 		shipType = -1;
+		sanityMap = new HashMap<Coordinate, Ship>();
 
 		// initial boolean values
 		enabled = true;
@@ -59,6 +65,7 @@ public class ShipPlacementPanel extends JPanel {
 	// created to select ship type
 	public void chooseShip(int ship) {
 		shipType = ship;
+//		System.out.println(shipType);
 	}
 
 	// toggled when user readies/unreadies
@@ -75,19 +82,22 @@ public class ShipPlacementPanel extends JPanel {
 			int mX, mY, mRow, mCol;
 			boolean inBounds = false;
 			boolean valid = false;
-			mX = me.getX() - 10;
+			mX = me.getX() - 135;
 			mY = me.getY() - 10;
+			//System.out.println(mX + " " + mY);
 			if(mX >= 0 && mY >= 0){
 				inBounds = true;
+//				System.out.println("In Bounds!");
 			}
-			mCol = mX/50;
-			mRow = mY/50;
+			mCol = mX/40;
+			mRow = mY/40;
+			//System.out.println("Row: " + mRow + " Col: " + mCol);
 			// place ship at that location (if valid)
 			// depends upon vertical
 			Ship myShip = null;
 			
 			if(shipType == 0){
-				myShip = myShip.new Dinghy();
+				myShip = new Dinghy();
 				if(vertical){
 					if(mRow <= 8){
 						valid = true;
@@ -100,7 +110,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 			}
 			else if(shipType == 1){
-				myShip = myShip.new Sloop();
+				myShip = new Sloop();
 				if(vertical){
 					if(mRow <= 7){
 						valid = true;
@@ -113,7 +123,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 			}
 			else if(shipType == 2){
-				myShip = myShip.new Frigate();
+				myShip = new Frigate();
 				if(vertical){
 					if(mRow <= 7){
 						valid = true;
@@ -126,7 +136,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 			}
 			else if(shipType == 3){
-				myShip = myShip.new Brigantine();
+				myShip = new Brigantine();
 				if(vertical){
 					if(mRow <= 6){
 						valid = true;
@@ -139,7 +149,7 @@ public class ShipPlacementPanel extends JPanel {
 				}
 			}
 			else if(shipType == 4){
-				myShip = myShip.new Galleon();
+				myShip = new Galleon();
 				if(vertical){
 					if(mRow <= 5){
 						valid = true;
@@ -155,47 +165,92 @@ public class ShipPlacementPanel extends JPanel {
 			if(inBounds){
 				if(mCol < 10 && mRow < 10){
 					if(valid){
-						if(vertical){
-							Coordinate c = new Coordinate(mCol, mRow); //Are ship coordinates actual coordinates or grid spaces?
-							myShip.coord = c;
-							myShip.vertical = true;
-							board.addShip(c, myShip);
-							Coordinate x = new Coordinate(mCol, mRow+1);
-							board.addShip(x, myShip);
-							if(shipType > 0){
+						boolean overlap = false;
+						if(fGUI.haveShips(shipType)){
+							//System.out.println("Have ships of type: " + shipType);
+							if(vertical){
+								Coordinate c = new Coordinate(mCol, mRow); //Are ship coordinates actual coordinates or grid spaces?
+								Coordinate x = new Coordinate(mCol, mRow+1);
 								Coordinate q = new Coordinate(mCol, mRow+2);
-								board.addShip(q, myShip);
-							}
-							if(shipType > 2){
 								Coordinate y = new Coordinate(mCol, mRow+3);
-								board.addShip(y, myShip);
-							}
-							if(shipType > 3){
 								Coordinate w = new Coordinate(mCol, mRow+4);
-								board.addShip(w, myShip);
+								
+								if(sanityMap.containsKey(c) || sanityMap.containsKey(x)){
+									overlap = true;
+								}
+								if(shipType > 0 && sanityMap.containsKey(q)){
+									overlap = true;
+								}
+								if(shipType > 3 && sanityMap.containsKey(w)){
+									overlap = true;
+								}
+								if(!overlap){
+									fGUI.decrementShips(shipType);
+									myShip.coord = c;
+									myShip.vertical = true;
+									ships.add(myShip);
+									board.addShip(c, myShip, true);
+									sanityMap.put(c, myShip);
+									board.addShip(x, myShip, false);
+									sanityMap.put(x, myShip);
+									if(shipType > 0){
+										board.addShip(q, myShip, false);
+										sanityMap.put(q, myShip);
+									}
+									if(shipType > 2){
+										board.addShip(y, myShip, false);
+										sanityMap.put(y, myShip);
+									}
+									if(shipType > 3){
+										board.addShip(w, myShip, false);
+										sanityMap.put(w, myShip);
+									}
+									repaint();
+									revalidate();
+								}
+								
 							}
-							repaint();
-						}
-						else{
-							Coordinate c = new Coordinate(mCol, mRow);
-							myShip.coord = c;
-							myShip.vertical = false;
-							board.addShip(c, myShip);
-							Coordinate x = new Coordinate(mCol+1, mRow);
-							board.addShip(x, myShip);
-							if(shipType > 0){
+							else{
+								Coordinate c = new Coordinate(mCol, mRow); 
+								Coordinate x = new Coordinate(mCol+1, mRow);
 								Coordinate q = new Coordinate(mCol+2, mRow);
-								board.addShip(q, myShip);
-							}
-							if(shipType > 2){
 								Coordinate y = new Coordinate(mCol+3, mRow);
-								board.addShip(y, myShip);
-							}
-							if(shipType > 3){
 								Coordinate w = new Coordinate(mCol+4, mRow);
-								board.addShip(w, myShip);
+								
+								if(sanityMap.containsKey(c) || sanityMap.containsKey(x)){
+									overlap = true;
+								}
+								if(shipType > 0 && sanityMap.containsKey(q)){
+									overlap = true;
+								}
+								if(shipType > 3 && sanityMap.containsKey(w)){
+									overlap = true;
+								}
+								if(!overlap){
+									fGUI.decrementShips(shipType);
+									myShip.coord = c;
+									myShip.vertical = false;
+									ships.add(myShip);
+									board.addShip(c, myShip, true);
+									sanityMap.put(c, myShip);
+									board.addShip(x, myShip, false);
+									sanityMap.put(x, myShip);
+									if(shipType > 0){
+										board.addShip(q, myShip, false);
+										sanityMap.put(q, myShip);
+									}
+									if(shipType > 2){
+										board.addShip(y, myShip, false);
+										sanityMap.put(y, myShip);
+									}
+									if(shipType > 3){
+										board.addShip(w, myShip, false);
+										sanityMap.put(w, myShip);
+									}
+									repaint();
+									revalidate();
+								}
 							}
-							repaint();
 						}
 					}
 				}
@@ -206,63 +261,20 @@ public class ShipPlacementPanel extends JPanel {
 	// drawing function, called from FleetGUI
 	public void paintComponent(Graphics g) {
 		// draw the background
+		super.paintComponent(g);
 
 		// draw the labels
 		g.setColor(Color.BLACK);
 		for (int i = 1; i <= ROWS; i++) {
-			g.drawString(""+i, 30 + i*GRID_SIZE, 10);
-			g.drawString(labels[i], 10, 10 + i*GRID_SIZE);
+			g.drawString(""+i, i*GRID_SIZE - 10, 10);
+			g.drawString(labels[i], 0, i*GRID_SIZE);
 		}
 
 		// draw the ships
 		for(int i = 0; i < ships.size(); i++){
 			int x = ships.get(i).coord.getColumn();
 			int y = ships.get(i).coord.getRow();
-			if(ships.get(i) instanceof Ship.Dinghy){
-				BufferedImage dinghyImage = null;
-				try {
-					dinghyImage = ImageIO.read(new File("dinghy.png"));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				g.drawImage(dinghyImage, x*50, y*50, null);
-			}
-			if(ships.get(i) instanceof Ship.Sloop){
-				BufferedImage sloopImage = null;
-				try {
-					sloopImage = ImageIO.read(new File("sloop.png"));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				g.drawImage(sloopImage, x*50, y*50, null);
-			}
-			if(ships.get(i) instanceof Ship.Frigate){
-				BufferedImage frigateImage = null;
-				try {
-					frigateImage = ImageIO.read(new File("frigate.png"));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				g.drawImage(frigateImage, x*50, y*50, null);
-			}
-			if(ships.get(i) instanceof Ship.Brigantine){
-				BufferedImage brigImage = null;
-				try {
-					brigImage = ImageIO.read(new File("brigantine.png"));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				g.drawImage(brigImage, x*50, y*50, null);
-			}
-			if(ships.get(i) instanceof Ship.Galleon){
-				BufferedImage galleonImage = null;
-				try {
-					galleonImage = ImageIO.read(new File("galleon.png"));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				g.drawImage(galleonImage, x*50, y*50, null);
-			}
+			g.drawImage(ships.get(i).getImage(), x*40 + 10, y*40 + 10, null);
 		}
 		// draw the grid
 		g.setColor(Color.BLACK);
@@ -271,6 +283,30 @@ public class ShipPlacementPanel extends JPanel {
 				g.drawRect(x, y, GRID_SIZE, GRID_SIZE);
 			}
 		}
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
 		
 	}
 }

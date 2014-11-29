@@ -1,19 +1,22 @@
 package csci201.finalproject;
 
-public class Shot {
+import java.io.Serializable;
+
+public class Shot implements Serializable {
 	
-	private String targetPlayer;
+	private String targetPlayer, originPlayer;
 	private Coordinate shotDestination;
-	private Boolean hitFlag;
+	private boolean hitFlag;
 	
 
 	public Shot() {
-		// TODO Auto-generated constructor stub
+		hitFlag = false;
 	}
 	
-	public Shot(String targetPlayer, Coordinate shotDestination){
+	public Shot(String targetPlayer, Coordinate shotDestination, String origin){
 		
 		this.targetPlayer = targetPlayer;
+		this.originPlayer = origin;
 		this.shotDestination = shotDestination;
 		hitFlag = false;
 		
@@ -23,6 +26,10 @@ public class Shot {
 		return targetPlayer;
 	}
 	
+	public String getOriginPlayer(){
+		return originPlayer;
+	}
+	
 	public Coordinate getShotDestination(){
 		return shotDestination;
 	}
@@ -30,5 +37,8 @@ public class Shot {
 	public void shotHitShip(){
 		hitFlag = true;
 	}
-
+	
+	public boolean wasAHit(){
+		return hitFlag;
+	}
 }

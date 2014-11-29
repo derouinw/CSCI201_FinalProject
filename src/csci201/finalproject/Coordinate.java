@@ -1,17 +1,19 @@
 package csci201.finalproject;
 
-public class Coordinate {
+import java.io.Serializable;
+
+public class Coordinate implements Serializable {
 	
 	private int row;
 	private int column;
 
 	public Coordinate() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	public Coordinate(int x, int y) {
-		row = x;
-		column = y;
+		column = x;
+		row = y;
 	}
 	
 	public void setRow(int y){
@@ -30,13 +32,19 @@ public class Coordinate {
 		return column;
 	}
 	
-	public boolean equals(Coordinate other){
-		
+	//Overriding hash map lookup to allow map to find same coordinate pairs even if coordinate objects in different memory locs.
+	
+	public boolean equals(Object o){
+		Coordinate other = (Coordinate) o;
 		if((other.getRow()==this.row)&&(other.getColumn()==this.column)){
 			return true;
 		}
 		
 		return false;
+	}
+	
+	public int hashCode(){
+		return (int)((long)((Math.pow(row+17, 3))-(Math.pow(column+42, 2))));
 	}
 
 }

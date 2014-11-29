@@ -1,10 +1,22 @@
 package csci201.finalproject;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -43,8 +55,8 @@ public class ChatPanel extends JPanel{
 		recipientsExist = true;
 		
 		displayArea = new JTextArea();
-		displayArea.setPreferredSize(new Dimension(300,325));
-		displayArea.setMinimumSize(new Dimension(300,325));
+		displayArea.setPreferredSize(new Dimension(200,300));
+		displayArea.setMinimumSize(new Dimension(200,300));
 		displayArea.setEditable(false);
 		
 		//add borders to display area
@@ -150,7 +162,7 @@ public class ChatPanel extends JPanel{
 		toBeSent = toBeSent + "]";
 		String actualMessage = chatArea.getText();
 		toBeSent = toBeSent + actualMessage;
-		networkThread.send(toBeSent);
+		networkThread.send(new Message(toBeSent));
 		addMessage(actualMessage, "Me");
 		chatArea.setText("");
 	}

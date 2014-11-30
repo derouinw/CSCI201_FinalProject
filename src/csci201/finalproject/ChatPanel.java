@@ -162,6 +162,7 @@ public class ChatPanel extends JPanel{
 				continue;
 			}
 			checkBoxes.get(i).setText(userArray[i]);
+			checkBoxes.get(i).setSelected(true);
 			checkBoxes.get(i).setVisible(true);
 		}
 	}

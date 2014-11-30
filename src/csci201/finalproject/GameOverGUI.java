@@ -2,6 +2,7 @@ package csci201.finalproject;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +11,9 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -43,7 +47,7 @@ public class GameOverGUI extends JPanel {
 		GameStats.setLayout(new BorderLayout());
 		GameOver.add("first", GameStats);
 		GameCredits = new JPanel();
-		//GameCredits.setLayout(new B);
+		GameCredits.setLayout(new BoxLayout(GameCredits,BoxLayout.Y_AXIS));
 		GameOver.add("credits", GameCredits);
 		
 		dtm = new DefaultTableModel();
@@ -78,17 +82,32 @@ public class GameOverGUI extends JPanel {
 			e.printStackTrace();
 		}
 		//add names to credits
+		JPanel NamesPanel = new JPanel();
+		NamesPanel.setLayout(new BoxLayout(NamesPanel,BoxLayout.Y_AXIS));
 		JLabel BillLabel = new JLabel("Bill Derouin");
 		JLabel CaraLabel = new JLabel("Cara Kirshon");
 		JLabel EshedLabel = new JLabel("Eshed Margalit");
 		JLabel HaigLabel = new JLabel("Haig Nalbandian");
 		JLabel MaxLabel = new JLabel("Max Weiner");
 		
-//		GameCredits.add(BillLabel);
-//		GameCredits.add(CaraLabel);
-//		GameCredits.add(EshedLabel);
-//		GameCredits.add(HaigLabel);
-//		GameCredits.add(MaxLabel);
+		NamesPanel.add(BillLabel);
+		NamesPanel.add(CaraLabel);
+		NamesPanel.add(EshedLabel);
+		NamesPanel.add(HaigLabel);
+		NamesPanel.add(MaxLabel);
+		NamesPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+		
+		
+		Box box = Box.createHorizontalBox();
+	    
+	    box.add(Box.createGlue());
+	    box.add(NamesPanel);
+	    box.add(Box.createGlue());
+		
+	    GameCredits.add(box);
+		
+		
+		
 		
 	}
 	void fillTable(String userName,String rank, String shotsHit,String shotsTaken, String turnsPlayed){

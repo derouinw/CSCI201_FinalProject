@@ -10,6 +10,7 @@ public class Frigate extends Ship implements Serializable{
 	public Frigate() {
 		super();
 		healthPoints = 3;
+		startingHealthPoints = 3;
 	}
 	
 	public Image getImage(){

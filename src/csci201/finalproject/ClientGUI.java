@@ -100,7 +100,9 @@ public class ClientGUI extends JFrame {
 			game.load(users, nt.username, board);
 
 		} else if (page.equals("game over")) {
-
+			String playerData = game.getPlayerData();
+			//gameOver.fillTable(playerData);
+			nt.send(playerData);
 		}
 	}
 
@@ -160,7 +162,12 @@ public class ClientGUI extends JFrame {
 					setPage("game over");
 				}
 			} else if (gameState.equals("game over")) {
-
+				if (sMsg.startsWith("data")) {
+					String data = sMsg.substring(5).trim();
+					if (!msg.source.equals(nt.username)) {
+						//gameOver.fillTable(data);
+					}
+				}
 			} else {
 
 			}

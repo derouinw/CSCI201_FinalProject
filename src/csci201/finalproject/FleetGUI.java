@@ -271,6 +271,7 @@ public class FleetGUI extends JPanel {
 			frigateLabel.setText("Frigate: x" + frigateQuantity);
 			brigantineLabel.setText("Brigantine: x" + brigQuantity);
 			galleonLabel.setText("Galleon: x" + galleonQuantity);
+			totalNum = dinghyQuantity + sloopQuantity + frigateQuantity + brigQuantity + galleonQuantity;
 			revalidate();
 		}
 		
@@ -331,7 +332,6 @@ public class FleetGUI extends JPanel {
 	}
 	
 	public boolean decrementShips(int shipType){
-		totalNum = dinghyQuantity + sloopQuantity + frigateQuantity + brigQuantity + galleonQuantity;
 		if(shipType == 0){
 			if(dinghyQuantity > 0){
 				dinghyQuantity = dinghyQuantity-1;

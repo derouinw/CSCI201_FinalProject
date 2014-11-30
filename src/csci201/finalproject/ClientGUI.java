@@ -68,7 +68,7 @@ public class ClientGUI extends JFrame {
 
 		// finally...
 		gameState = "splash";
-		setPage("fleet selection");
+		setPage("splash");
 		setResizable(false);
 		setVisible(true);
 	}

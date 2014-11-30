@@ -103,7 +103,7 @@ public class GameGUI extends JPanel{
 		
 		isMyTurn = false;
 		
-		maxShotsAllowed = 5;
+		maxShotsAllowed = myBoardPanel.getHealthOfLargestShip();
 		turnsTaken = 0;
 		shotsFired = 0;
 		shotsHit = 0;
@@ -234,10 +234,6 @@ public class GameGUI extends JPanel{
 		currentPlayingUser = curUser;
 		nextPlayer = curUser;
 		whosTurnArea.setText(currentPlayingUser + " is now firing.");
-		
-		//add statistics
-		turnsTaken++;
-		turnsTakenStatLabel.setText("Turns Taken: " + turnsTaken);
 	}
 	
 	public void userHasLost(String username){
@@ -487,6 +483,9 @@ public class GameGUI extends JPanel{
 			// fire shots
 			// TODO: bring stuff from endTurn
 			fireButton.setEnabled(false);
+			//add statistics
+			turnsTaken++;
+			turnsTakenStatLabel.setText("Turns Taken: " + turnsTaken);
 			nt.send(new Message(shots));
 		}
 	}
@@ -499,6 +498,5 @@ public class GameGUI extends JPanel{
 	public void updateNumShipsRemaining(String user, int num) {
 		enemyPanels.get(user).updateNumShipsRemaining(num);
 		maxShotsAllowed = myBoardPanel.getHealthOfLargestShip();
-		System.out.println("Max shots allowed is now: " + maxShotsAllowed);
 	}
 }

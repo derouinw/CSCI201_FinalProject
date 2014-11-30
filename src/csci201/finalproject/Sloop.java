@@ -18,4 +18,12 @@ public class Sloop extends Ship implements Serializable {
 			return (new ImageIcon("sloopH.png")).getImage();
 		}
 	}
+	
+	public Image getSmallImage(){
+		if (vertical) {
+			return (new ImageIcon("Sloopsmall.png")).getImage();
+		} else {
+			return (new ImageIcon("sloopHsmall.png")).getImage();
+		}
+	}
 }

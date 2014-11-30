@@ -16,6 +16,11 @@ public class Coordinate implements Serializable {
 		row = y;
 	}
 	
+	public Coordinate(Coordinate c) {
+		row = c.row;
+		column = c.column;
+	}
+
 	public void setRow(int y){
 		row = y;
 	}

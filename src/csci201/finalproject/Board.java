@@ -42,11 +42,11 @@ public class Board extends JPanel implements Serializable {
 		
 		ships.add(new ArrayList<Coordinate>());
 		for (int i = 0; i < ship.healthPoints; i++) {
-			Coordinate newC = c;
+			Coordinate newC = new Coordinate(c);
 			if (ship.vertical) {
-				c.setRow(c.getRow() + i);
+				newC.setRow(c.getRow() + i);
 			} else {
-				c.setColumn(c.getColumn() + i);
+				newC.setColumn(c.getColumn() + i);
 			}
 			ships.get(ships.size() - 1).add(newC);
 			shipsToSpaces.put(newC, ship);
@@ -68,7 +68,8 @@ public class Board extends JPanel implements Serializable {
 				s.shotHitShip();
 				shipsToSpaces.remove(entry.getValue());
 
-				for (ArrayList<Coordinate> alc : ships) {
+				for (int i = 0; i < ships.size(); i++) {
+					ArrayList<Coordinate> alc = ships.get(i);
 					if (alc.contains(entry.getKey()))
 						alc.remove(entry.getKey());
 					if (alc.isEmpty())

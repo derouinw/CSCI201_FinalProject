@@ -29,14 +29,15 @@ public class GameGUI extends JPanel{
 	private TimerPanel timerPanel;
 	private Board myBoardPanel;
 	private JButton fireButton;
-	private JLabel shotsFiredStatLabel, turnsTakenStatLabel, shipsSunkStatLabel, maxShotsAllowedStatLabel;
+	private JLabel shotsFiredStatLabel, turnsTakenStatLabel, averageTurnTimeStatLabel, maxShotsAllowedStatLabel;
 	private JTextArea whosTurnArea;
 	private BoardSpaceListener bsl;
 	private ButtonListener buttonListener;
 	private HashMap<String, ArrayList <Coordinate> > selectedCoordinates;
 	private HashMap<String, EnemyPanel> enemyPanels;
 	private HashMap<Coordinate, Ship> myShips;
-	private int maxShotsAllowed, turnsTaken, shotsFired, shotsHit, shipsSunk;
+	private int maxShotsAllowed, turnsTaken, shotsFired, shotsHit;
+	private double averageTimePerTurn, totalTimeTaken;
 	private boolean isMyTurn;
 	private String currentPlayingUser, nextPlayer, myUsername;
 	private ArrayList<String> allUsernames;
@@ -107,13 +108,14 @@ public class GameGUI extends JPanel{
 		turnsTaken = 0;
 		shotsFired = 0;
 		shotsHit = 0;
-		shipsSunk = 0;
+		averageTimePerTurn= 0;
+		totalTimeTaken = 0;
 		
 		whosTurnArea.setText(currentPlayingUser + " is now firing.");
 		maxShotsAllowedStatLabel = new JLabel("Shots per turn: " + maxShotsAllowed);
 		shotsFiredStatLabel = new JLabel("Shots Hit/Fired: " + shotsHit + "/" + shotsFired);
 		turnsTakenStatLabel = new JLabel("Turns Taken: " + turnsTaken);
-		shipsSunkStatLabel = new JLabel("Ships Sunk: " + shipsSunk);
+		averageTurnTimeStatLabel = new JLabel("Sec per turn: " + averageTimePerTurn);
 		fireButton = new JButton("FIRE!");
 		fireButton.addActionListener(buttonListener);
 		
@@ -174,8 +176,7 @@ public class GameGUI extends JPanel{
 	private void createFirePanel(){
 		firePanel.setLayout(new BoxLayout(firePanel, BoxLayout.Y_AXIS));
 		
-		fireButton.setEnabled(false); //TODO: start disabled until at least one shot is selected
-										// currently it just waits until you choose all shots
+		fireButton.setEnabled(false); //disable until all shots have been selected
 		fireButtonPanel.add(fireButton);
 		firePanel.add(timerPanel);
 		firePanel.add(fireButtonPanel);
@@ -199,13 +200,15 @@ public class GameGUI extends JPanel{
 		statWrapper.add(Box.createRigidArea(new Dimension(0,50)));
 		statWrapper.add(shotsFiredStatLabel);
 		statWrapper.add(turnsTakenStatLabel);
-		statWrapper.add(shipsSunkStatLabel);
+		statWrapper.add(averageTurnTimeStatLabel);
 		statPanel.add(statWrapper);
 	}
 	
 	public void startTurn(){
 		isMyTurn = true;
 		timerPanel.startTimer();
+		maxShotsAllowed = myBoardPanel.getHealthOfLargestShip();
+		maxShotsAllowedStatLabel.setText("Shots per turn: " + maxShotsAllowed);
 		whosTurnArea.setForeground(Color.red);
 		whosTurnArea.setText("IT'S Y'ARR TURN, TIMER RUNNING!");
 	}
@@ -327,6 +330,10 @@ public class GameGUI extends JPanel{
 		public void reset(){
 			running = false;
 			this.repaint();
+		}
+		
+		public int getTimeRemaining(){
+			return timeRemaining;
 		}
 		
 		public void paintComponent(Graphics g){
@@ -464,6 +471,9 @@ public class GameGUI extends JPanel{
 			if (getNumSelectedCoordinates() == maxShotsAllowed){
 				fireButton.setEnabled(true);
 			}
+			else{
+				fireButton.setEnabled(false);
+			}
 		}
 		
 		public void mouseEntered(MouseEvent arg0) {	}
@@ -489,9 +499,22 @@ public class GameGUI extends JPanel{
 			// fire shots
 			// TODO: bring stuff from endTurn
 			fireButton.setEnabled(false);
+			
+			
 			//add statistics
 			turnsTaken++;
 			turnsTakenStatLabel.setText("Turns Taken: " + turnsTaken);
+			
+			int timeRemaining = timerPanel.getTimeRemaining();
+			int timeTaken = 65 - timeRemaining;
+			totalTimeTaken += timeTaken;
+			averageTimePerTurn = totalTimeTaken/turnsTaken;
+			averageTimePerTurn = Math.floor(averageTimePerTurn * 100) / 100;
+			averageTurnTimeStatLabel.setText("Sec per turn: " + averageTimePerTurn);
+			
+			shotsFired += shots.size();
+			shotsFiredStatLabel.setText("Shots Hit/Fired: " + shotsHit + "/" + shotsFired);
+			
 			nt.send(new Message(shots));
 		}
 	}
@@ -503,7 +526,6 @@ public class GameGUI extends JPanel{
 	
 	public void updateNumShipsRemaining(String user, int num) {
 		enemyPanels.get(user).updateNumShipsRemaining(num);
-		maxShotsAllowed = myBoardPanel.getHealthOfLargestShip();
 	}
 
 	public String shipSunk() {

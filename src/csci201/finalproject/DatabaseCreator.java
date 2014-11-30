@@ -48,31 +48,6 @@ public class DatabaseCreator {
 			System.out.println("Class not found exception");
 			ce.printStackTrace();
 		}
-		
-		//String sql = "CREATE DATABASE "+DB_NAME;
-		
-		//stm.executeUpdate(sql);
-//		}catch(SQLException se){
-//		      //Handle errors for JDBC
-//		      se.printStackTrace();
-//		   }catch(Exception e){
-//		      //Handle errors for Class.forName
-//		      e.printStackTrace();
-//		   }finally{
-//		      //finally block used to close resources
-//		      try{
-//		         if(stmt!=null)
-//		            stmt.close();
-//		      }catch(SQLException se2){
-//		      }// nothing we can do
-//		      try{
-//		         if(conn!=null)
-//		            conn.close();
-//		      }catch(SQLException se){
-//		         se.printStackTrace();
-//		      }//end finally try
-//		   }//end try
-//		   System.out.println("Goodbye!");
 
 		
 	}
@@ -106,7 +81,7 @@ public class DatabaseCreator {
 			try {
 				 stm = (Statement) conn.createStatement();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+				 
 				e.printStackTrace();
 			}
 			
@@ -114,7 +89,7 @@ public class DatabaseCreator {
 			try {
 				rs = stm.executeQuery(sql);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+				 
 				e.printStackTrace();
 			}
 			
@@ -129,20 +104,276 @@ public class DatabaseCreator {
 				
 					}
 				}catch (SQLException e) {
-					// TODO Auto-generated catch block
+					 
 					e.printStackTrace();
 				}
 			
 			return name;
 		}
 		
-//		public static void main(String[] args){
-//			DatabaseCreator dbTest = new DatabaseCreator();
-//			dbTest.addFullRow("thenightman", 1, 5, 5, 5, 5, 5, 5, 5);
-//			dbTest.addFullRow("mrjones", 2, 5, 5, 5, 5, 5, 5, 5);
-//			System.out.println(dbTest.getNameByRank(1));
-//			System.out.println(dbTest.getNameByRank(1));
-//			System.out.println(dbTest.getNameByRank(2));
-//			System.out.println(dbTest.getNameByRank(1));
-//		}
+		public int getTurnsTakenByRank(int rank){
+			
+			String sql = "SELECT FinalRank, TurnsTaken FROM  PlayerInformation";
+			Statement stm = null;
+			
+			try {
+				 stm = (Statement) conn.createStatement();
+			} catch (SQLException e) {
+				 
+				e.printStackTrace();
+			}
+			
+			ResultSet rs = null;
+			try {
+				rs = stm.executeQuery(sql);
+			} catch (SQLException e) {
+				 
+				e.printStackTrace();
+			}
+			
+			int turnsTaken = 0;
+			try {
+					while(rs.next())
+					{
+						int ranking = rs.getInt("FinalRank");
+						if(ranking == rank){
+							turnsTaken = rs.getInt("TurnsTaken");
+						}
+				
+					}
+				}catch (SQLException e) {
+					 
+					e.printStackTrace();
+				}
+			
+			return turnsTaken;
+			
+		}
+		
+		public int getChatsSentByRank(int rank){
+			
+			String sql = "SELECT FinalRank, ChatMessagesSent FROM  PlayerInformation";
+			Statement stm = null;
+			
+			try {
+				 stm = (Statement) conn.createStatement();
+			} catch (SQLException e) {
+				 
+				e.printStackTrace();
+			}
+			
+			ResultSet rs = null;
+			try {
+				rs = stm.executeQuery(sql);
+			} catch (SQLException e) {
+				 
+				e.printStackTrace();
+			}
+			
+			int chatsSent = 0;
+			try {
+					while(rs.next())
+					{
+						int ranking = rs.getInt("FinalRank");
+						if(ranking == rank){
+							chatsSent = rs.getInt("ChatMessagesSent");
+						}
+				
+					}
+				}catch (SQLException e) {
+					 
+					e.printStackTrace();
+				}
+			
+			return chatsSent;
+		}
+		
+		public int getNumShipsDeployed(int rank){
+			String sql = "SELECT FinalRank, NumShipsDeployed FROM  PlayerInformation";
+			Statement stm = null;
+			
+			try {
+				 stm = (Statement) conn.createStatement();
+			} catch (SQLException e) {
+				 
+				e.printStackTrace();
+			}
+			
+			ResultSet rs = null;
+			try {
+				rs = stm.executeQuery(sql);
+			} catch (SQLException e) {
+				 
+				e.printStackTrace();
+			}
+			
+			int shipsDeployed = 0;
+			try {
+					while(rs.next())
+					{
+						int ranking = rs.getInt("FinalRank");
+						if(ranking == rank){
+							shipsDeployed = rs.getInt("NumShipsDeployed");
+						}
+				
+					}
+				}catch (SQLException e) {
+					e.printStackTrace();
+				}
+			
+			return shipsDeployed;
+		}
+		
+		public int getNumShipsLost(int rank){
+			String sql = "SELECT FinalRank, NumShipsLost FROM  PlayerInformation";
+			Statement stm = null;
+			
+			try {
+				 stm = (Statement) conn.createStatement();
+			} catch (SQLException e) {
+				 
+				e.printStackTrace();
+			}
+			
+			ResultSet rs = null;
+			try {
+				rs = stm.executeQuery(sql);
+			} catch (SQLException e) {
+				 
+				e.printStackTrace();
+			}
+			
+			int numShipsLost = 0;
+			try {
+					while(rs.next())
+					{
+						int ranking = rs.getInt("FinalRank");
+						if(ranking == rank){
+							numShipsLost = rs.getInt("NumShipsLost");
+						}
+				
+					}
+				}catch (SQLException e) {
+					 
+					e.printStackTrace();
+				}
+			
+			return numShipsLost;
+		}
+		
+		public int getShotsTaken(int rank){
+			String sql = "SELECT FinalRank, ShotsTaken FROM  PlayerInformation";
+			Statement stm = null;
+			
+			try {
+				 stm = (Statement) conn.createStatement();
+			} catch (SQLException e) {
+				 
+				e.printStackTrace();
+			}
+			
+			ResultSet rs = null;
+			try {
+				rs = stm.executeQuery(sql);
+			} catch (SQLException e) {
+				 
+				e.printStackTrace();
+			}
+			
+			int shotsTaken = 0;
+			try {
+					while(rs.next())
+					{
+						int ranking = rs.getInt("FinalRank");
+						if(ranking == rank){
+							shotsTaken = rs.getInt("ShotsTaken");
+						}
+				
+					}
+				}catch (SQLException e) {
+					 
+					e.printStackTrace();
+				}
+			
+			return shotsTaken;
+		}
+		
+		public int getSuccessfulShots(int rank){
+			String sql = "SELECT FinalRank, SuccessfulShots FROM  PlayerInformation";
+			Statement stm = null;
+			
+			try {
+				 stm = (Statement) conn.createStatement();
+			} catch (SQLException e) {
+				 
+				e.printStackTrace();
+			}
+			
+			ResultSet rs = null;
+			try {
+				rs = stm.executeQuery(sql);
+			} catch (SQLException e) {
+				 
+				e.printStackTrace();
+			}
+			
+			int successfulShots = 0;
+			try {
+					while(rs.next())
+					{
+						int ranking = rs.getInt("FinalRank");
+						if(ranking == rank){
+							successfulShots = rs.getInt("SuccessfulShots");
+						}
+				
+					}
+				}catch (SQLException e) {
+					 
+					e.printStackTrace();
+				}
+			
+			return successfulShots;
+		}
+		
+		public double getAccuracyPercentage(int rank){
+			return (double) ((double)getSuccessfulShots(rank)/(double)getShotsTaken(rank));
+		}
+		
+		public int getNumShipsSunk(int rank){
+			String sql = "SELECT FinalRank, NumShipsSunk FROM  PlayerInformation";
+			Statement stm = null;
+			
+			try {
+				 stm = (Statement) conn.createStatement();
+			} catch (SQLException e) {
+				 
+				e.printStackTrace();
+			}
+			
+			ResultSet rs = null;
+			try {
+				rs = stm.executeQuery(sql);
+			} catch (SQLException e) {
+				 
+				e.printStackTrace();
+			}
+			
+			int shipsSunk = 0;
+			try {
+					while(rs.next())
+					{
+						int ranking = rs.getInt("FinalRank");
+						if(ranking == rank){
+							shipsSunk = rs.getInt("NumShipsSunk");
+						}
+				
+					}
+				}catch (SQLException e) {
+					 
+					e.printStackTrace();
+				}
+			
+			return shipsSunk;
+		}
+	
 }

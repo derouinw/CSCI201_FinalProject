@@ -181,6 +181,9 @@ public class ShipPlacementPanel extends JPanel implements MouseListener{
 								if(shipType > 0 && sanityMap.containsKey(q)){
 									overlap = true;
 								}
+								if(shipType > 2 && sanityMap.containsKey(y)){
+									overlap = true;
+								}
 								if(shipType > 3 && sanityMap.containsKey(w)){
 									overlap = true;
 								}
@@ -219,6 +222,9 @@ public class ShipPlacementPanel extends JPanel implements MouseListener{
 								if(shipType > 0 && sanityMap.containsKey(q)){
 									overlap = true;
 								}
+								if(shipType > 2 && sanityMap.containsKey(y)){
+									overlap = true;
+								}
 								if(shipType > 3 && sanityMap.containsKey(w)){
 									overlap = true;
 								}
@@ -228,6 +234,7 @@ public class ShipPlacementPanel extends JPanel implements MouseListener{
 									myShip.vertical = false;
 									ships.add(myShip);
 									board.addShip(c, myShip);
+									sanityMap.put(c, myShip);
 									sanityMap.put(x, myShip);
 									if(shipType > 0){
 										sanityMap.put(q, myShip);

@@ -91,6 +91,7 @@ public class ClientGUI extends JFrame {
 			// pass in IP address
 			chatPanel.setVisible(true);
 			lobby.setup();
+			if (!nt.isHost) lobby.setIp(splash.host);
 		} else if (page.equals("fleet selection")) {
 
 		} else if (page.equals("playing")) {
@@ -110,8 +111,11 @@ public class ClientGUI extends JFrame {
 	public void receive(Message msg) {
 		if (msg.value == null) {
 			// disconnect
-			JDialog popup = new JDialog(this, "Disconnected from server");
-			dispose();
+			//JDialog popup = new JDialog(this, "Disconnected from server");
+			System.out.println("disconnected...maybe?");
+			//setVisible(false);
+			//dispose();
+			//nt.connected = false;
 		}
 		switch (msg.type) {
 		case Message.TYPE_STRING:

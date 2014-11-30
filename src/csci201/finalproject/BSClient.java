@@ -173,6 +173,8 @@ public class BSClient {
 
 			try {
 				msg = (Message) receive.readObject();
+			} catch (ClassCastException cce) {
+				System.out.println("class cast exception");
 			} catch (EOFException eofe) {
 				// TODO: handle disconnect
 				return new Message();

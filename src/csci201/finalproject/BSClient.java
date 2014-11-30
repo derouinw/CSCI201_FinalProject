@@ -172,7 +172,9 @@ public class BSClient {
 			Message msg = new Message();
 
 			try {
-				msg = (Message) receive.readObject();
+				Object rec = receive.readObject();
+				if (rec instanceof Message) 
+					msg = (Message) receive.readObject();
 			} catch (EOFException eofe) {
 				// TODO: handle disconnect
 				return new Message();

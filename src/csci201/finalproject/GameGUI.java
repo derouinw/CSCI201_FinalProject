@@ -240,8 +240,14 @@ public class GameGUI extends JPanel{
 	}
 	
 	public void userHasLost(String username){
-		EnemyPanel ep = enemyPanels.get(username);
-		ep.lostGame();
+		if (username.equals(nt.username)) {
+			// you lose!
+			whosTurnArea.setText("You lose! ARGGGGHHH");
+			isMyTurn = false;
+		} else {
+			EnemyPanel ep = enemyPanels.get(username);
+			ep.lostGame();
+		}
 	}
 
 	public Shot checkShot(Shot s) {

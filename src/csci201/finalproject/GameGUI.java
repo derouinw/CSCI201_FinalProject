@@ -38,7 +38,7 @@ public class GameGUI extends JPanel{
 	private HashMap<Coordinate, Ship> myShips;
 	private int maxShotsAllowed, turnsTaken, shotsFired, shotsHit, shipsSunk;
 	private boolean isMyTurn;
-	private String currentPlayingUser, myUsername;
+	private String currentPlayingUser, nextPlayer, myUsername;
 	private ArrayList<String> allUsernames;
 	private ArrayList<String> enemyUsernames;
 	
@@ -86,7 +86,8 @@ public class GameGUI extends JPanel{
 		bsl = new BoardSpaceListener();
 		buttonListener = new ButtonListener();
 		
-		currentPlayingUser = "John";//enemyUsernames.get(0);
+		currentPlayingUser = nextPlayer = "";
+		
 		
 		topPanel = new JPanel();
 		bottomPanel = new JPanel();
@@ -173,7 +174,8 @@ public class GameGUI extends JPanel{
 	private void createFirePanel(){
 		firePanel.setLayout(new BoxLayout(firePanel, BoxLayout.Y_AXIS));
 		
-		fireButton.setEnabled(false); //start disabled until at least one shot is selected
+		fireButton.setEnabled(false); //TODO: start disabled until at least one shot is selected
+										// currently it just waits until you choose all shots
 		fireButtonPanel.add(fireButton);
 		firePanel.add(timerPanel);
 		firePanel.add(fireButtonPanel);
@@ -208,7 +210,7 @@ public class GameGUI extends JPanel{
 		whosTurnArea.setText("IT'S Y'ARR TURN, TIMER RUNNING!");
 	}
 	
-	public void endTurn(){
+	public void endTurn(String curUser){
 		isMyTurn = false;
 		timerPanel.stopTimer();
 		fireButton.setEnabled(false);
@@ -228,6 +230,8 @@ public class GameGUI extends JPanel{
 		
 		//reset label
 		whosTurnArea.setForeground(Color.black);
+		currentPlayingUser = curUser;
+		nextPlayer = curUser;
 		whosTurnArea.setText(currentPlayingUser + " is now firing.");
 		
 		//add statistics
@@ -238,6 +242,13 @@ public class GameGUI extends JPanel{
 	public void userHasLost(String username){
 		EnemyPanel ep = enemyPanels.get(username);
 		ep.lostGame();
+	}
+
+	public Shot checkShot(Shot s) {
+		Shot ret = new Shot(s);
+		if (myBoardPanel.processAttack(s)) ret.shotHitShip();
+		myBoardPanel.repaint();
+		return ret;
 	}
 	
 	public void addShotsList(ArrayList<Shot> shots){
@@ -279,7 +290,7 @@ public class GameGUI extends JPanel{
 			//this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			this.add(label);
 			timer = new Timer();
-			timeRemaining = 30;
+			timeRemaining = 60;
 			dotSpacing = 27;
 		}
 		
@@ -288,7 +299,11 @@ public class GameGUI extends JPanel{
 			public void run() {
 				timeRemaining -= 1;
 				if (timeRemaining == 0){
-					endTurn();
+					// send empty shots message to server
+					// it'll send disable message back
+					// TODO: bring stuff from endTurn
+					fireButton.setEnabled(false);
+					nt.send(new Message(new ArrayList<Shot>()));
 				}
 				TimerPanel.this.repaint();
 			}
@@ -297,7 +312,7 @@ public class GameGUI extends JPanel{
 		
 		public void startTimer(){
 			running = true;
-			timer.scheduleAtFixedRate(new UpdateTimer(), 0, 1000);
+			//timer.scheduleAtFixedRate(new UpdateTimer(), 0, 1000);
 		}
 		
 		public void stopTimer(){
@@ -466,7 +481,20 @@ public class GameGUI extends JPanel{
 			    	shots.add(new Shot(user,c,myUsername));
 			    }
 			}
-			endTurn();
+			
+			// fire shots
+			// TODO: bring stuff from endTurn
+			fireButton.setEnabled(false);
+			nt.send(new Message(shots));
 		}
+	}
+
+	
+	public int getShipsRemaining() {
+		return myBoardPanel.numShipsRemaining();
+	}
+	
+	public void updateNumShipsRemaining(String user, int num) {
+		enemyPanels.get(user).updateNumShipsRemaining(num);
 	}
 }

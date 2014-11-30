@@ -1,21 +1,20 @@
 package csci201.finalproject;
 
-import java.awt.*;
+import java.awt.Image;
+import java.io.Serializable;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
 
-
-public class Sloop extends Ship {
+public class Sloop extends Ship implements Serializable {
 	public Sloop() {
 		super();
 		healthPoints = 3;
 	}
-	
-	public Image getImage(){
-		if(vertical){
+
+	public Image getImage() {
+		if (vertical) {
 			return (new ImageIcon("Sloop.png")).getImage();
-		}
-		else{
+		} else {
 			return (new ImageIcon("sloopH.png")).getImage();
 		}
 	}

@@ -137,7 +137,6 @@ public class FleetGUI extends JPanel {
 		ContinueButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// for now advance to playing game state
-				FleetGUI.this.nt.send(new Message("ready"));
 				ContinueButton.setEnabled(false);
 				fleetCard.show(fleetPanel, "PLACEMENT PANEL");
 			}
@@ -214,6 +213,7 @@ public class FleetGUI extends JPanel {
 		//Rotate Button
 		rotateButton = new JButton("Rotate: Horizontal");
 		rotateButton.addActionListener(new RotateListener());
+		rotateButton.setPreferredSize(new Dimension(175, 50));
 		//Submit button
 		submitButton = new JButton("Submit");
 		submitButton.addActionListener(new SubmitListener());
@@ -321,6 +321,8 @@ public class FleetGUI extends JPanel {
 			Board data = shipPlacementGridPanel.board;
 			Message boardData = new Message(data);
 			FleetGUI.this.nt.send(boardData);
+			
+			submitButton.setEnabled(false);
 		}
 	}
 	

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 // Length: int of length of message
 // Value: the actual message (be it string or object)
 public class Message implements Serializable {
-	final static int TYPE_STRING = 0, TYPE_SHOTS = 1, TYPE_BOARD = 2;
+	final static int TYPE_STRING = 0, TYPE_SHOTS = 1, TYPE_BOARD = 2, TYPE_SHOT = 3;
 	
 	int type;
 	int length;
@@ -30,16 +30,18 @@ public class Message implements Serializable {
 		source = username;
 	}
 	
-	public Message(ArrayList<Shot> msg, String username) {
+	public Message(ArrayList<Shot> msg) {
 		type = TYPE_SHOTS;
-		length = 0;
 		value = msg;
-		source = username;
 	}
 	
 	public Message(Board msg) {
 		type = TYPE_BOARD;
-		length = 0;
 		value = msg;
+	}
+	
+	public Message(Shot s) {
+		type = TYPE_SHOT;
+		value = s;
 	}
 }

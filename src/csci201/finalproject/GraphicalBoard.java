@@ -17,7 +17,7 @@ public class GraphicalBoard extends JPanel {
 		isOut = false;
 		boardSpaces = new ArrayList<BoardSpace>();
 		for (int i = 0; i < 100; i++) {
-			BoardSpace bs = new BoardSpace((i / 10), (i % 10));
+			BoardSpace bs = new BoardSpace((i % 10), (i / 10));
 			bs.addMouseListener(bsl);
 			bs.setBackground(Color.LIGHT_GRAY);
 			bs.setBorder(BorderFactory.createEtchedBorder());

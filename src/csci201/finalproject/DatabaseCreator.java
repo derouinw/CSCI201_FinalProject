@@ -32,18 +32,9 @@ public class DatabaseCreator {
 		
 		try{
 		Class.forName(JDBC_DRIVER);
-		
-		conn = (Connection) DriverManager.getConnection(DB_ADDRESS, USER, PASSWORD);
-		stmt = (Statement) conn.createStatement();
-
-	      //STEP 4: Execute a query
-	      System.out.println("Creating database...");
-	     //stmt = conn.createStatement();
-	      
-	      //String sql = "CREATE DATABASE "+DB_NAME;
-	      //stmt.executeUpdate(sql);
-		
-	     conn = (Connection) DriverManager.getConnection(DB_ADDRESS+DB_NAME, USER, PASSWORD);
+	    conn = (Connection) DriverManager.getConnection(DB_ADDRESS+DB_NAME, USER, PASSWORD);
+	    stmt = (Statement) conn.createStatement();
+	    
 		ScriptRunner runner=new ScriptRunner(conn);
 		InputStreamReader reader = new InputStreamReader(new FileInputStream(SQL_SCRIPT));
 		

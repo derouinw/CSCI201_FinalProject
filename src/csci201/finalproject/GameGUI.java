@@ -471,6 +471,9 @@ public class GameGUI extends JPanel{
 			if (getNumSelectedCoordinates() == maxShotsAllowed){
 				fireButton.setEnabled(true);
 			}
+			else{
+				fireButton.setEnabled(false);
+			}
 		}
 		
 		public void mouseEntered(MouseEvent arg0) {	}

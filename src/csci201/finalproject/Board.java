@@ -108,7 +108,8 @@ public class Board extends JPanel implements Serializable {
 
 		
 		//draw shots
-		for (Shot s: shotsFiredOnMyBoard){
+		for (int i=0;i<shotsFiredOnMyBoard.size();i++){
+			Shot s = shotsFiredOnMyBoard.get(i);
 			int x = (s.getShotDestination().getColumn() * 39) + 20;
 			int y = (s.getShotDestination().getRow() * 31) + 30;
 			if (s.wasAHit()){

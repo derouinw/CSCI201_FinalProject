@@ -178,7 +178,7 @@ public class BSServer {
 
 		private int nextPlayer() {
 			curPlayer++;
-			while (!playerThreads.get(curPlayer).active) {
+			while (playerThreads.get(curPlayer).active) {
 				curPlayer++;
 				if (curPlayer >= playerThreads.size())
 					curPlayer = 0; // loop around

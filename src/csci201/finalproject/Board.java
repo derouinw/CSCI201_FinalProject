@@ -99,18 +99,19 @@ public class Board extends JPanel implements Serializable {
 		// draw ships
 		for (Map.Entry<Coordinate, Ship> entry : firstCoordinates.entrySet()) {
 			Coordinate c = entry.getKey();
-			Image toDraw = entry.getValue().getImage();
-			int x = c.getColumn() * 36 + 10;
-			int y = c.getRow() * 30 + 24;
-			g.drawImage(toDraw, x, y, null);
+
+			Image toDraw = entry.getValue().getSmallImage();
+			int x = c.getColumn()*39 + 10;
+			int y = c.getRow()*31 + 20;
+			g.drawImage(toDraw, x,y,null);
 		}
 
-		// draw shots
-		for (int i = 0; i < shotsFiredOnMyBoard.size(); i++) {
-			Shot s = shotsFiredOnMyBoard.get(i);
-			int x = (s.getShotDestination().getColumn() * 36) + 20;
-			int y = (s.getShotDestination().getRow() * 30) + 30;
-			if (s.wasAHit()) {
+		
+		//draw shots
+		for (Shot s: shotsFiredOnMyBoard){
+			int x = (s.getShotDestination().getColumn() * 39) + 20;
+			int y = (s.getShotDestination().getRow() * 31) + 30;
+			if (s.wasAHit()){
 				g.setColor(Color.red);
 			} else {
 				g.setColor(Color.green);

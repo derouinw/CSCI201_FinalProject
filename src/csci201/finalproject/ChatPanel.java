@@ -74,6 +74,7 @@ public class ChatPanel extends JPanel{
 		displayArea.setForeground(Color.black);
 		
 		displayScroll = new JScrollPane(displayArea);
+		displayScroll.setPreferredSize((new Dimension(200,300)));
 		
 		//set borders and line wrapping for chat box
 		chatArea = new JTextArea();
@@ -127,6 +128,7 @@ public class ChatPanel extends JPanel{
 		recipientSelectionPanel = new JPanel();
 		recipientSelectionPanel.setLayout(new BoxLayout(recipientSelectionPanel,BoxLayout.Y_AXIS));
 		JPanel checkBoxWrapper = new JPanel();
+		checkBoxWrapper.setLayout(new BoxLayout(checkBoxWrapper, BoxLayout.Y_AXIS));
 		JPanel labelWrapper = new JPanel();
 		checkBoxes = new ArrayList<JCheckBox>();
 		checkBoxListener = new CheckBoxListener();

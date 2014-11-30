@@ -313,7 +313,8 @@ public class GameGUI extends JPanel{
 		
 		public void startTimer(){
 			running = true;
-			//timer.scheduleAtFixedRate(new UpdateTimer(), 0, 1000);
+			timer = new Timer();
+			timer.scheduleAtFixedRate(new UpdateTimer(), 0, 1000);
 		}
 		
 		public void stopTimer(){

@@ -173,7 +173,8 @@ public class BSServer {
 			case Message.TYPE_SHOT:
 				Shot s = (Shot)msg.value;
 				//playerThreads.get(ptNum(s.getOriginPlayer())).send(new Message(s));
-				broadcast(new Message(s));
+				
+				broadcast(new Message(s, true));
 			}
 		}
 

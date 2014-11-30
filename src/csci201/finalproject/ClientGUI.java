@@ -131,6 +131,7 @@ public class ClientGUI extends JFrame {
 					users = lobby.getUsernames(usernames); // also store users
 															// for later
 					chatPanel.updateUserCheckBoxes(usernames);
+					System.out.println("usernames: " + usernames);
 				} else if (sMsg.equals("ready")) {
 					// only for host
 					lobby.StartButton.setEnabled(true);
@@ -166,13 +167,14 @@ public class ClientGUI extends JFrame {
 		// if it's a shot, update hitflag and send it back
 		case Message.TYPE_SHOT:
 			Shot s = (Shot) msg.value;
-			System.out.println(s);
 			// shot is aimed at me, send back with hit updated
 			if (s.getTargetPlayer().equals(nt.username)) {
-				s = game.checkShot(s);
-				nt.send(new Message(s));
-				nt.send(new Message("ships " + game.getShipsRemaining(),
-						nt.username));
+				if (!msg.updated) {
+					s = game.checkShot(s);
+					nt.send(new Message(s, true));
+					nt.send(new Message("ships " + game.getShipsRemaining(),
+							nt.username));
+				}
 			} else {
 				game.addShotToOtherBoard(s);
 			}

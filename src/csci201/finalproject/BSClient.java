@@ -173,7 +173,6 @@ public class BSClient {
 			try {
 				msg = (Message) receive.readObject();
 			} catch (EOFException eofe) {
-				//System.out.println("disconnect");
 				// TODO: handle disconnect
 				return new Message();
 			} catch (SocketTimeoutException ste) {

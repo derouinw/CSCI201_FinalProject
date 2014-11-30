@@ -217,7 +217,7 @@ public class FleetGUI extends JPanel {
 		//Submit button
 		submitButton = new JButton("Submit");
 		submitButton.addActionListener(new SubmitListener());
-		//submitButton.setEnabled(false);
+		submitButton.setEnabled(false);
 		
 		shipLabelPanel.setLayout(new GridLayout(7, 1));
 		shipLabelPanel.add(dinghyLabel);

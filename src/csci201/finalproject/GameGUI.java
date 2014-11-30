@@ -509,6 +509,7 @@ public class GameGUI extends JPanel{
 			int timeTaken = 65 - timeRemaining;
 			totalTimeTaken += timeTaken;
 			averageTimePerTurn = totalTimeTaken/turnsTaken;
+			averageTimePerTurn = Math.floor(averageTimePerTurn * 100) / 100;
 			averageTurnTimeStatLabel.setText("Sec per turn: " + averageTimePerTurn);
 			
 			shotsFired += shots.size();

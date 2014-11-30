@@ -172,18 +172,19 @@ public class BSServer {
 				break;
 			case Message.TYPE_SHOT:
 				Shot s = (Shot)msg.value;
-				playerThreads.get(ptNum(s.getOriginPlayer())).send(new Message(s));
+				//playerThreads.get(ptNum(s.getOriginPlayer())).send(new Message(s));
+				broadcast(new Message(s));
 			}
 		}
 
 		private int nextPlayer() {
-			curPlayer++;
-			while (!playerThreads.get(curPlayer).active) {
+			//curPlayer++;
+			//while (!playerThreads.get(curPlayer).active) {
 				curPlayer++;
 				if (curPlayer >= playerThreads.size())
 					curPlayer = 0; // loop around
-				System.out.println("yeah the game is over bud");
-			}
+			//	System.out.println("yeah the game is over bud");
+			//}
 			return curPlayer;
 		}
 

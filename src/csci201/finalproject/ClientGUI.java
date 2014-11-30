@@ -166,6 +166,7 @@ public class ClientGUI extends JFrame {
 		// if it's a shot, update hitflag and send it back
 		case Message.TYPE_SHOT:
 			Shot s = (Shot) msg.value;
+			System.out.println(s);
 			// shot is aimed at me, send back with hit updated
 			if (s.getTargetPlayer().equals(nt.username)) {
 				s = game.checkShot(s);

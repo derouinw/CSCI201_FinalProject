@@ -9,6 +9,7 @@ public class Sloop extends Ship implements Serializable {
 	public Sloop() {
 		super();
 		healthPoints = 3;
+		startingHealthPoints = 3;
 	}
 
 	public Image getImage() {

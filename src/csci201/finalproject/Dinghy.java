@@ -10,6 +10,7 @@ public class Dinghy extends Ship implements Serializable{
 	public Dinghy(){
 		super();
 		healthPoints = 2;
+		startingHealthPoints = 2;
 	}
 	
 	public Image getImage(){

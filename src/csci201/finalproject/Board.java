@@ -79,7 +79,7 @@ public class Board extends JPanel implements Serializable {
 			if (s.getShotDestination().equals(entry.getKey())) {
 				entry.getValue().hit();
 				s.shotHitShip();
-				shipsToSpaces.remove(entry.getValue());
+				shipsToSpaces.remove(entry);
 
 				for (int i = 0; i < ships.size(); i++) {
 					ArrayList<Coordinate> alc = ships.get(i);

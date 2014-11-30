@@ -9,6 +9,7 @@ public class Galleon extends Ship implements Serializable{
 	public Galleon() {
 		super();
 		healthPoints = 5;
+		startingHealthPoints = 5;
 	}
 	
 	public Image getImage(){

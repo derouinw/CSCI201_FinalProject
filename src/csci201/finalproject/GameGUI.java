@@ -133,7 +133,6 @@ public class GameGUI extends JPanel{
 		for (ArrayList<Coordinate> al : selectedCoordinates.values()){
 			retval += al.size();
 		}
-		System.out.println("Number of selected coordinates should be: " + retval);
 		return retval;
 	}
 	
@@ -315,6 +314,7 @@ public class GameGUI extends JPanel{
 		
 		public void startTimer(){
 			running = true;
+			timeRemaining = 65;
 			timer = new Timer();
 			timer.scheduleAtFixedRate(new UpdateTimer(), 0, 1000);
 		}

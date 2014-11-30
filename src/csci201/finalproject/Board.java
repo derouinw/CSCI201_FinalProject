@@ -37,6 +37,19 @@ public class Board extends JPanel implements Serializable {
 		ships = new ArrayList<ArrayList<Coordinate>>();
 	}
 
+	public int getHealthOfLargestShip(){
+		int largest = 0;
+		for (Map.Entry<Coordinate, Ship> entry : shipsToSpaces.entrySet()){
+			Ship s = entry.getValue();
+			int hp = s.getHealthPoints();
+			if (hp > largest){
+				largest = hp;
+			}
+		}
+		return largest;
+	}
+	
+	
 	public void addShip(Coordinate c, Ship ship) {
 		firstCoordinates.put(c, ship);
 		

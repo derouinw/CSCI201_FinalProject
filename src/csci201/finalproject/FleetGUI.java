@@ -27,9 +27,10 @@ public class FleetGUI extends JPanel {
 	JPanel shipLabelPanel;
 	JPanel buttonPanel;
 	JPanel SelectUserInfoPanel;
-	JLabel SelectColorLabel;
-	JComboBox<String> SelectColorCombo;
+	//JLabel SelectColorLabel;
+	//JComboBox<String> SelectColorCombo;
 	JLabel SelectFleetLabel;
+	JLabel selectionCounterLabel;
 	JRadioButton ClassicFleetButton;
 	JRadioButton CreateFleetButton;
 	JPanel FleetInfo; //BoxLayout
@@ -72,7 +73,6 @@ public class FleetGUI extends JPanel {
 
 		
 		SelectUserInfoPanel = new JPanel(new BorderLayout());
-		JPanel SelectColorPanel = new JPanel();
 		JPanel SelectFleetPanel = new JPanel();
 		SelectFleetPanel.setLayout(new BoxLayout(SelectFleetPanel,BoxLayout.X_AXIS));
 		JPanel FleetSelect = new JPanel();
@@ -82,14 +82,6 @@ public class FleetGUI extends JPanel {
 		shipLabelPanel = new JPanel();
 		placementPanel = new JPanel();
 		placementPanel.addMouseListener(shipPlacementGridPanel);
-		
-		// Color Selection
-		SelectColorLabel = new JLabel("Select your color ");
-		String[] ColorOptions = {"red","orange","yellow","cyan","green","pink"};
-		SelectColorCombo = new JComboBox<String>(ColorOptions);
-		SelectColorPanel.add(SelectColorLabel);
-		SelectColorPanel.add(SelectColorCombo);
-		SelectUserInfoPanel.add(SelectColorPanel, BorderLayout.NORTH);
 		
 		// Fleet Selection
 		SelectFleetLabel = new JLabel("Select your fleet type ");
@@ -190,11 +182,16 @@ public class FleetGUI extends JPanel {
 		Type4Panel.add(ShipType4Label);
 		Type4Panel.add(Type4Combo);
 		
+		JPanel counterPanel = new JPanel();
+		selectionCounterLabel = new JLabel("Total Number of Spaces Taken: 0");
+		counterPanel.add(selectionCounterLabel);
+		
 		FleetInfo.add(Type0Panel);
 		FleetInfo.add(Type1Panel);
 		FleetInfo.add(Type2Panel);
 		FleetInfo.add(Type3Panel);
 		FleetInfo.add(Type4Panel);
+		FleetInfo.add(selectionCounterLabel); 
 		
 		SelectFleetPanel.add(FleetInfo);
 		
@@ -260,7 +257,8 @@ public class FleetGUI extends JPanel {
 			galleonQuantity = Integer.valueOf(numOptions3[Type4Combo.getSelectedIndex()]);
 			int g = galleonQuantity*5;
 			
-			if(d+s+f+b+g == 17){
+			int spaceCounter = d+s+f+b+g;
+			if(spaceCounter == 17){
 				ContinueButton.setEnabled(true);
 			}
 			else{
@@ -272,6 +270,7 @@ public class FleetGUI extends JPanel {
 			brigantineLabel.setText("Brigantine: x" + brigQuantity);
 			galleonLabel.setText("Galleon: x" + galleonQuantity);
 			totalNum = dinghyQuantity + sloopQuantity + frigateQuantity + brigQuantity + galleonQuantity;
+			selectionCounterLabel.setText("Total Number of Spaces Taken: " + spaceCounter);
 			revalidate();
 		}
 		

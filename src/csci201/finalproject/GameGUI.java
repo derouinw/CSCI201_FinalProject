@@ -206,6 +206,8 @@ public class GameGUI extends JPanel{
 	public void startTurn(){
 		isMyTurn = true;
 		timerPanel.startTimer();
+		maxShotsAllowed = myBoardPanel.getHealthOfLargestShip();
+		maxShotsAllowedStatLabel.setText("Shots per turn: " + maxShotsAllowed);
 		whosTurnArea.setForeground(Color.red);
 		whosTurnArea.setText("IT'S Y'ARR TURN, TIMER RUNNING!");
 	}
@@ -503,6 +505,5 @@ public class GameGUI extends JPanel{
 	
 	public void updateNumShipsRemaining(String user, int num) {
 		enemyPanels.get(user).updateNumShipsRemaining(num);
-		maxShotsAllowed = myBoardPanel.getHealthOfLargestShip();
 	}
 }

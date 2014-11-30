@@ -104,12 +104,13 @@ public class BSServer {
 				if (sMsg.startsWith("[")) {
 					// chat message
 					int bracket = sMsg.indexOf("]");
-					String users = sMsg.substring(1,bracket);
+					String users = sMsg.substring(1, bracket);
 					String[] usersArr = users.split(" ");
-					String message = sMsg.substring(bracket+1);
+					String message = sMsg.substring(bracket + 1);
 					Message newMsg = new Message("chat " + message, src);
 					for (int i = 0; i < usersArr.length; i++) {
-						playerThreads.get(ptNum(usersArr[i].trim())).send(newMsg);
+						playerThreads.get(ptNum(usersArr[i].trim())).send(
+								newMsg);
 					}
 				} else if (gameState.equals("lobby")) {
 					// messages during lobby
@@ -125,19 +126,57 @@ public class BSServer {
 						fleetsFinished--;
 					}
 				} else if (gameState.equals("playing")) {
-					// TODO: receive a message while playing
+					// player sends updated ship number
+					if (sMsg.startsWith("ships")) {
+						int ships = Integer.valueOf(sMsg.substring(5).trim());
+						broadcast("ships " + src + " " + ships);
+					}
 				} else if (gameState.equals("game over")) {
 					// there should be no messages received during game over
 				}
 				break;
 			case Message.TYPE_SHOTS:
-				// TODO: receive shots;
+				ArrayList<Shot> shots = (ArrayList<Shot>) msg.value;
+				
+				for (Shot s : shots) {
+					String user = s.getTargetPlayer();
+					
+					// send shot
+					playerThreads.get(ptNum(user)).send(new Message(s));
+				}
+				
+				// TODO: receive updated data from players
+				// will happen in another receive
+				
+				// TODO: send updated data to players
+				// will happen once that happens
+
+				// next player leggo
+				curPlayer = nextPlayer();
+				for (int i = 0; i < playerThreads.size(); i++) {
+					if (i == curPlayer)
+						playerThreads.get(i).send("enable");
+					else
+						playerThreads
+								.get(i)
+								.send("disable "
+										+ playerThreads.get(curPlayer).username);
+				}
 				break;
 			case Message.TYPE_BOARD:
 				// TODO: receive board
-				System.out.println("received board");
 				break;
+			case Message.TYPE_SHOT:
+				Shot s = (Shot)msg.value;
+				playerThreads.get(ptNum(s.getOriginPlayer())).send(new Message(s));
 			}
+		}
+
+		private int nextPlayer() {
+			curPlayer++;
+			if (curPlayer >= playerThreads.size())
+				curPlayer = 0; // loop around
+			return curPlayer;
 		}
 
 		// Thread.run
@@ -163,10 +202,12 @@ public class BSServer {
 						// start with host
 						for (int i = 0; i < playerThreads.size(); i++) {
 							if (i == curPlayer)
-								playerThreads.get(i)
-										.send("enable");
+								playerThreads.get(i).send("enable");
 							else
-								playerThreads.get(i).send("disable");
+								playerThreads
+										.get(i)
+										.send("disable "
+												+ playerThreads.get(curPlayer).username);
 						}
 					}
 				} else if (gameState.equals("playing")) {
@@ -178,7 +219,7 @@ public class BSServer {
 				}
 			}
 		}
-		
+
 		private void broadcast(String msg) {
 			broadcast(new Message(msg, "Server"));
 		}
@@ -235,7 +276,7 @@ public class BSServer {
 				e.printStackTrace();
 			}
 		}
-		
+
 		public void send(String msg) {
 			send(new Message(msg, "Server"));
 		}
@@ -256,7 +297,6 @@ public class BSServer {
 			try {
 				msg = (Message) receive.readObject();
 			} catch (EOFException eofe) {
-				// System.out.println("disconnect");
 				// TODO: handle disconnect
 				return new Message();
 			} catch (SocketTimeoutException ste) {

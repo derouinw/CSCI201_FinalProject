@@ -32,6 +32,10 @@ public class Coordinate implements Serializable {
 		return column;
 	}
 	
+	public String toString() {
+		return "(" + column + ", " + row + ")";
+	}
+	
 	//Overriding hash map lookup to allow map to find same coordinate pairs even if coordinate objects in different memory locs.
 	
 	public boolean equals(Object o){

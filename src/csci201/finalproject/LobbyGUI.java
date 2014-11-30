@@ -69,13 +69,14 @@ public class LobbyGUI extends JPanel {
 	}
 
 	// function that takes a string split by spaces
-	public void getUsernames(String s) {
+	public ArrayList<String> getUsernames(String s) {
 		String[] users = s.split(" ");
 		usernames.clear();
 		for (int i = 0; i < users.length; i++) {
 			usernames.add(users[i]);
 		}
 		updateLabel();
+		return usernames;
 	}
 
 	void updateLabel() {

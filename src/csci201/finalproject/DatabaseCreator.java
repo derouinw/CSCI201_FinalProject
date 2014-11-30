@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 import java.sql.*;
 import java.util.ArrayList;
 
-import org.apache.ibatis.jdbc.ScriptRunner;
+//import org.apache.ibatis.jdbc.ScriptRunner;
 
 
 //import org.apache.ibatis.jdbc.ScriptRunner;
@@ -45,10 +45,10 @@ public class DatabaseCreator {
 	      
 	      conn = DriverManager.getConnection(DB_ADDRESS+DB_NAME, USER,PASSWORD);
 		
-		ScriptRunner runner=new ScriptRunner(conn);
+		//ScriptRunner runner=new ScriptRunner(conn);
 		InputStreamReader reader = new InputStreamReader(new FileInputStream("BuccBattleInformation.sql"));
 		
-		runner.runScript(reader);
+		//runner.runScript(reader);
 		}catch(SQLException se){
 			System.out.println("Failure creating DatabaseCreator");
 		}catch(FileNotFoundException fe){

@@ -132,7 +132,7 @@ public class ChatPanel extends JPanel{
 		JPanel labelWrapper = new JPanel();
 		checkBoxes = new ArrayList<JCheckBox>();
 		checkBoxListener = new CheckBoxListener();
-		for (int i=0;i<3;i++){
+		for (int i=0;i<4;i++){
 			JCheckBox cb = new JCheckBox("User" + (i+1));
 			cb.setSelected(false);
 			cb.addActionListener(checkBoxListener);

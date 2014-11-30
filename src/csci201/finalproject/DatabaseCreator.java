@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.sql.*;
 import java.util.ArrayList;
 
+import com.mysql.jdbc.Statement;
+
 //import org.apache.ibatis.jdbc.ScriptRunner;
 
 
@@ -106,5 +108,39 @@ public class DatabaseCreator {
 			catch(SQLException se){
 				System.out.println("Failuring adding a full row.");
 			}
+		}
+		
+		public String getNameByRank(int rank){
+			String sql = "SELECT Name, FinalRank FROM  PlayerInformation";
+			Statement stm = null;
+			
+			try {
+				 stm = (Statement) conn.createStatement();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			ResultSet rs = null;
+			try {
+				rs = stm.executeQuery(sql);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			try {
+					while(rs.next())
+					{
+						int ranking = rs.getInt("FinalRank");
+						if(ranking == rank){
+							return rs.getString("Name");
+						}
+				
+					}
+				}catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		}
 }

@@ -84,14 +84,14 @@ public class ShipPlacementPanel extends JPanel implements MouseListener{
 			boolean valid = false;
 			mX = me.getX() - 185;
 			mY = me.getY() - 10;
-			System.out.println(mX + " " + mY);
+			//System.out.println(mX + " " + mY);
 			if(mX >= 0 && mY >= 0){
 				inBounds = true;
 				//System.out.println("In Bounds!");
 			}
 			mCol = mX/40;
 			mRow = mY/40;
-			System.out.println("Row: " + mRow + " Col: " + mCol);
+			//System.out.println("Row: " + mRow + " Col: " + mCol);
 			// place ship at that location (if valid)
 			// depends upon vertical
 			Ship myShip = null;

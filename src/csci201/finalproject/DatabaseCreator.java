@@ -1,4 +1,5 @@
 package csci201.finalproject;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
@@ -7,10 +8,8 @@ import java.util.ArrayList;
 
 import com.mysql.jdbc.Statement;
 
-//import org.apache.ibatis.jdbc.ScriptRunner;
-
-
-//import org.apache.ibatis.jdbc.ScriptRunner;
+import org.apache.ibatis.jdbc.ScriptRunner;
+import org.apache.ibatis.jdbc.ScriptRunner;
 
 
 
@@ -18,10 +17,11 @@ public class DatabaseCreator {
 
 	public static final String DB_ADDRESS = "jdbc:mysql://localhost/";
 	public static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-	public static final String DB_NAME = "BuccaneerBattles";
+	public static final String DB_NAME = "BuccBattlesInformation";
 	public static final String DRIVER = "com.mysql.jdbc.Driver";
 	public static final String USER = "root";
 	public static final String PASSWORD = "";
+	public static final String SQL_SCRIPT = "BuccBattleInformation.sql";
 	private Connection conn = null;
 	private Statement stmt = null;
 	private final String allAtOnce = "INSERT INTO PlayerInformation(Name, FinalRank, TurnsTaken, ChatMessagesSent, NumShipsDeployed, NumShipsLost, NumShipsSunk, ShotsTaken,SuccessfulShots) VALUE (?,?,?,?,?,?,?,?,?)";
@@ -33,26 +33,24 @@ public class DatabaseCreator {
 		try{
 		Class.forName(JDBC_DRIVER);
 		
-		conn = DriverManager.getConnection(DB_ADDRESS, USER, PASSWORD);
-		stmt = conn.createStatement();
-		
-		 //conn = DriverManager.getConnection(DB_URL, USER, PASS);
+		conn = (Connection) DriverManager.getConnection(DB_ADDRESS, USER, PASSWORD);
+		stmt = (Statement) conn.createStatement();
 
 	      //STEP 4: Execute a query
 	      System.out.println("Creating database...");
-	     // stmt = conn.createStatement();
+	     //stmt = conn.createStatement();
 	      
-	      String sql = "CREATE DATABASE "+DB_NAME;
-	      stmt.executeUpdate(sql);
-	      
-	      conn = DriverManager.getConnection(DB_ADDRESS+DB_NAME, USER,PASSWORD);
+	      //String sql = "CREATE DATABASE "+DB_NAME;
+	      //stmt.executeUpdate(sql);
 		
-		//ScriptRunner runner=new ScriptRunner(conn);
-		InputStreamReader reader = new InputStreamReader(new FileInputStream("BuccBattleInformation.sql"));
+	     conn = (Connection) DriverManager.getConnection(DB_ADDRESS+DB_NAME, USER, PASSWORD);
+		ScriptRunner runner=new ScriptRunner(conn);
+		InputStreamReader reader = new InputStreamReader(new FileInputStream(SQL_SCRIPT));
 		
-		//runner.runScript(reader);
+		runner.runScript(reader);
 		}catch(SQLException se){
 			System.out.println("Failure creating DatabaseCreator");
+			se.printStackTrace();
 		}catch(FileNotFoundException fe){
 			System.out.println(".sql script not found");
 		}catch(ClassNotFoundException ce){
@@ -129,12 +127,13 @@ public class DatabaseCreator {
 				e.printStackTrace();
 			}
 			
+			String name = null;
 			try {
 					while(rs.next())
 					{
 						int ranking = rs.getInt("FinalRank");
 						if(ranking == rank){
-							return rs.getString("Name");
+							name = rs.getString("Name");
 						}
 				
 					}
@@ -142,5 +141,17 @@ public class DatabaseCreator {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			
+			return name;
 		}
+		
+//		public static void main(String[] args){
+//			DatabaseCreator dbTest = new DatabaseCreator();
+//			dbTest.addFullRow("thenightman", 1, 5, 5, 5, 5, 5, 5, 5);
+//			dbTest.addFullRow("mrjones", 2, 5, 5, 5, 5, 5, 5, 5);
+//			System.out.println(dbTest.getNameByRank(1));
+//			System.out.println(dbTest.getNameByRank(1));
+//			System.out.println(dbTest.getNameByRank(2));
+//			System.out.println(dbTest.getNameByRank(1));
+//		}
 }

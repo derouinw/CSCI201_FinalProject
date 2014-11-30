@@ -156,7 +156,11 @@ public class ChatPanel extends JPanel{
 	public void updateUserCheckBoxes(String users){
 		String userArray[] = users.split(" ");
 		for (int i=0;i<userArray.length;i++){
+			if (userArray[i].equals(networkThread.username)){
+				continue;
+			}
 			checkBoxes.get(i).setText(userArray[i]);
+			checkBoxes.get(i).setVisible(true);
 		}
 	}
 	

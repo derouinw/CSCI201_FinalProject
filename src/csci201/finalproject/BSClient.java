@@ -4,6 +4,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -173,6 +174,9 @@ public class BSClient {
 			try {
 				msg = (Message) receive.readObject();
 			} catch (EOFException eofe) {
+				// TODO: handle disconnect
+				return new Message();
+			} catch (StreamCorruptedException ste) {
 				// TODO: handle disconnect
 				return new Message();
 			} catch (SocketTimeoutException ste) {

@@ -156,6 +156,8 @@ public class ClientGUI extends JFrame {
 					}
 				} else if (sMsg.equals("game over")) {
 					game.userHasLost(nt.username);
+				} else if (sMsg.equals("ready game over")) {
+					setPage("game over");
 				}
 			} else if (gameState.equals("game over")) {
 
@@ -199,9 +201,5 @@ public class ClientGUI extends JFrame {
 		} else {
 			return null;
 		}
-	}
-
-	class GameOverGUI extends JPanel {
-
 	}
 }

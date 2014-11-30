@@ -243,6 +243,7 @@ public class GameGUI extends JPanel{
 			// you lose!
 			whosTurnArea.setText("You lose! ARGGGGHHH");
 			isMyTurn = false;
+			timerPanel.stopTimer();
 		} else {
 			EnemyPanel ep = enemyPanels.get(username);
 			ep.lostGame();
@@ -325,6 +326,7 @@ public class GameGUI extends JPanel{
 		public void stopTimer(){
 			timeRemaining = 65;
 			timer.cancel();
+			reset();
 		}
 		
 		public void reset(){
@@ -466,13 +468,16 @@ public class GameGUI extends JPanel{
 							selectedCoordinates.get(user).add(c);
 						}
 					}
+					
+					if (getNumSelectedCoordinates() == maxShotsAllowed){
+						fireButton.setEnabled(true);
+					}
+					else{
+						fireButton.setEnabled(false);
+					}
+				} else {
+					fireButton.setEnabled(false);
 				}
-			}
-			if (getNumSelectedCoordinates() == maxShotsAllowed){
-				fireButton.setEnabled(true);
-			}
-			else{
-				fireButton.setEnabled(false);
 			}
 		}
 		

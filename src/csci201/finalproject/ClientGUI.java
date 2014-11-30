@@ -68,7 +68,7 @@ public class ClientGUI extends JFrame {
 
 		// finally...
 		gameState = "splash";
-		setPage("fleet selection");
+		setPage("splash");
 		setResizable(false);
 		setVisible(true);
 	}
@@ -154,6 +154,8 @@ public class ClientGUI extends JFrame {
 						// update that player's ship num
 						game.updateNumShipsRemaining(user, num);
 					}
+				} else if (sMsg.equals("game over")) {
+					game.userHasLost(nt.username);
 				}
 			} else if (gameState.equals("game over")) {
 

@@ -103,7 +103,7 @@ public class GameGUI extends JPanel{
 		
 		isMyTurn = false;
 		
-		maxShotsAllowed = 5;
+		maxShotsAllowed = myBoardPanel.getHealthOfLargestShip();
 		turnsTaken = 0;
 		shotsFired = 0;
 		shotsHit = 0;
@@ -133,6 +133,7 @@ public class GameGUI extends JPanel{
 		for (ArrayList<Coordinate> al : selectedCoordinates.values()){
 			retval += al.size();
 		}
+		System.out.println("Number of selected coordinates should be: " + retval);
 		return retval;
 	}
 	
@@ -233,15 +234,17 @@ public class GameGUI extends JPanel{
 		currentPlayingUser = curUser;
 		nextPlayer = curUser;
 		whosTurnArea.setText(currentPlayingUser + " is now firing.");
-		
-		//add statistics
-		turnsTaken++;
-		turnsTakenStatLabel.setText("Turns Taken: " + turnsTaken);
 	}
 	
 	public void userHasLost(String username){
-		EnemyPanel ep = enemyPanels.get(username);
-		ep.lostGame();
+		if (username.equals(nt.username)) {
+			// you lose!
+			whosTurnArea.setText("You lose! ARGGGGHHH");
+			isMyTurn = false;
+		} else {
+			EnemyPanel ep = enemyPanels.get(username);
+			ep.lostGame();
+		}
 	}
 
 	public Shot checkShot(Shot s) {
@@ -312,7 +315,8 @@ public class GameGUI extends JPanel{
 		
 		public void startTimer(){
 			running = true;
-			//timer.scheduleAtFixedRate(new UpdateTimer(), 0, 1000);
+			timer = new Timer();
+			timer.scheduleAtFixedRate(new UpdateTimer(), 0, 1000);
 		}
 		
 		public void stopTimer(){
@@ -485,6 +489,9 @@ public class GameGUI extends JPanel{
 			// fire shots
 			// TODO: bring stuff from endTurn
 			fireButton.setEnabled(false);
+			//add statistics
+			turnsTaken++;
+			turnsTakenStatLabel.setText("Turns Taken: " + turnsTaken);
 			nt.send(new Message(shots));
 		}
 	}
@@ -496,5 +503,6 @@ public class GameGUI extends JPanel{
 	
 	public void updateNumShipsRemaining(String user, int num) {
 		enemyPanels.get(user).updateNumShipsRemaining(num);
+		maxShotsAllowed = myBoardPanel.getHealthOfLargestShip();
 	}
 }

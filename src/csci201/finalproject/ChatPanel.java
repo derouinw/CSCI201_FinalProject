@@ -49,6 +49,7 @@ public class ChatPanel extends JPanel{
 		//Panel Setup
 		//set vertical boxlayout
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		this.setMaximumSize(new Dimension(200,700));
 		
 		//Data member instantiation
 		enterIsValidSubmission = true;
@@ -58,7 +59,6 @@ public class ChatPanel extends JPanel{
 		numRecipients = 0;
 		
 		displayArea = new JTextArea();
-		//displayArea.setPreferredSize(new Dimension(200,300));
 		displayArea.setMinimumSize(new Dimension(200,300));
 		displayArea.setEditable(false);
 		
@@ -74,6 +74,7 @@ public class ChatPanel extends JPanel{
 		displayArea.setForeground(Color.black);
 		
 		displayScroll = new JScrollPane(displayArea);
+		displayScroll.setPreferredSize((new Dimension(200,300)));
 		
 		//set borders and line wrapping for chat box
 		chatArea = new JTextArea();
@@ -127,6 +128,7 @@ public class ChatPanel extends JPanel{
 		recipientSelectionPanel = new JPanel();
 		recipientSelectionPanel.setLayout(new BoxLayout(recipientSelectionPanel,BoxLayout.Y_AXIS));
 		JPanel checkBoxWrapper = new JPanel();
+		checkBoxWrapper.setLayout(new BoxLayout(checkBoxWrapper, BoxLayout.Y_AXIS));
 		JPanel labelWrapper = new JPanel();
 		checkBoxes = new ArrayList<JCheckBox>();
 		checkBoxListener = new CheckBoxListener();
@@ -155,7 +157,7 @@ public class ChatPanel extends JPanel{
 	
 	public void updateUserCheckBoxes(String users){
 		String userArray[] = users.split(" ");
-		for (int i=0;i<userArray.length;i++){
+		for (int i=0;i<userArray.length-1;i++){
 			if (userArray[i].equals(networkThread.username)){
 				continue;
 			}

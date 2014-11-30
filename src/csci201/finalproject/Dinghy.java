@@ -20,5 +20,13 @@ public class Dinghy extends Ship implements Serializable{
 			return (new ImageIcon("dinghyH.png")).getImage();
 		}
 	}
+	
+	public Image getSmallImage(){
+		if (vertical) {
+			return (new ImageIcon("Dinghysmall.png")).getImage();
+		} else {
+			return (new ImageIcon("dinghyHsmall.png")).getImage();
+		}
+	}
 }
 

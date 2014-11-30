@@ -37,16 +37,29 @@ public class Board extends JPanel implements Serializable {
 		ships = new ArrayList<ArrayList<Coordinate>>();
 	}
 
+	public int getHealthOfLargestShip(){
+		int largest = 0;
+		for (Map.Entry<Coordinate, Ship> entry : shipsToSpaces.entrySet()){
+			Ship s = entry.getValue();
+			int hp = s.getHealthPoints();
+			if (hp > largest){
+				largest = hp;
+			}
+		}
+		return largest;
+	}
+	
+	
 	public void addShip(Coordinate c, Ship ship) {
 		firstCoordinates.put(c, ship);
 		
 		ships.add(new ArrayList<Coordinate>());
 		for (int i = 0; i < ship.healthPoints; i++) {
-			Coordinate newC = c;
+			Coordinate newC = new Coordinate(c);
 			if (ship.vertical) {
-				c.setRow(c.getRow() + i);
+				newC.setRow(c.getRow() + i);
 			} else {
-				c.setColumn(c.getColumn() + i);
+				newC.setColumn(c.getColumn() + i);
 			}
 			ships.get(ships.size() - 1).add(newC);
 			shipsToSpaces.put(newC, ship);
@@ -68,7 +81,8 @@ public class Board extends JPanel implements Serializable {
 				s.shotHitShip();
 				shipsToSpaces.remove(entry.getValue());
 
-				for (ArrayList<Coordinate> alc : ships) {
+				for (int i = 0; i < ships.size(); i++) {
+					ArrayList<Coordinate> alc = ships.get(i);
 					if (alc.contains(entry.getKey()))
 						alc.remove(entry.getKey());
 					if (alc.isEmpty())
@@ -98,18 +112,20 @@ public class Board extends JPanel implements Serializable {
 		// draw ships
 		for (Map.Entry<Coordinate, Ship> entry : firstCoordinates.entrySet()) {
 			Coordinate c = entry.getKey();
-			Image toDraw = entry.getValue().getImage();
-			int x = c.getColumn() * 36 + 10;
-			int y = c.getRow() * 30 + 24;
-			g.drawImage(toDraw, x, y, null);
+
+			Image toDraw = entry.getValue().getSmallImage();
+			int x = c.getColumn()*39 + 10;
+			int y = c.getRow()*31 + 20;
+			g.drawImage(toDraw, x,y,null);
 		}
 
-		// draw shots
-		for (int i = 0; i < shotsFiredOnMyBoard.size(); i++) {
+		
+		//draw shots
+		for (int i=0;i<shotsFiredOnMyBoard.size();i++){
 			Shot s = shotsFiredOnMyBoard.get(i);
-			int x = (s.getShotDestination().getColumn() * 36) + 20;
-			int y = (s.getShotDestination().getRow() * 30) + 30;
-			if (s.wasAHit()) {
+			int x = (s.getShotDestination().getColumn() * 39) + 20;
+			int y = (s.getShotDestination().getRow() * 31) + 30;
+			if (s.wasAHit()){
 				g.setColor(Color.red);
 			} else {
 				g.setColor(Color.green);

@@ -20,4 +20,8 @@ public abstract class Ship {
 	}
 	
 	public abstract Image getImage();
+	public abstract Image getSmallImage();
+	public int getHealthPoints(){
+		return healthPoints;
+	}
 }

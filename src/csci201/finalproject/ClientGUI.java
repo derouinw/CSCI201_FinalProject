@@ -30,6 +30,8 @@ public class ClientGUI extends JFrame {
 	// From BSClient, interaction with server
 	NetworkThread nt;
 
+	ArrayList<String> users;
+
 	// Main constructor
 	public ClientGUI(NetworkThread nt) {
 		// super constructor
@@ -62,6 +64,8 @@ public class ClientGUI extends JFrame {
 		this.nt = nt;
 		nt.client = this;
 
+		users = new ArrayList<String>();
+
 		// finally...
 		gameState = "splash";
 		setPage("splash");
@@ -91,27 +95,10 @@ public class ClientGUI extends JFrame {
 
 		} else if (page.equals("playing")) {
 			// get data from FleetGUI and ClientGUI
-			ArrayList<String> usernames = new ArrayList<String>(4); // fake data
-			usernames.add("Eshed");
-			usernames.add("Bill");
-			usernames.add("Max");
-			usernames.add("Cara");
+			Board board = fleet.shipPlacementGridPanel.board;
+			// users is usernames pulled from lobby
+			game.load(users, nt.username, board);
 
-			ArrayList<Shot> shotsList = new ArrayList<Shot>(5); // fake data
-			shotsList.add(new Shot("Eshed", new Coordinate(0, 0), "Cara"));
-			shotsList.add(new Shot("Bill", new Coordinate(1, 1), "Eshed"));
-			shotsList.add(new Shot("Eshed", new Coordinate(0, 1), "Cara"));
-			shotsList.add(new Shot("Max", new Coordinate(0, 2), "Eshed"));
-			shotsList.add(new Shot("Eshed", new Coordinate(0, 3), "Cara"));
-			shotsList.add(new Shot("Eshed", new Coordinate(1, 2), "Max"));
-			shotsList.add(new Shot("Eshed", new Coordinate(5, 5), "Max"));
-			shotsList.add(new Shot("Eshed", new Coordinate(9, 9), "Max"));
-
-			game.load(usernames, "Eshed", new Board());
-			game.addShotsList(shotsList);
-
-			// game.load(nt.players, nt.username, null); //TODO add this data,
-			// not fake data
 		} else if (page.equals("game over")) {
 
 		}
@@ -130,7 +117,7 @@ public class ClientGUI extends JFrame {
 			sMsg = ((String) msg.value).trim();
 			if (sMsg.startsWith("chat")) {
 				int space = sMsg.indexOf(" ");
-				String message = sMsg.substring(space+1);
+				String message = sMsg.substring(space + 1);
 				chatPanel.addMessage(message, msg.source);
 			} else if (gameState.equals("splash")) {
 				if (sMsg.equals("ready splash")) {
@@ -140,9 +127,10 @@ public class ClientGUI extends JFrame {
 				if (sMsg.equals("ready lobby")) {
 					setPage("fleet selection");
 				} else if (sMsg.startsWith("users")) {
-					String users = sMsg.substring(6);
-					lobby.getUsernames(users);
-					chatPanel.updateUserCheckBoxes(users);
+					String usernames = sMsg.substring(6);
+					users = lobby.getUsernames(usernames); // also store users
+															// for later
+					chatPanel.updateUserCheckBoxes(usernames);
 				} else if (sMsg.equals("ready")) {
 					// only for host
 					lobby.StartButton.setEnabled(true);
@@ -154,13 +142,36 @@ public class ClientGUI extends JFrame {
 			} else if (gameState.equals("playing")) {
 				if (sMsg.equals("enable")) {
 					game.startTurn();
-				} else if (sMsg.equals("disable")) {
-					game.endTurn();
+				} else if (sMsg.startsWith("disable")) {
+					String curUser = sMsg.substring(8).trim();
+					game.endTurn(curUser);
+				} else if (sMsg.startsWith("ships")) {
+					int secSpace = sMsg.indexOf(" ", 7);
+					String user = sMsg.substring(5, secSpace).trim();
+					if (!user.equals(nt.username)) {
+						int num = Integer.valueOf(sMsg.substring(secSpace + 1)
+								.trim());
+						// update that player's ship num
+						game.updateNumShipsRemaining(user, num);
+					}
 				}
 			} else if (gameState.equals("game over")) {
 
 			} else {
 
+			}
+			break;
+		// if it's a shot, update hitflag and send it back
+		case Message.TYPE_SHOT:
+			Shot s = (Shot) msg.value;
+			// shot is aimed at me, send back with hit updated
+			if (s.getTargetPlayer().equals(nt.username)) {
+				s = game.checkShot(s);
+				nt.send(new Message(s));
+				nt.send(new Message("ships " + game.getShipsRemaining(),
+						nt.username));
+			} else {
+				game.addShotToOtherBoard(s);
 			}
 			break;
 		}

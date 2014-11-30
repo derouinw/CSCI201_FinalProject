@@ -1,10 +1,12 @@
 package csci201.finalproject;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Image;
+import java.io.Serializable;
+
+import javax.swing.ImageIcon;
 
 
-public class Frigate extends Ship {
+public class Frigate extends Ship implements Serializable{
 	public Frigate() {
 		super();
 		healthPoints = 3;

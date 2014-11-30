@@ -1,11 +1,12 @@
 package csci201.finalproject;
 
-import java.awt.*;
+import java.awt.Image;
+import java.io.Serializable;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
 
 
-public class Brigantine extends Ship {
+public class Brigantine extends Ship implements Serializable {
 	public Brigantine() {
 		super();
 		healthPoints = 4;

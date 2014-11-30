@@ -50,19 +50,26 @@ public class Board extends JPanel implements Serializable {
 		}
 	}*/
 	
-	public void processAttack(Shot s){
+	public boolean processAttack(Shot s){
+		boolean ret = false;
 		for(Map.Entry<Coordinate, Ship> entry: shipsToSpaces.entrySet()){
 			if(s.getShotDestination().equals(entry.getKey())){
 				entry.getValue().hit();
 				s.shotHitShip();
 				shipsToSpaces.remove(entry.getValue());
+				ret = true;
 			}
 		}
 		shotsFiredOnMyBoard.add(s);
+		return ret;
 	}
 	
 	public HashMap<Coordinate, Ship> getMap(){
 		return shipsToSpaces;
+	}
+	
+	public int numShipsRemaining() {
+		return firstCoordinates.size();
 	}
 	
 	public ArrayList<BoardSpace> getBoardspaces(){

@@ -1,10 +1,11 @@
 package csci201.finalproject;
 
-import java.awt.*;
+import java.awt.Image;
+import java.io.Serializable;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
 
-public class Galleon extends Ship {
+public class Galleon extends Ship implements Serializable{
 	public Galleon() {
 		super();
 		healthPoints = 5;

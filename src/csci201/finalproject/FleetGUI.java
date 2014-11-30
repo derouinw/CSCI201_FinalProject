@@ -213,6 +213,7 @@ public class FleetGUI extends JPanel {
 		//Rotate Button
 		rotateButton = new JButton("Rotate: Horizontal");
 		rotateButton.addActionListener(new RotateListener());
+		rotateButton.setPreferredSize(new Dimension(175, 50));
 		//Submit button
 		submitButton = new JButton("Submit");
 		submitButton.addActionListener(new SubmitListener());

@@ -10,6 +10,7 @@ public class Frigate extends Ship implements Serializable{
 	public Frigate() {
 		super();
 		healthPoints = 3;
+		startingHealthPoints = 3;
 	}
 	
 	public Image getImage(){
@@ -28,4 +29,6 @@ public class Frigate extends Ship implements Serializable{
 			return (new ImageIcon("frigateHsmall.png")).getImage();
 		}
 	}
+	
+	public String toString() { return "frigate"; }
 }

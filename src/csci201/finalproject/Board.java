@@ -18,6 +18,8 @@ public class Board extends JPanel implements Serializable {
 	private ArrayList<ArrayList<Coordinate>> ships;
 	private ArrayList<Shot> shotsFiredOnMyBoard;
 	private ArrayList<BoardSpace> boardSpaces;
+	
+	private String shipSunk = "";
 
 	public Board() {
 		shipsToSpaces = new HashMap<Coordinate, Ship>();
@@ -41,8 +43,8 @@ public class Board extends JPanel implements Serializable {
 		int largest = 0;
 		for (Map.Entry<Coordinate, Ship> entry : shipsToSpaces.entrySet()){
 			Ship s = entry.getValue();
-			int hp = s.getHealthPoints();
-			if (hp > largest){
+			int hp = s.getTotalPoints();
+			if (hp > largest && (s.getHealthPoints() != 0)){
 				largest = hp;
 			}
 		}
@@ -79,14 +81,18 @@ public class Board extends JPanel implements Serializable {
 			if (s.getShotDestination().equals(entry.getKey())) {
 				entry.getValue().hit();
 				s.shotHitShip();
+				String shipString = entry.getValue().toString();
 				shipsToSpaces.remove(entry.getValue());
-
+				
 				for (int i = 0; i < ships.size(); i++) {
 					ArrayList<Coordinate> alc = ships.get(i);
-					if (alc.contains(entry.getKey()))
+					if (alc.contains(entry.getKey())) {
 						alc.remove(entry.getKey());
-					if (alc.isEmpty())
+					} if (alc.isEmpty()) {
+						// sunk a ship
+						shipSunk = s.getOriginPlayer() + " sunk " + s.getTargetPlayer() + "'s " + shipString;
 						ships.remove(alc);
+					}
 				}
 				ret = true;
 			}
@@ -100,8 +106,13 @@ public class Board extends JPanel implements Serializable {
 	}
 
 	public int numShipsRemaining() {
-		// return firstCoordinates.size();
 		return ships.size();
+	}
+	
+	public String getShipSunk() {
+		String ret = new String(shipSunk);
+		shipSunk = "";
+		return ret;
 	}
 
 	public ArrayList<BoardSpace> getBoardspaces() {

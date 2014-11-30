@@ -15,6 +15,7 @@ public class Message implements Serializable {
 	int length;
 	String source;
 	Object value;
+	boolean updated;
 	
 	public Message () {
 		type = -1;
@@ -43,5 +44,12 @@ public class Message implements Serializable {
 	public Message(Shot s) {
 		type = TYPE_SHOT;
 		value = s;
+		updated = false;
+	}
+	
+	public Message(Shot s, boolean edited) {
+		type = TYPE_SHOT;
+		value = s;
+		updated = edited;
 	}
 }

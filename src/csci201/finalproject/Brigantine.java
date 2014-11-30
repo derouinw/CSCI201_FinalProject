@@ -10,6 +10,7 @@ public class Brigantine extends Ship implements Serializable {
 	public Brigantine() {
 		super();
 		healthPoints = 4;
+		startingHealthPoints = 4;
 	}
 	
 	public Image getImage(){
@@ -28,4 +29,6 @@ public class Brigantine extends Ship implements Serializable {
 			return (new ImageIcon("brigantineHsmall.png")).getImage();
 		}
 	}
+	
+	public String toString() { return "brigantine"; }
 }

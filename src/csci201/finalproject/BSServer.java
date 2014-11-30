@@ -19,6 +19,8 @@ public class BSServer {
 	// Store the number of players here too
 	int numPlayers;
 
+	int numShots = -1;
+
 	boolean allConnected = false;
 
 	// Constructor
@@ -86,12 +88,6 @@ public class BSServer {
 			PlayerThread pt = new PlayerThread(s, this);
 			playerThreads.add(pt);
 			pt.start();
-
-			String msg = "users ";
-			for (int i = 0; i < playerThreads.size(); i++) {
-				msg += playerThreads.get(i).username + " ";
-			}
-			broadcast(msg);
 		}
 
 		// Receive a message from a PlayerThread
@@ -134,57 +130,59 @@ public class BSServer {
 							playerThreads.get(ptNum(src)).send("game over");
 							playerThreads.get(ptNum(src)).active = false;
 						}
+					} else if (sMsg.startsWith("sunk")) {
+						String text = sMsg.substring(5).trim();
+						broadcast("chat " + text);
 					}
 				} else if (gameState.equals("game over")) {
 					// there should be no messages received during game over
 				}
 				break;
 			case Message.TYPE_SHOTS:
+				// receive shots list and send out to respective players
 				ArrayList<Shot> shots = (ArrayList<Shot>) msg.value;
-				
+
+				numShots = shots.size();
 				for (Shot s : shots) {
 					String user = s.getTargetPlayer();
-					
+
 					// send shot
 					playerThreads.get(ptNum(user)).send(new Message(s));
-				}
-				
-				// TODO: receive updated data from players
-				// will happen in another receive
-				
-				// TODO: send updated data to players
-				// will happen once that happens
-
-				// next player leggo
-				curPlayer = nextPlayer();
-				for (int i = 0; i < playerThreads.size(); i++) {
-					if (i == curPlayer)
-						playerThreads.get(i).send("enable");
-					else
-						playerThreads
-								.get(i)
-								.send("disable "
-										+ playerThreads.get(curPlayer).username);
 				}
 				break;
 			case Message.TYPE_BOARD:
 				// TODO: receive board
 				break;
 			case Message.TYPE_SHOT:
-				Shot s = (Shot)msg.value;
-				playerThreads.get(ptNum(s.getOriginPlayer())).send(new Message(s));
+				Shot s = (Shot) msg.value;
+				numShots--;
+				
+				// send out all shots to all players
+				broadcast(new Message(s, true));
 			}
 		}
 
 		private int nextPlayer() {
-			//curPlayer++;
-			//while (!playerThreads.get(curPlayer).active) {
+			curPlayer++;
+			if (curPlayer >= playerThreads.size())
+				curPlayer = 0; // loop around
+			while (!playerThreads.get(curPlayer).active) {
 				curPlayer++;
 				if (curPlayer >= playerThreads.size())
 					curPlayer = 0; // loop around
-				//System.out.println("yeah the game is over bud");
-			//}
+			}
 			return curPlayer;
+		}
+
+		// number of players still alive
+		private int numActive() {
+			int ret = 0;
+			for (PlayerThread pt : playerThreads) {
+				if (pt.active)
+					ret++;
+			}
+
+			return ret;
 		}
 
 		// Thread.run
@@ -219,7 +217,32 @@ public class BSServer {
 						}
 					}
 				} else if (gameState.equals("playing")) {
-					// TODO: playing part of run()
+					// received all shots, so go to next player
+					if (numShots == 0) {
+						numShots = numPlayers;
+						curPlayer = nextPlayer();
+						for (int i = 0; i < playerThreads.size(); i++) {
+							if (i == curPlayer)
+								playerThreads.get(i).send("enable");
+							else
+								playerThreads
+										.get(i)
+										.send("disable "
+												+ playerThreads.get(curPlayer).username);
+						}
+					}
+					if (numActive() < 2) {
+						// game is over
+						broadcast("ready game over");
+						gameState = "game over";
+						for (PlayerThread pt : playerThreads) {
+							// find winner
+							if (pt.active) {
+								broadcast("chat " + pt.username + " wins!");
+								break;
+							}
+						}
+					}
 				} else if (gameState.equals("game over")) {
 					// send out statistics data then kill server
 					// TODO: this ^
@@ -295,11 +318,14 @@ public class BSServer {
 			if (!active) {
 				boolean okay = false;
 				// TODO: messages to send while inactive
-				if (msg.type == Message.TYPE_STRING && ((String)msg.value).startsWith("chat")) {
-					okay = true; // send chat messages
+				if (msg.type == Message.TYPE_STRING) {
+					if (((String) msg.value).startsWith("chat")
+							|| ((String) msg.value).equals("ready game over")) {
+						okay = true; // send chat messages
+					}
 				}
 				if (!okay) {
-					return;					
+					return;
 				}
 			}
 			try {
@@ -357,10 +383,14 @@ public class BSServer {
 						send("ready splash");
 
 						String broadcast = "users ";
+						String newUser = "";
 						for (int i = 0; i < st.playerThreads.size(); i++) {
 							broadcast += st.playerThreads.get(i).username + " ";
+							if (i == st.playerThreads.size() - 1)
+								newUser = st.playerThreads.get(i).username;
 						}
 						st.broadcast(broadcast);
+						st.broadcast("chat " + newUser + " connected");
 						// otherwise everything is handled in the
 						// ServerThread
 					}

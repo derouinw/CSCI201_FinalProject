@@ -128,7 +128,7 @@ public class SplashGUI extends JPanel {
 				isHost = true;
 			}
 		});
-		choosePlayers.add(displayIPLabel);
+		//choosePlayers.add(displayIPLabel);
 		choosePlayers.add(numPlayersLabel);
 
 		numPanel.add(numPlayersCombo);

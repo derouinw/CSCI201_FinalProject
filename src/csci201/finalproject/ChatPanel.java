@@ -132,7 +132,7 @@ public class ChatPanel extends JPanel{
 		JPanel labelWrapper = new JPanel();
 		checkBoxes = new ArrayList<JCheckBox>();
 		checkBoxListener = new CheckBoxListener();
-		for (int i=0;i<3;i++){
+		for (int i=0;i<4;i++){
 			JCheckBox cb = new JCheckBox("User" + (i+1));
 			cb.setSelected(false);
 			cb.addActionListener(checkBoxListener);
@@ -156,12 +156,14 @@ public class ChatPanel extends JPanel{
 	}
 	
 	public void updateUserCheckBoxes(String users){
+		users = users.trim();
 		String userArray[] = users.split(" ");
-		for (int i=0;i<userArray.length-1;i++){
+		for (int i=0;i<userArray.length;i++){
 			if (userArray[i].equals(networkThread.username)){
 				continue;
 			}
 			checkBoxes.get(i).setText(userArray[i]);
+			checkBoxes.get(i).setSelected(true);
 			checkBoxes.get(i).setVisible(true);
 		}
 	}

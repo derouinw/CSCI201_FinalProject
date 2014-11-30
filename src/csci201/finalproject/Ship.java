@@ -4,7 +4,7 @@ import java.awt.Image;
 
 public abstract class Ship {
 
-	protected int healthPoints;
+	protected int healthPoints, startingHealthPoints;
 	protected boolean vertical;
 	protected Coordinate coord;
 	protected Image image;
@@ -21,7 +21,11 @@ public abstract class Ship {
 	
 	public abstract Image getImage();
 	public abstract Image getSmallImage();
+	public abstract String toString();
 	public int getHealthPoints(){
 		return healthPoints;
+	}
+	public int getTotalPoints(){
+		return startingHealthPoints;
 	}
 }

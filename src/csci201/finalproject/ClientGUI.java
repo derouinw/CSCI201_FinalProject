@@ -91,6 +91,7 @@ public class ClientGUI extends JFrame {
 			// pass in IP address
 			chatPanel.setVisible(true);
 			lobby.setup();
+			if (!nt.isHost) lobby.setIp(splash.host);
 		} else if (page.equals("fleet selection")) {
 
 		} else if (page.equals("playing")) {
@@ -108,8 +109,11 @@ public class ClientGUI extends JFrame {
 	public void receive(Message msg) {
 		if (msg.value == null) {
 			// disconnect
-			JDialog popup = new JDialog(this, "Disconnected from server");
-			dispose();
+			//JDialog popup = new JDialog(this, "Disconnected from server");
+			System.out.println("disconnected...maybe?");
+			//setVisible(false);
+			//dispose();
+			//nt.connected = false;
 		}
 		switch (msg.type) {
 		case Message.TYPE_STRING:
@@ -156,6 +160,8 @@ public class ClientGUI extends JFrame {
 					}
 				} else if (sMsg.equals("game over")) {
 					game.userHasLost(nt.username);
+				} else if (sMsg.equals("ready game over")) {
+					setPage("game over");
 				}
 			} else if (gameState.equals("game over")) {
 
@@ -168,10 +174,16 @@ public class ClientGUI extends JFrame {
 			Shot s = (Shot) msg.value;
 			// shot is aimed at me, send back with hit updated
 			if (s.getTargetPlayer().equals(nt.username)) {
-				s = game.checkShot(s);
-				nt.send(new Message(s));
-				nt.send(new Message("ships " + game.getShipsRemaining(),
-						nt.username));
+				if (!msg.updated) {
+					s = game.checkShot(s);
+					nt.send(new Message(s, true));
+					nt.send(new Message("ships " + game.getShipsRemaining(),
+							nt.username));
+					String shipSunk = game.shipSunk();
+					if (!shipSunk.equals("")) {
+						nt.send("sunk " + shipSunk);
+					}
+				}
 			} else {
 				game.addShotToOtherBoard(s);
 			}
@@ -193,9 +205,5 @@ public class ClientGUI extends JFrame {
 		} else {
 			return null;
 		}
-	}
-
-	class GameOverGUI extends JPanel {
-
 	}
 }

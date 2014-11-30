@@ -21,6 +21,7 @@ public abstract class Ship {
 	
 	public abstract Image getImage();
 	public abstract Image getSmallImage();
+	public abstract String toString();
 	public int getHealthPoints(){
 		return healthPoints;
 	}

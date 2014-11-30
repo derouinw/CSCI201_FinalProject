@@ -134,6 +134,9 @@ public class BSServer {
 							playerThreads.get(ptNum(src)).send("game over");
 							playerThreads.get(ptNum(src)).active = false;
 						}
+					} else if (sMsg.startsWith("sunk")) {
+						String text = sMsg.substring(5).trim();
+						broadcast("chat " + text);
 					}
 				} else if (gameState.equals("game over")) {
 					// there should be no messages received during game over

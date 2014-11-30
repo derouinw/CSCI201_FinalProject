@@ -130,6 +130,10 @@ public class BSServer {
 					if (sMsg.startsWith("ships")) {
 						int ships = Integer.valueOf(sMsg.substring(5).trim());
 						broadcast("ships " + src + " " + ships);
+						if (ships == 0) {
+							playerThreads.get(ptNum(src)).send("game over");
+							playerThreads.get(ptNum(src)).active = false;
+						}
 					}
 				} else if (gameState.equals("game over")) {
 					// there should be no messages received during game over
@@ -174,8 +178,12 @@ public class BSServer {
 
 		private int nextPlayer() {
 			curPlayer++;
-			if (curPlayer >= playerThreads.size())
-				curPlayer = 0; // loop around
+			while (!playerThreads.get(curPlayer).active) {
+				curPlayer++;
+				if (curPlayer >= playerThreads.size())
+					curPlayer = 0; // loop around
+				System.out.println("yeah the game is over bud");
+			}
 			return curPlayer;
 		}
 
@@ -272,6 +280,7 @@ public class BSServer {
 				send = new ObjectOutputStream(s.getOutputStream());
 				receive = new ObjectInputStream(s.getInputStream());
 				this.st = st;
+				active = true;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -283,6 +292,16 @@ public class BSServer {
 
 		// Send a message to the player (TLV protocol)
 		public void send(Message msg) {
+			if (!active) {
+				boolean okay = false;
+				// TODO: messages to send while inactive
+				if (msg.type == Message.TYPE_STRING && ((String)msg.value).startsWith("chat")) {
+					okay = true; // send chat messages
+				}
+				if (!okay) {
+					return;					
+				}
+			}
 			try {
 				send.writeObject(msg);
 				send.flush();

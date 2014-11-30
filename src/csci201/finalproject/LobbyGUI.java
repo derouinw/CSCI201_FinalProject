@@ -49,12 +49,14 @@ public class LobbyGUI extends JPanel {
 
 		// get ip address
 		try {
-			ipString = InetAddress.getLocalHost().getHostAddress();
+			if (nt.isHost)
+				setIp(InetAddress.getLocalHost().getHostAddress());
+			else
+				setIp("Waiting for host");
 		} catch (UnknownHostException e1) {
-			ipString = "[unknown host error (try again)]";
+			setIp("[unknown host error (try again)]");
 		}
 
-		ipString = "Give yer mates this secret code so they can join the crew! " + ipString; 
 		WaitingLabel = new JLabel(ipString);
 
 		updateLabel();
@@ -78,6 +80,10 @@ public class LobbyGUI extends JPanel {
 		WaitingLobby.add(WaitingButtonPanel, BorderLayout.SOUTH);
 
 		add(WaitingLobby, BorderLayout.CENTER);
+	}
+	
+	public void setIp(String ip) {
+		ipString = "Give yer mates this secret code so they can join the crew! " + ip;
 	}
 
 	// function that takes a string split by spaces

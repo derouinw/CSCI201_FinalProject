@@ -91,6 +91,7 @@ public class ClientGUI extends JFrame {
 			// pass in IP address
 			chatPanel.setVisible(true);
 			lobby.setup();
+			if (!nt.isHost) lobby.setIp(splash.host);
 		} else if (page.equals("fleet selection")) {
 
 		} else if (page.equals("playing")) {

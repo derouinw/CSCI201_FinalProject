@@ -108,7 +108,7 @@ public class BSClient {
 
 			return true;
 		}
-		
+
 		public void send(String msg) {
 			send(new Message(msg, username));
 		}
@@ -133,7 +133,7 @@ public class BSClient {
 				Message msg = receive();
 				switch (msg.type) {
 				case Message.TYPE_STRING:
-					if (receive().value.equals("gotUser")) {
+					if (msg.value.equals("gotUser")) {
 						gotUser = true;
 					}
 					break;
@@ -183,7 +183,8 @@ public class BSClient {
 				e.printStackTrace();
 			}
 
-			if (msg.type == Message.TYPE_STRING) System.out.println("received message at client: " + msg.value);
+			if (msg.type == Message.TYPE_STRING)
+				System.out.println("received message at client: " + msg.value);
 			return msg;
 		}
 	}

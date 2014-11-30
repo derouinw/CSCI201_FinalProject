@@ -87,11 +87,13 @@ public class BSServer {
 			playerThreads.add(pt);
 			pt.start();
 
-			String msg = "users ";
+			/*String msg = "users ";
+			String newUser = "";
 			for (int i = 0; i < playerThreads.size(); i++) {
 				msg += playerThreads.get(i).username + " ";
+				if (i == playerThreads.size()-1) newUser = playerThreads.get(i).username;
 			}
-			broadcast(msg);
+			broadcast(msg);*/
 		}
 
 		// Receive a message from a PlayerThread
@@ -362,10 +364,13 @@ public class BSServer {
 						send("ready splash");
 
 						String broadcast = "users ";
+						String newUser = "";
 						for (int i = 0; i < st.playerThreads.size(); i++) {
 							broadcast += st.playerThreads.get(i).username + " ";
+							if (i == st.playerThreads.size()-1) newUser = st.playerThreads.get(i).username;
 						}
 						st.broadcast(broadcast);
+						st.broadcast("chat " + newUser + " connected");
 						// otherwise everything is handled in the
 						// ServerThread
 					}

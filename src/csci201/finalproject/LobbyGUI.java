@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -24,6 +26,7 @@ public class LobbyGUI extends JPanel {
 
 	BSClient.NetworkThread nt;
 	ArrayList<String> usernames;
+	String ipString = "";
 
 	public LobbyGUI(BSClient.NetworkThread nt) {
 		this.nt = nt;
@@ -44,7 +47,16 @@ public class LobbyGUI extends JPanel {
 			e.printStackTrace();
 		}
 
-		WaitingLabel = new JLabel("Connected players: ");
+		// get ip address
+		try {
+			ipString = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e1) {
+			ipString = "[unknown host error (try again)]";
+		}
+
+		ipString = "Give yer mates this secret code so they can join the crew! " + ipString; 
+		WaitingLabel = new JLabel(ipString);
+
 		updateLabel();
 		WaitingLobby.add(WaitingLabel, BorderLayout.CENTER);
 
@@ -56,10 +68,10 @@ public class LobbyGUI extends JPanel {
 		StartButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				nt.send("ready lobby");
-				System.out.println("ready lobby sent");
 			}
 		});
-		if (!nt.isHost) StartButton.setVisible(false);
+		if (!nt.isHost)
+			StartButton.setVisible(false);
 
 		WaitingButtonPanel.add(InstructionsButton);
 		WaitingButtonPanel.add(StartButton);
@@ -82,9 +94,10 @@ public class LobbyGUI extends JPanel {
 	void updateLabel() {
 		String text = "Connected players: ";
 		for (int i = 0; i < usernames.size(); i++) {
-			text += usernames.get(i) + ((i == usernames.size()-1) ? "" : ", ");
+			text += usernames.get(i)
+					+ ((i == usernames.size() - 1) ? "" : ", ");
 		}
-		WaitingLabel.setText(text);
+		WaitingLabel.setText("<html>" + ipString + "<br>" + text + "</html>");
 	}
 
 	class InstructionsListener implements ActionListener {

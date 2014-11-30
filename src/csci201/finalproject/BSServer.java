@@ -177,13 +177,13 @@ public class BSServer {
 		}
 
 		private int nextPlayer() {
-			curPlayer++;
-			while (playerThreads.get(curPlayer).active) {
+			//curPlayer++;
+			//while (!playerThreads.get(curPlayer).active) {
 				curPlayer++;
 				if (curPlayer >= playerThreads.size())
 					curPlayer = 0; // loop around
-				System.out.println("yeah the game is over bud");
-			}
+				//System.out.println("yeah the game is over bud");
+			//}
 			return curPlayer;
 		}
 

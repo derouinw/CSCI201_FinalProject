@@ -49,6 +49,7 @@ public class ChatPanel extends JPanel{
 		//Panel Setup
 		//set vertical boxlayout
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		this.setMaximumSize(new Dimension(200,700));
 		
 		//Data member instantiation
 		enterIsValidSubmission = true;
@@ -58,7 +59,6 @@ public class ChatPanel extends JPanel{
 		numRecipients = 0;
 		
 		displayArea = new JTextArea();
-		//displayArea.setPreferredSize(new Dimension(200,300));
 		displayArea.setMinimumSize(new Dimension(200,300));
 		displayArea.setEditable(false);
 		
@@ -157,7 +157,7 @@ public class ChatPanel extends JPanel{
 	
 	public void updateUserCheckBoxes(String users){
 		String userArray[] = users.split(" ");
-		for (int i=0;i<userArray.length;i++){
+		for (int i=0;i<userArray.length-1;i++){
 			if (userArray[i].equals(networkThread.username)){
 				continue;
 			}

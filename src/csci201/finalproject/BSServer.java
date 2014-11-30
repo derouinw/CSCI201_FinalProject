@@ -183,7 +183,7 @@ public class BSServer {
 				curPlayer++;
 				if (curPlayer >= playerThreads.size())
 					curPlayer = 0; // loop around
-			//	System.out.println("yeah the game is over bud");
+				//System.out.println("yeah the game is over bud")
 			//}
 			return curPlayer;
 		}

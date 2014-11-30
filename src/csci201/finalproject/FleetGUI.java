@@ -27,9 +27,10 @@ public class FleetGUI extends JPanel {
 	JPanel shipLabelPanel;
 	JPanel buttonPanel;
 	JPanel SelectUserInfoPanel;
-	JLabel SelectColorLabel;
-	JComboBox<String> SelectColorCombo;
+	//JLabel SelectColorLabel;
+	//JComboBox<String> SelectColorCombo;
 	JLabel SelectFleetLabel;
+	JLabel selectionCounterLabel;
 	JRadioButton ClassicFleetButton;
 	JRadioButton CreateFleetButton;
 	JPanel FleetInfo; //BoxLayout
@@ -54,6 +55,8 @@ public class FleetGUI extends JPanel {
 	int frigateQuantity;
 	int brigQuantity;
 	int galleonQuantity;
+	int placementCounter;
+	int totalNum;
 	
 	ShipPlacementPanel shipPlacementGridPanel;
 	CardLayout fleetCard;
@@ -62,6 +65,7 @@ public class FleetGUI extends JPanel {
 	
 	public FleetGUI(NetworkThread nt){
 		this.nt = nt;
+		placementCounter = 0;
 
 		fleetPanel = new JPanel();
 		fleetCard = new CardLayout();
@@ -69,7 +73,6 @@ public class FleetGUI extends JPanel {
 
 		
 		SelectUserInfoPanel = new JPanel(new BorderLayout());
-		JPanel SelectColorPanel = new JPanel();
 		JPanel SelectFleetPanel = new JPanel();
 		SelectFleetPanel.setLayout(new BoxLayout(SelectFleetPanel,BoxLayout.X_AXIS));
 		JPanel FleetSelect = new JPanel();
@@ -79,14 +82,6 @@ public class FleetGUI extends JPanel {
 		shipLabelPanel = new JPanel();
 		placementPanel = new JPanel();
 		placementPanel.addMouseListener(shipPlacementGridPanel);
-		
-		// Color Selection
-		SelectColorLabel = new JLabel("Select your color ");
-		String[] ColorOptions = {"red","orange","yellow","cyan","green","pink"};
-		SelectColorCombo = new JComboBox<String>(ColorOptions);
-		SelectColorPanel.add(SelectColorLabel);
-		SelectColorPanel.add(SelectColorCombo);
-		SelectUserInfoPanel.add(SelectColorPanel, BorderLayout.NORTH);
 		
 		// Fleet Selection
 		SelectFleetLabel = new JLabel("Select your fleet type ");
@@ -187,11 +182,16 @@ public class FleetGUI extends JPanel {
 		Type4Panel.add(ShipType4Label);
 		Type4Panel.add(Type4Combo);
 		
+		JPanel counterPanel = new JPanel();
+		selectionCounterLabel = new JLabel("Total Number of Spaces Taken: 0");
+		counterPanel.add(selectionCounterLabel);
+		
 		FleetInfo.add(Type0Panel);
 		FleetInfo.add(Type1Panel);
 		FleetInfo.add(Type2Panel);
 		FleetInfo.add(Type3Panel);
 		FleetInfo.add(Type4Panel);
+		FleetInfo.add(selectionCounterLabel); 
 		
 		SelectFleetPanel.add(FleetInfo);
 		
@@ -217,6 +217,7 @@ public class FleetGUI extends JPanel {
 		//Submit button
 		submitButton = new JButton("Submit");
 		submitButton.addActionListener(new SubmitListener());
+		submitButton.setEnabled(false);
 		
 		shipLabelPanel.setLayout(new GridLayout(7, 1));
 		shipLabelPanel.add(dinghyLabel);
@@ -256,7 +257,8 @@ public class FleetGUI extends JPanel {
 			galleonQuantity = Integer.valueOf(numOptions3[Type4Combo.getSelectedIndex()]);
 			int g = galleonQuantity*5;
 			
-			if(d+s+f+b+g == 17){
+			int spaceCounter = d+s+f+b+g;
+			if(spaceCounter == 17){
 				ContinueButton.setEnabled(true);
 			}
 			else{
@@ -267,6 +269,8 @@ public class FleetGUI extends JPanel {
 			frigateLabel.setText("Frigate: x" + frigateQuantity);
 			brigantineLabel.setText("Brigantine: x" + brigQuantity);
 			galleonLabel.setText("Galleon: x" + galleonQuantity);
+			totalNum = dinghyQuantity + sloopQuantity + frigateQuantity + brigQuantity + galleonQuantity;
+			selectionCounterLabel.setText("Total Number of Spaces Taken: " + spaceCounter);
 			revalidate();
 		}
 		
@@ -331,6 +335,10 @@ public class FleetGUI extends JPanel {
 			if(dinghyQuantity > 0){
 				dinghyQuantity = dinghyQuantity-1;
 				dinghyLabel.setText("Dinghy: x" + dinghyQuantity);
+				placementCounter++;
+				if(placementCounter == totalNum){
+					submitButton.setEnabled(true);
+				}
 				return true;
 			}
 		}
@@ -338,6 +346,10 @@ public class FleetGUI extends JPanel {
 			if(sloopQuantity > 0){
 				sloopQuantity = sloopQuantity-1;
 				sloopLabel.setText("Sloop: x" + sloopQuantity);
+				placementCounter++;
+				if(placementCounter == totalNum){
+					submitButton.setEnabled(true);
+				}
 				return true;
 			}
 		}
@@ -345,6 +357,10 @@ public class FleetGUI extends JPanel {
 			if(frigateQuantity > 0){
 				frigateQuantity = frigateQuantity-1;
 				frigateLabel.setText("Frigate: x" + frigateQuantity);
+				placementCounter++;
+				if(placementCounter == totalNum){
+					submitButton.setEnabled(true);
+				}
 				return true;
 			}
 		}
@@ -352,6 +368,10 @@ public class FleetGUI extends JPanel {
 			if(brigQuantity > 0){
 				brigQuantity = brigQuantity-1;
 				brigantineLabel.setText("Brigantine: x" + brigQuantity);
+				placementCounter++;
+				if(placementCounter == totalNum){
+					submitButton.setEnabled(true);
+				}
 				return true;
 			}
 		}
@@ -359,6 +379,10 @@ public class FleetGUI extends JPanel {
 			if(galleonQuantity > 0){
 				galleonQuantity = galleonQuantity-1;
 				galleonLabel.setText("Galleon: x" + galleonQuantity);
+				placementCounter++;
+				if(placementCounter == totalNum){
+					submitButton.setEnabled(true);
+				}
 				return true;
 			}
 		}

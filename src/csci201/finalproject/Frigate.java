@@ -28,4 +28,6 @@ public class Frigate extends Ship implements Serializable{
 			return (new ImageIcon("frigateHsmall.png")).getImage();
 		}
 	}
+	
+	public String toString() { return "frigate"; }
 }

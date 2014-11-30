@@ -505,4 +505,9 @@ public class GameGUI extends JPanel{
 		enemyPanels.get(user).updateNumShipsRemaining(num);
 		maxShotsAllowed = myBoardPanel.getHealthOfLargestShip();
 	}
+
+	public String shipSunk() {
+		String shipSunk =  myBoardPanel.getShipSunk();
+		return shipSunk;
+	}
 }

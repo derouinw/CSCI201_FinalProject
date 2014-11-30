@@ -131,7 +131,6 @@ public class ClientGUI extends JFrame {
 					users = lobby.getUsernames(usernames); // also store users
 															// for later
 					chatPanel.updateUserCheckBoxes(usernames);
-					System.out.println("usernames: " + usernames);
 				} else if (sMsg.equals("ready")) {
 					// only for host
 					lobby.StartButton.setEnabled(true);
@@ -174,6 +173,10 @@ public class ClientGUI extends JFrame {
 					nt.send(new Message(s, true));
 					nt.send(new Message("ships " + game.getShipsRemaining(),
 							nt.username));
+					String shipSunk = game.shipSunk();
+					if (!shipSunk.equals("")) {
+						nt.send("sunk " + shipSunk);
+					}
 				}
 			} else {
 				game.addShotToOtherBoard(s);

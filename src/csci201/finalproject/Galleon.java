@@ -27,4 +27,6 @@ public class Galleon extends Ship implements Serializable{
 			return (new ImageIcon("galleonHsmall.png")).getImage();
 		}
 	}
+	
+	public String toString() { return "galleon"; }
 }

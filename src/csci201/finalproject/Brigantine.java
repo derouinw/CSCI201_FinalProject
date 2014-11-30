@@ -28,4 +28,6 @@ public class Brigantine extends Ship implements Serializable {
 			return (new ImageIcon("brigantineHsmall.png")).getImage();
 		}
 	}
+	
+	public String toString() { return "brigantine"; }
 }

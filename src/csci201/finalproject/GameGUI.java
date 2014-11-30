@@ -524,7 +524,6 @@ public class GameGUI extends JPanel{
 		}
 	}
 
-	
 	public int getShipsRemaining() {
 		return myBoardPanel.numShipsRemaining();
 	}
@@ -536,5 +535,15 @@ public class GameGUI extends JPanel{
 	public String shipSunk() {
 		String shipSunk =  myBoardPanel.getShipSunk();
 		return shipSunk;
+	}
+
+	public String getPlayerData() {
+		String ret = "";
+		ret += nt.username + " "; 
+		ret += " 0 "; // rank
+		ret += shotsHit + " ";
+		ret += shotsFired + " ";
+		ret += turnsTaken;
+		return ret;
 	}
 }

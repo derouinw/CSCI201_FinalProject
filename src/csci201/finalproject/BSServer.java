@@ -135,7 +135,9 @@ public class BSServer {
 						broadcast("chat " + text);
 					}
 				} else if (gameState.equals("game over")) {
-					// there should be no messages received during game over
+					if (sMsg.startsWith("data")) {
+						broadcast(new Message(sMsg, src));
+					}
 				}
 				break;
 			case Message.TYPE_SHOTS:
@@ -156,7 +158,6 @@ public class BSServer {
 			case Message.TYPE_SHOT:
 				Shot s = (Shot) msg.value;
 				numShots--;
-				
 				// send out all shots to all players
 				broadcast(new Message(s, true));
 			}

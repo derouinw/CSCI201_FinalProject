@@ -494,6 +494,9 @@ public class GameGUI extends JPanel{
 			//add statistics
 			turnsTaken++;
 			turnsTakenStatLabel.setText("Turns Taken: " + turnsTaken);
+			shotsFired += shots.size();
+			shotsFiredStatLabel.setText("Shots Hit/Fired: " + shotsHit + "/" + shotsFired);
+			
 			nt.send(new Message(shots));
 		}
 	}

@@ -41,8 +41,8 @@ public class Board extends JPanel implements Serializable {
 		int largest = 0;
 		for (Map.Entry<Coordinate, Ship> entry : shipsToSpaces.entrySet()){
 			Ship s = entry.getValue();
-			int hp = s.getHealthPoints();
-			if (hp > largest){
+			int hp = s.getTotalPoints();
+			if (hp > largest && (s.getHealthPoints() != 0)){
 				largest = hp;
 			}
 		}
@@ -79,7 +79,7 @@ public class Board extends JPanel implements Serializable {
 			if (s.getShotDestination().equals(entry.getKey())) {
 				entry.getValue().hit();
 				s.shotHitShip();
-				shipsToSpaces.remove(entry);
+				shipsToSpaces.remove(entry.getValue());
 
 				for (int i = 0; i < ships.size(); i++) {
 					ArrayList<Coordinate> alc = ships.get(i);

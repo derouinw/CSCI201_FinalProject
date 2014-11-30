@@ -13,87 +13,105 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 public class Board extends JPanel implements Serializable {
-	
-	private HashMap<Coordinate,Ship> shipsToSpaces, firstCoordinates;
+
+	private HashMap<Coordinate, Ship> shipsToSpaces, firstCoordinates;
+	private ArrayList<ArrayList<Coordinate>> ships;
 	private ArrayList<Shot> shotsFiredOnMyBoard;
 	private ArrayList<BoardSpace> boardSpaces;
 
 	public Board() {
-		shipsToSpaces = new HashMap<Coordinate,Ship>();
-		firstCoordinates = new HashMap<Coordinate,Ship>();
+		shipsToSpaces = new HashMap<Coordinate, Ship>();
+		firstCoordinates = new HashMap<Coordinate, Ship>();
 		shotsFiredOnMyBoard = new ArrayList<Shot>();
 		boardSpaces = new ArrayList<BoardSpace>();
 
-		this.setLayout(new GridLayout(10,10));
+		this.setLayout(new GridLayout(10, 10));
 		boardSpaces = new ArrayList<BoardSpace>();
-		for (int i=0;i<100;i++){
-			BoardSpace bs = new BoardSpace((i/10),(i%10));
+		for (int i = 0; i < 100; i++) {
+			BoardSpace bs = new BoardSpace((i / 10), (i % 10));
 			bs.setBorder(BorderFactory.createEtchedBorder());
 			boardSpaces.add(bs);
 			this.add(bs);
 		}
+
+		ships = new ArrayList<ArrayList<Coordinate>>();
 	}
-	
-	public void addShip(Coordinate c, Ship ship, boolean isFirstCoordinate){
-		if (isFirstCoordinate){
-			firstCoordinates.put(c, ship);
-		}
-		shipsToSpaces.put(c, ship);
-	}
-	
-	/*public void receiveAttacksList(ArrayList<Shot> shots){
-		for(int i = 0; i<shots.size(); i++){
-			if(shots.get(i).getTargetPlayer().equals(username.getText()))
-			{
-				processAttack(shots.get(i));
+
+	public void addShip(Coordinate c, Ship ship) {
+		firstCoordinates.put(c, ship);
+		
+		ships.add(new ArrayList<Coordinate>());
+		for (int i = 0; i < ship.healthPoints; i++) {
+			Coordinate newC = c;
+			if (ship.vertical) {
+				c.setRow(c.getRow() + i);
+			} else {
+				c.setColumn(c.getColumn() + i);
 			}
+			ships.get(ships.size() - 1).add(newC);
+			shipsToSpaces.put(newC, ship);
 		}
-	}*/
-	
-	public boolean processAttack(Shot s){
+	}
+
+	/*
+	 * public void receiveAttacksList(ArrayList<Shot> shots){ for(int i = 0;
+	 * i<shots.size(); i++){
+	 * if(shots.get(i).getTargetPlayer().equals(username.getText())) {
+	 * processAttack(shots.get(i)); } } }
+	 */
+
+	public boolean processAttack(Shot s) {
 		boolean ret = false;
-		for(Map.Entry<Coordinate, Ship> entry: shipsToSpaces.entrySet()){
-			if(s.getShotDestination().equals(entry.getKey())){
+		for (Map.Entry<Coordinate, Ship> entry : shipsToSpaces.entrySet()) {
+			if (s.getShotDestination().equals(entry.getKey())) {
 				entry.getValue().hit();
 				s.shotHitShip();
 				shipsToSpaces.remove(entry.getValue());
+
+				for (ArrayList<Coordinate> alc : ships) {
+					if (alc.contains(entry.getKey()))
+						alc.remove(entry.getKey());
+					if (alc.isEmpty())
+						ships.remove(alc);
+				}
 				ret = true;
 			}
 		}
 		shotsFiredOnMyBoard.add(s);
 		return ret;
 	}
-	
-	public HashMap<Coordinate, Ship> getMap(){
+
+	public HashMap<Coordinate, Ship> getMap() {
 		return shipsToSpaces;
 	}
-	
+
 	public int numShipsRemaining() {
-		return firstCoordinates.size();
+		// return firstCoordinates.size();
+		return ships.size();
 	}
-	
-	public ArrayList<BoardSpace> getBoardspaces(){
+
+	public ArrayList<BoardSpace> getBoardspaces() {
 		return boardSpaces;
 	}
-	
-	public void paintComponent(Graphics g){
-		//draw ships
-		for (Map.Entry<Coordinate, Ship> entry : firstCoordinates.entrySet()){
+
+	public void paintComponent(Graphics g) {
+		// draw ships
+		for (Map.Entry<Coordinate, Ship> entry : firstCoordinates.entrySet()) {
 			Coordinate c = entry.getKey();
 			Image toDraw = entry.getValue().getImage();
-			int x = c.getColumn()*36 + 10;
-			int y = c.getRow()*30 + 24;
-			g.drawImage(toDraw, x,y,null);
+			int x = c.getColumn() * 36 + 10;
+			int y = c.getRow() * 30 + 24;
+			g.drawImage(toDraw, x, y, null);
 		}
-		
-		//draw shots
-		for (Shot s: shotsFiredOnMyBoard){
+
+		// draw shots
+		for (int i = 0; i < shotsFiredOnMyBoard.size(); i++) {
+			Shot s = shotsFiredOnMyBoard.get(i);
 			int x = (s.getShotDestination().getColumn() * 36) + 20;
 			int y = (s.getShotDestination().getRow() * 30) + 30;
-			if (s.wasAHit()){
+			if (s.wasAHit()) {
 				g.setColor(Color.red);
-			}
-			else{
+			} else {
 				g.setColor(Color.green);
 			}
 			g.fillOval(x, y, 10, 10);

@@ -133,6 +133,7 @@ public class GameGUI extends JPanel{
 		for (ArrayList<Coordinate> al : selectedCoordinates.values()){
 			retval += al.size();
 		}
+		System.out.println("Number of selected coordinates should be: " + retval);
 		return retval;
 	}
 	
@@ -496,5 +497,7 @@ public class GameGUI extends JPanel{
 	
 	public void updateNumShipsRemaining(String user, int num) {
 		enemyPanels.get(user).updateNumShipsRemaining(num);
+		maxShotsAllowed = myBoardPanel.getHealthOfLargestShip();
+		System.out.println("Max shots allowed is now: " + maxShotsAllowed);
 	}
 }

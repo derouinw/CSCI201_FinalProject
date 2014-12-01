@@ -278,7 +278,7 @@ public class GameGUI extends JPanel{
 		int idx = (10 * row) + col;
 		EnemyPanel targetPanel = enemyPanels.get(shot.getTargetPlayer());
 		targetPanel.addShotGraphic(idx, shot.wasAHit());
-		if (shot.wasAHit()){
+		if (shot.wasAHit() && shot.getOriginPlayer().equals(myUsername)){
 			shotsHit++;
 		}
 		shotsFiredStatLabel.setText("Shots Hit/Fired: " + shotsHit + "/" + shotsFired);

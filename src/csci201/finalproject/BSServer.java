@@ -162,12 +162,17 @@ public class BSServer {
 				// next player leggo
 				curPlayer = nextPlayer();
 				for (int i = 0; i < playerThreads.size(); i++) {
+					if (playerThreads.get(i).active == false){
+						continue;
+					}
 					if ( i == curPlayer ){
 						playerThreads.get(curPlayer).send("enable");
 					}
 					else{
 						playerThreads.get(i).send("disable " + playerThreads.get(i).username);
 					}
+					//send random chat message to kickstart server
+					broadcast("Hope you're all enjoying the game!");
 				}
 				break;
 			case Message.TYPE_BOARD:
@@ -228,6 +233,9 @@ public class BSServer {
 						// start with host
 						//curPlayer = nextPlayer();
 						for (int i = 0; i < playerThreads.size(); i++) {
+							if (playerThreads.get(i).active == false){
+								continue;
+							}
 							if ( i == curPlayer ){
 								playerThreads.get(curPlayer).send("enable");
 							}

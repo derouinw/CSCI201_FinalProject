@@ -407,7 +407,7 @@ public class GameGUI extends JPanel{
 		}
 		
 		public void lostGame() {
-			userNameLabel.setText(userNameLabel.getText() + " has lost.");
+			userNameLabel.setText(username + " has lost.");
 			boardPanel.shipWreck();
 			boardPanel.repaint();
 		}

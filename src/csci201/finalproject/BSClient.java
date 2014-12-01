@@ -1,12 +1,9 @@
 package csci201.finalproject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -100,7 +97,7 @@ public class BSClient {
 		private boolean setupConnection(String host, int port) {
 			try {
 				s = new Socket(host, port);
-				s.setSoTimeout(1000);
+				s.setSoTimeout(2000);
 				send = new ObjectOutputStream(s.getOutputStream());
 				receive = new ObjectInputStream(s.getInputStream());
 			} catch (SocketTimeoutException ste) {
@@ -111,7 +108,7 @@ public class BSClient {
 
 			return true;
 		}
-
+		
 		public void send(String msg) {
 			send(new Message(msg, username));
 		}
@@ -119,7 +116,6 @@ public class BSClient {
 		// TLV protocol
 		public void send(Message msg) {
 			try {
-				send = new ObjectOutputStream(s.getOutputStream());
 				send.writeObject(msg);
 				send.flush();
 			} catch (IOException e) {
@@ -137,7 +133,7 @@ public class BSClient {
 				Message msg = receive();
 				switch (msg.type) {
 				case Message.TYPE_STRING:
-					if (msg.value.equals("gotUser")) {
+					if (receive().value.equals("gotUser")) {
 						gotUser = true;
 					}
 					break;
@@ -175,14 +171,8 @@ public class BSClient {
 			Message msg = new Message();
 
 			try {
-				receive = new ObjectInputStream(s.getInputStream());
 				msg = (Message) receive.readObject();
-			} catch (ClassCastException cce) {
-				System.out.println("class cast exception");
 			} catch (EOFException eofe) {
-				// TODO: handle disconnect
-				return new Message();
-			} catch (StreamCorruptedException ste) {
 				// TODO: handle disconnect
 				return new Message();
 			} catch (SocketTimeoutException ste) {
@@ -193,8 +183,7 @@ public class BSClient {
 				e.printStackTrace();
 			}
 
-			if (msg.type == Message.TYPE_STRING)
-				System.out.println("received message at client: " + msg.value);
+			if (msg.type == Message.TYPE_STRING) System.out.println("received message at client: " + msg.value + "--" + username);
 			return msg;
 		}
 	}

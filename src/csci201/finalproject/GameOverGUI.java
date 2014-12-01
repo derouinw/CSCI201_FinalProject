@@ -45,10 +45,11 @@ public class GameOverGUI extends JPanel {
 		//add screens
 		GameStats = new JPanel();
 		GameStats.setLayout(new BorderLayout());
-		GameOver.add("first", GameStats);
+		
 		GameCredits = new JPanel();
 		GameCredits.setLayout(new BoxLayout(GameCredits,BoxLayout.Y_AXIS));
 		GameOver.add("credits", GameCredits);
+		GameOver.add("first", GameStats);
 		
 		dtm = new DefaultTableModel();
 		statsTable = new JTable(dtm);

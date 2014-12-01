@@ -166,7 +166,7 @@ public class BSServer {
 						playerThreads.get(curPlayer).send("enable");
 					}
 					else{
-						playerThreads.get(i).send("disable " + playerThreads.get(i).username);
+						playerThreads.get(i).send("disable " + playerThreads.get(curPlayer).username);
 					}
 				}
 				break;
@@ -232,7 +232,7 @@ public class BSServer {
 								playerThreads.get(curPlayer).send("enable");
 							}
 							else{
-								playerThreads.get(i).send("disable " + playerThreads.get(i).username);
+								playerThreads.get(i).send("disable " + playerThreads.get(curPlayer).username);
 							}
 						}
 					}

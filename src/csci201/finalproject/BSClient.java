@@ -97,7 +97,7 @@ public class BSClient {
 		private boolean setupConnection(String host, int port) {
 			try {
 				s = new Socket(host, port);
-				s.setSoTimeout(1000);
+				s.setSoTimeout(2000);
 				send = new ObjectOutputStream(s.getOutputStream());
 				receive = new ObjectInputStream(s.getInputStream());
 			} catch (SocketTimeoutException ste) {
@@ -183,7 +183,7 @@ public class BSClient {
 				e.printStackTrace();
 			}
 
-			if (msg.type == Message.TYPE_STRING) System.out.println("received message at client: " + msg.value);
+			if (msg.type == Message.TYPE_STRING) System.out.println("received message at client: " + msg.value + "--" + username);
 			return msg;
 		}
 	}

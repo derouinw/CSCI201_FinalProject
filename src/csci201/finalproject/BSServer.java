@@ -158,13 +158,12 @@ public class BSServer {
 				// next player leggo
 				curPlayer = nextPlayer();
 				for (int i = 0; i < playerThreads.size(); i++) {
-					if (i == curPlayer)
-						playerThreads.get(i).send("enable");
-					else
-						playerThreads
-								.get(i)
-								.send("disable "
-										+ playerThreads.get(curPlayer).username);
+					if ( i == curPlayer ){
+						playerThreads.get(curPlayer).send("enable");
+					}
+					else{
+						playerThreads.get(i).send("disable " + playerThreads.get(i).username);
+					}
 				}
 				break;
 			case Message.TYPE_BOARD:
@@ -210,14 +209,14 @@ public class BSServer {
 
 						// start first turn of game
 						// start with host
+						//curPlayer = nextPlayer();
 						for (int i = 0; i < playerThreads.size(); i++) {
-							if (i == curPlayer)
-								playerThreads.get(i).send("enable");
-							else
-								playerThreads
-										.get(i)
-										.send("disable "
-												+ playerThreads.get(curPlayer).username);
+							if ( i == curPlayer ){
+								playerThreads.get(curPlayer).send("enable");
+							}
+							else{
+								playerThreads.get(i).send("disable " + playerThreads.get(i).username);
+							}
 						}
 					}
 				} else if (gameState.equals("playing")) {
@@ -278,7 +277,7 @@ public class BSServer {
 		public PlayerThread(Socket s, ServerThread st) {
 			this.s = s;
 			try {
-				s.setSoTimeout(1000);
+				s.setSoTimeout(2000);
 				send = new ObjectOutputStream(s.getOutputStream());
 				receive = new ObjectInputStream(s.getInputStream());
 				this.st = st;

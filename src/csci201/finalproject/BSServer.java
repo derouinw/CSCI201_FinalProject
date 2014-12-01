@@ -306,7 +306,7 @@ public class BSServer {
 			}
 			try {
 				send.writeObject(msg);
-				send.close();
+				send.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -317,7 +317,6 @@ public class BSServer {
 
 			try {
 				msg = (Message) receive.readObject();
-				receive.close();
 			} catch (EOFException eofe) {
 				// TODO: handle disconnect
 				return new Message();

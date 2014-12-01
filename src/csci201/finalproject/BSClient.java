@@ -4,6 +4,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -97,7 +98,7 @@ public class BSClient {
 		private boolean setupConnection(String host, int port) {
 			try {
 				s = new Socket(host, port);
-				s.setSoTimeout(2000);
+				s.setSoTimeout(1000);
 				send = new ObjectOutputStream(s.getOutputStream());
 				receive = new ObjectInputStream(s.getInputStream());
 			} catch (SocketTimeoutException ste) {
@@ -108,7 +109,7 @@ public class BSClient {
 
 			return true;
 		}
-		
+
 		public void send(String msg) {
 			send(new Message(msg, username));
 		}
@@ -133,7 +134,7 @@ public class BSClient {
 				Message msg = receive();
 				switch (msg.type) {
 				case Message.TYPE_STRING:
-					if (receive().value.equals("gotUser")) {
+					if (msg.value.equals("gotUser")) {
 						gotUser = true;
 					}
 					break;
@@ -172,7 +173,14 @@ public class BSClient {
 
 			try {
 				msg = (Message) receive.readObject();
+			} catch (ClassCastException cce) {
+				System.out.println("class cast exception");
 			} catch (EOFException eofe) {
+				// TODO: handle disconnect
+				System.out.println("EOFE");
+				return new Message();
+			} catch (StreamCorruptedException ste) {
+				System.out.println("SCE");
 				// TODO: handle disconnect
 				return new Message();
 			} catch (SocketTimeoutException ste) {
@@ -183,7 +191,8 @@ public class BSClient {
 				e.printStackTrace();
 			}
 
-			if (msg.type == Message.TYPE_STRING) System.out.println("received message at client: " + msg.value + "--" + username);
+			if (msg.type == Message.TYPE_STRING)
+				System.out.println("received message at client: " + msg.value);
 			return msg;
 		}
 	}

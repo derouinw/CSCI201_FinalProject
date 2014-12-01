@@ -511,7 +511,7 @@ public class GameGUI extends JPanel{
 			turnsTakenStatLabel.setText("Turns Taken: " + turnsTaken);
 			
 			int timeRemaining = timerPanel.getTimeRemaining();
-			int timeTaken = 65 - timeRemaining;
+			int timeTaken = 60 - timeRemaining;
 			totalTimeTaken += timeTaken;
 			averageTimePerTurn = totalTimeTaken/turnsTaken;
 			averageTimePerTurn = Math.floor(averageTimePerTurn * 100) / 100;

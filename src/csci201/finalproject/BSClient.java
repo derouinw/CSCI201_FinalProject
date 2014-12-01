@@ -119,7 +119,6 @@ public class BSClient {
 		// TLV protocol
 		public void send(Message msg) {
 			try {
-				send = new ObjectOutputStream(s.getOutputStream());
 				send.writeObject(msg);
 				send.flush();
 			} catch (IOException e) {
@@ -175,7 +174,6 @@ public class BSClient {
 			Message msg = new Message();
 
 			try {
-				receive = new ObjectInputStream(s.getInputStream());
 				msg = (Message) receive.readObject();
 			} catch (ClassCastException cce) {
 				System.out.println("class cast exception");

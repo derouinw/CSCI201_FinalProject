@@ -330,7 +330,6 @@ public class BSServer {
 				}
 			}
 			try {
-				 send = new ObjectOutputStream(s.getOutputStream());
 				send.writeObject(msg);
 				send.flush();
 			} catch (IOException e) {
@@ -342,7 +341,6 @@ public class BSServer {
 			Message msg = new Message();
 
 			try {
-				receive = new ObjectInputStream(s.getInputStream());
 				msg = (Message) receive.readObject();
 			} catch (EOFException eofe) {
 				// TODO: handle disconnect

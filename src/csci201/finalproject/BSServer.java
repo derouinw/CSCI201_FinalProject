@@ -131,8 +131,12 @@ public class BSServer {
 						int ships = Integer.valueOf(sMsg.substring(5).trim());
 						broadcast("ships " + src + " " + ships);
 						if (ships == 0) {
-							playerThreads.get(ptNum(src)).send("game over");
 							playerThreads.get(ptNum(src)).active = false;
+							playerThreads.get(ptNum(src)).send("game over");
+							if (onlyOnePlayerRemaining()){ //should I end the game?
+								gameState = "game over";
+								broadcast(new Message("ready game over","Server"));
+							}
 						}
 					}
 				} else if (gameState.equals("game over")) {
@@ -175,6 +179,19 @@ public class BSServer {
 				
 				broadcast(new Message(s, true));
 			}
+		}
+		
+		private boolean onlyOnePlayerRemaining(){
+			int numPlayersOut = 0;
+			for (int i=0;i<playerThreads.size();i++){
+				if (playerThreads.get(i).active == false){
+					numPlayersOut++;
+				}
+			}
+			if (numPlayersOut == playerThreads.size()-1){
+				return true;
+			}
+			return false;
 		}
 
 		private int nextPlayer() {

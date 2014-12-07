@@ -1,8 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `BuccBattleInformation` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `BuccBattleInformation`;
+CREATE DATABASE  IF NOT EXISTS `BuccBattleInfo` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `BuccBattleInfo`;
 -- MySQL dump 10.13  Distrib 5.6.19, for osx10.7 (i386)
 --
--- Host: localhost    Database: BuccBattleInformation
+-- Host: localhost    Database: BuccBattleInfo
 -- ------------------------------------------------------
 -- Server version	5.6.21
 
@@ -18,26 +18,29 @@ USE `BuccBattleInformation`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `PlayerInformation`
+-- Table structure for table `PlayerInfo`
 --
 
-DROP TABLE IF EXISTS `PlayerInformation`;
+DROP TABLE IF EXISTS `PlayerInfo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `PlayerInformation` (
-  `player_id` int(100) unsigned NOT NULL AUTO_INCREMENT,
-  `Name` varchar(50) NOT NULL,
+CREATE TABLE `PlayerInfo` (
+  `Name` varchar(100) NOT NULL,
   `FinalRank` int(11) NOT NULL,
-  `TurnsTaken` int(100) NOT NULL,
-  `ChatMessagesSent` int(100) NOT NULL,
-  `NumShipsDeployed` int(100) NOT NULL,
-  `NumShipsLost` int(100) NOT NULL,
-  `NumShipsSunk` int(100) NOT NULL,
-  `ShotsTaken` int(100) NOT NULL,
-  `SuccessfulShots` int(100) NOT NULL,
-  PRIMARY KEY (`player_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `TurnsTaken` int(11) NOT NULL,
+  `ShotsTaken` int(11) NOT NULL,
+  `SuccessfulShots` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `PlayerInfo`
+--
+
+LOCK TABLES `PlayerInfo` WRITE;
+/*!40000 ALTER TABLE `PlayerInfo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `PlayerInfo` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -48,4 +51,4 @@ CREATE TABLE `PlayerInformation` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-11-29 19:27:55
+-- Dump completed on 2014-12-06 18:14:52

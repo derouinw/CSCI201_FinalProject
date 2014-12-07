@@ -17,14 +17,14 @@ public class DatabaseCreator {
 
 	public static final String DB_ADDRESS = "jdbc:mysql://localhost/";
 	public static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-	public static final String DB_NAME = "BuccBattlesInformation";
+	public static final String DB_NAME = "BuccBattleInfo";
 	public static final String DRIVER = "com.mysql.jdbc.Driver";
 	public static final String USER = "root";
 	public static final String PASSWORD = "";
-	public static final String SQL_SCRIPT = "BuccBattleInformation.sql";
+	public static final String SQL_SCRIPT = "BuccBattleInfo.sql";
 	private Connection conn = null;
 	private Statement stmt = null;
-	private final String allAtOnce = "INSERT INTO PlayerInformation(Name, FinalRank, TurnsTaken, ChatMessagesSent, NumShipsDeployed, NumShipsLost, NumShipsSunk, ShotsTaken,SuccessfulShots) VALUE (?,?,?,?,?,?,?,?,?)";
+	private final String allAtOnce = "INSERT INTO PlayerInformation(Name, FinalRank, TurnsTaken, ShotsTaken,SuccessfulShots) VALUE (?,?,?,?,?)";
 	private java.sql.PreparedStatement everythingAllAtOnce = null;
 	
 	public DatabaseCreator() {
@@ -52,7 +52,7 @@ public class DatabaseCreator {
 		
 	}
 		
-		public void addFullRow(String username,  int finalPlace, int turnsTaken, int messagesSent, int totalShipsDeployed, int totalShipsLost, int totalShipsSunk, int totalShotsTaken, int totalSuccessfulShots ){
+		public void addFullRow(String username,  int finalPlace, int turnsTaken,  int totalShotsTaken, int totalSuccessfulShots ){
 			
 			try{
 			everythingAllAtOnce = conn.prepareStatement(allAtOnce);
@@ -60,12 +60,8 @@ public class DatabaseCreator {
 			everythingAllAtOnce.setString(1, username);
 			everythingAllAtOnce.setInt(2, finalPlace);
 			everythingAllAtOnce.setInt(3, turnsTaken);
-			everythingAllAtOnce.setInt(4, messagesSent);
-			everythingAllAtOnce.setInt(5, totalShipsDeployed);
-			everythingAllAtOnce.setInt(6, totalShipsLost);
-			everythingAllAtOnce.setInt(7, totalShipsSunk);
-			everythingAllAtOnce.setInt(8, totalShotsTaken);
-			everythingAllAtOnce.setInt(9, totalSuccessfulShots);
+			everythingAllAtOnce.setInt(4, totalShotsTaken);
+			everythingAllAtOnce.setInt(5, totalSuccessfulShots);
 			
 			everythingAllAtOnce.execute();
 			}

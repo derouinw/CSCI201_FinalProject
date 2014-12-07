@@ -282,8 +282,6 @@ public class BSServer {
 							int turnsTaken = Integer.valueOf(stats[3]);
 							int finalPlace = Integer.valueOf(stats[4]);
 							db.addFullRow(username, finalPlace, turnsTaken,
-									messagesSent, totalShipsDeployed,
-									totalShipsLost, totalShipsSunk,
 									totalShotsTaken, totalSuccessfulShots);
 						}
 					}

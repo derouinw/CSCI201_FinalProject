@@ -102,7 +102,7 @@ public class ClientGUI extends JFrame {
 
 		} else if (page.equals("game over")) {
 			String playerData = game.getPlayerData();
-			gameOver.fillTable(playerData);
+			//gameOver.fillTable(playerData);
 			nt.send(playerData);
 		}
 	}
@@ -169,7 +169,7 @@ public class ClientGUI extends JFrame {
 				if (sMsg.startsWith("data")) {
 					String data = sMsg.substring(5).trim();
 					if (!msg.source.equals(nt.username)) {
-						gameOver.fillTable(data);
+						//gameOver.fillTable(data);
 					}
 				}
 			} else {
@@ -214,5 +214,3 @@ public class ClientGUI extends JFrame {
 		}
 	}
 }
-
-// why eshed

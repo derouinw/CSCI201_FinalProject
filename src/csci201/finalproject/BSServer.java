@@ -263,8 +263,10 @@ public class BSServer {
 					}
 				} else if (gameState.equals("game over")) {
 					// send data to database
+					DatabaseCreator db = new DatabaseCreator();
 					if (curRank == 0) { // if all data has been sent out
 						// TODO: put database code here
+						db.addFullRow(username, finalPlace, turnsTaken, messagesSent, totalShipsDeployed, totalShipsLost, totalShipsSunk, totalShotsTaken, totalSuccessfulShots);
 					}
 					break;
 				}

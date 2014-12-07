@@ -111,7 +111,7 @@ public class LobbyGUI extends JPanel {
 			JOptionPane
 					.showMessageDialog(
 							null,
-							"Kind of like BattleShip, but with more players, and way more awesome.",
+							"Welcome to Buccaneer Battles! Our game is similar to the Salvo Battleship variant. The point of the game is to keep your fleet afloat the longest. This can be achieved by shooting down your opponents’ ships until you are the last pirate on the seven seas. Ship placement: When the game starts, you will be asked to choose your fleet and then place your ships. On the ship placement screen, you will first click on the label for the ship you are placing, than select the ship’s orientation. To place the ship on the grid, make sure you have selected a ship (label of selected ship will be outlined in red) and then click on the square you want the top of the ship to start in. When you have placed all of your ships, press the submit button and wait for your opponents to finish. Shots Fired: To fire at your opponents, select the spaces on their grids that you would like to hit. You must fire the full amount of shots that you have during each of your turns. This is the same number of shots as the size of your largest ship that is still in play.",
 							"Game Instructions", JOptionPane.PLAIN_MESSAGE);
 		}
 	}

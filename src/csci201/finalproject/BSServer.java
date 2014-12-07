@@ -76,12 +76,17 @@ public class BSServer {
 		int curPlayer = 0; // default host
 		int curRank;
 
+		// database stuff
+		DatabaseCreator db;
+		ArrayList<String> statistics;
+
 		// Constructor
 		public ServerThread(int numPlayers) {
 			this.numPlayers = numPlayers;
 			curRank = numPlayers;
 			playerThreads = new ArrayList<PlayerThread>();
 			gameState = "lobby";
+			statistics = new ArrayList<String>();
 		}
 
 		// Creates a connection with socket passed in,
@@ -151,10 +156,13 @@ public class BSServer {
 								secondSpace);
 						int rank = playerThreads.get(ptNum(name)).rank;
 						if (rank == 0) {
-							rank = curRank; // if rank is still 0, it's the winner
+							rank = curRank; // if rank is still 0, it's the
+											// winner
 							curRank--;
 						}
-						broadcast(new Message(sMsg + " " + rank, src));
+						String message = sMsg + " " + rank;
+						statistics.add(message);
+						broadcast(new Message(message, src));
 					}
 				}
 				break;
@@ -263,10 +271,21 @@ public class BSServer {
 					}
 				} else if (gameState.equals("game over")) {
 					// send data to database
-					DatabaseCreator db = new DatabaseCreator();
+					db = new DatabaseCreator();
 					if (curRank == 0) { // if all data has been sent out
 						// TODO: put database code here
-						db.addFullRow(username, finalPlace, turnsTaken, messagesSent, totalShipsDeployed, totalShipsLost, totalShipsSunk, totalShotsTaken, totalSuccessfulShots);
+						for (String s : statistics) {
+							String[] stats = s.split(" ");
+							String username = stats[0];
+							int totalSuccessfulShots = Integer.valueOf(stats[1]);
+							int totalShotsTaken = Integer.valueOf(stats[2]);
+							int turnsTaken = Integer.valueOf(stats[3]);
+							int finalPlace = Integer.valueOf(stats[4]);
+							db.addFullRow(username, finalPlace, turnsTaken,
+									messagesSent, totalShipsDeployed,
+									totalShipsLost, totalShipsSunk,
+									totalShotsTaken, totalSuccessfulShots);
+						}
 					}
 					break;
 				}

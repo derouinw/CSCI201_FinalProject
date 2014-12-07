@@ -540,10 +540,10 @@ public class GameGUI extends JPanel{
 	public String getPlayerData() {
 		String ret = "";
 		ret += nt.username + " "; 
-		ret += "0 "; // rank
 		ret += shotsHit + " ";
 		ret += shotsFired + " ";
 		ret += turnsTaken;
+		// rank is added on in server
 		return ret;
 	}
 }

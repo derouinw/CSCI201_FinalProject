@@ -91,7 +91,8 @@ public class ClientGUI extends JFrame {
 			// pass in IP address
 			chatPanel.setVisible(true);
 			lobby.setup();
-			if (!nt.isHost) lobby.setIp(splash.host);
+			if (!nt.isHost)
+				lobby.setIp(splash.host);
 		} else if (page.equals("fleet selection")) {
 
 		} else if (page.equals("playing")) {
@@ -102,7 +103,6 @@ public class ClientGUI extends JFrame {
 
 		} else if (page.equals("game over")) {
 			String playerData = game.getPlayerData();
-			gameOver.fillTable(playerData);
 			nt.send("data " + playerData);
 		}
 	}
@@ -111,7 +111,7 @@ public class ClientGUI extends JFrame {
 	public void receive(Message msg) {
 		if (msg.value == null) {
 			// disconnect
-			//JDialog popup = new JDialog(this, "Disconnected from server");
+			// JDialog popup = new JDialog(this, "Disconnected from server");
 			System.out.println("disconnected");
 			setVisible(false);
 			dispose();
@@ -168,9 +168,7 @@ public class ClientGUI extends JFrame {
 			} else if (gameState.equals("game over")) {
 				if (sMsg.startsWith("data")) {
 					String data = sMsg.substring(5).trim();
-					if (!msg.source.equals(nt.username)) {
-						gameOver.fillTable(data);
-					}
+					gameOver.fillTable(data);
 				}
 			} else {
 

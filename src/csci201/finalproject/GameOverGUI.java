@@ -116,10 +116,10 @@ public class GameOverGUI extends JPanel {
 		
 		String userName, rank, shotsHit, shotsTaken, turnsPlayed;
 		userName = string[0];
-		rank = string[1];
-		shotsHit = string[2];
-		shotsTaken = string[3];
-		turnsPlayed = string[4];
+		shotsHit = string[1];
+		shotsTaken = string[2];
+		turnsPlayed = string[3];
+		rank = string[4];
 		
 		Object[] currUser = new Object[]{userName,rank,shotsHit,shotsTaken,turnsPlayed};
 		dtm.addRow(currUser); 

@@ -74,10 +74,12 @@ public class BSServer {
 
 		// during playing, the index of current player firing
 		int curPlayer = 0; // default host
+		int curRank;
 
 		// Constructor
 		public ServerThread(int numPlayers) {
 			this.numPlayers = numPlayers;
+			curRank = numPlayers;
 			playerThreads = new ArrayList<PlayerThread>();
 			gameState = "lobby";
 		}
@@ -127,8 +129,14 @@ public class BSServer {
 						int ships = Integer.valueOf(sMsg.substring(5).trim());
 						broadcast("ships " + src + " " + ships);
 						if (ships == 0) {
-							playerThreads.get(ptNum(src)).send("game over");
-							playerThreads.get(ptNum(src)).active = false;
+							PlayerThread pt = playerThreads.get(ptNum(src));
+							if (pt.active) {
+								pt.send("game over");
+								pt.active = false;
+								pt.rank = curRank;
+								System.out.println("updating rank: " + curRank);
+								curRank--;
+							}
 						}
 					} else if (sMsg.startsWith("sunk")) {
 						String text = sMsg.substring(5).trim();
@@ -136,7 +144,14 @@ public class BSServer {
 					}
 				} else if (gameState.equals("game over")) {
 					if (sMsg.startsWith("data")) {
-						broadcast(new Message(sMsg, src));
+						int firstSpace = sMsg.indexOf(" ");
+						int secondSpace = sMsg.indexOf(" ", firstSpace + 1);
+						int thirdSpace = sMsg.indexOf(" ", secondSpace + 1);
+						String name = sMsg.substring(firstSpace + 1,
+								secondSpace);
+						int rank = playerThreads.get(ptNum(name)).rank;
+						if (rank == 0) rank = 1; // if rank is still 0, it's the winner
+						broadcast(new Message(sMsg + " " + rank, src));
 					}
 				}
 				break;
@@ -153,7 +168,6 @@ public class BSServer {
 				}
 				break;
 			case Message.TYPE_BOARD:
-				// TODO: receive board
 				break;
 			case Message.TYPE_SHOT:
 				Shot s = (Shot) msg.value;
@@ -189,7 +203,7 @@ public class BSServer {
 		// Thread.run
 		// I.e. main loop for thread
 		public void run() {
-			while (running) { // TODO: real exit case
+			while (running) {
 				// server logic here
 				System.out.print(""); // TODO: things break without this idk why
 				if (gameState.equals("lobby")) {
@@ -246,7 +260,7 @@ public class BSServer {
 					}
 				} else if (gameState.equals("game over")) {
 					// send out statistics data then kill server
-					// TODO: this ^
+					// (in receive)
 					break;
 				}
 			}
@@ -292,6 +306,7 @@ public class BSServer {
 		// Whether the player has been killed or not
 		boolean active;
 		boolean ptrunning = true;
+		int rank;
 
 		// the user's handle
 		String username;
@@ -318,10 +333,10 @@ public class BSServer {
 		public void send(Message msg) {
 			if (!active) {
 				boolean okay = false;
-				// TODO: messages to send while inactive
 				if (msg.type == Message.TYPE_STRING) {
 					if (((String) msg.value).startsWith("chat")
-							|| ((String) msg.value).equals("ready game over")) {
+							|| ((String) msg.value).equals("ready game over")
+							|| ((String) msg.value).startsWith("data")) {
 						okay = true; // send chat messages
 					}
 				}
@@ -344,7 +359,6 @@ public class BSServer {
 			try {
 				msg = (Message) receive.readObject();
 			} catch (EOFException eofe) {
-				// TODO: handle disconnect
 				return new Message();
 			} catch (SocketTimeoutException ste) {
 				return null;

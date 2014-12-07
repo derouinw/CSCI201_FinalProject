@@ -150,7 +150,10 @@ public class BSServer {
 						String name = sMsg.substring(firstSpace + 1,
 								secondSpace);
 						int rank = playerThreads.get(ptNum(name)).rank;
-						if (rank == 0) rank = 1; // if rank is still 0, it's the winner
+						if (rank == 0) {
+							rank = curRank; // if rank is still 0, it's the winner
+							curRank--;
+						}
 						broadcast(new Message(sMsg + " " + rank, src));
 					}
 				}
@@ -259,8 +262,10 @@ public class BSServer {
 						}
 					}
 				} else if (gameState.equals("game over")) {
-					// send out statistics data then kill server
-					// (in receive)
+					// send data to database
+					if (curRank == 0) { // if all data has been sent out
+						// TODO: put database code here
+					}
 					break;
 				}
 			}

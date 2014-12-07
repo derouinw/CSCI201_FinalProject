@@ -326,6 +326,7 @@ public class BSServer {
 					}
 				}
 				if (!okay) {
+					System.out.println("filtering " + msg.value);
 					return;
 				}
 			}

@@ -107,7 +107,7 @@ public class GameOverGUI extends JPanel {
 		
 	    GameCredits.add(box);
 		
-		
+		pages.show(GameOver, "first");
 		
 		
 	}
